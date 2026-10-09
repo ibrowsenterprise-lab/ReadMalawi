@@ -18,10 +18,29 @@ const entry=(data)=>{
  const actions=document.createElement("div");actions.className="card-actions";
  const link=document.createElement("a");link.className="btn";link.textContent=data.kind==="audio"?"Listen / details":"Read / details";
  if(data.source==="member"){
-   link.href="#";link.addEventListener("click",async e=>{e.preventDefault();if(!app.client)return;link.textContent="Opening…";try{const bucket=data.kind==="audio"?"readmalawi-audio":"readmalawi-books";const result=await app.client.storage.from(bucket).createSignedUrl(data.storage_path,120);if(result.error)throw result.error;if(!secureURL(result.data?.signedUrl))throw Error("Unable to create a safe reading link");window.location.assign(result.data.signedUrl)}catch(err){link.textContent="Read / details";alert("This file cannot be opened yet: "+err.message)}});
+   link.href="#";link.textContent=data.kind==="audio"?"Listen online":"Read online";link.addEventListener("click",async e=>{e.preventDefault();if(!app.client)return;link.textContent="Opening…";try{const result=await app.client.storage.from("readmalawi-library").createSignedUrl(data.storage_path,120);if(result.error)throw result.error;const url=secureURL(result.data?.signedUrl);if(!url)throw Error("Cannot safely open the approved book");openReader(url,data)}catch(err){alert("Unable to open this book yet: "+err.message)}finally{link.textContent=data.kind==="audio"?"Listen online":"Read online"}});
  }else{link.href=secureURL(data.url)||"#";link.target="_blank";link.rel="noopener noreferrer";}
  actions.appendChild(link);card.appendChild(actions);return card;
 };
+
+function openReader(url,book){
+  document.querySelector("#readmalawi-viewer")?.remove();
+  const box=document.createElement("section");box.id="readmalawi-viewer";box.setAttribute("role","dialog");box.setAttribute("aria-modal","true");box.setAttribute("aria-label","Online reading");
+  box.style.cssText="position:fixed;inset:0;z-index:1000;background:#092e2bf2;display:flex;flex-direction:column;padding:16px;gap:12px";
+  const top=document.createElement("div");top.style.cssText="display:flex;justify-content:space-between;align-items:center;gap:12px;color:white";
+  const title=document.createElement("strong");title.textContent=(book.title||"ReadMalawi")+" · "+(book.access_mode==="online_only"?"Online only":"Online preview");
+  const close=document.createElement("button");close.className="btn secondary";close.textContent="Close reader";close.addEventListener("click",()=>{box.remove();document.removeEventListener("keydown",onEscape)});
+  function onEscape(e){if(e.key==="Escape")close.click()} document.addEventListener("keydown",onEscape);
+  top.append(title,close);box.append(top);
+  const container=document.createElement("div");container.style.cssText="flex:1;min-height:0;background:white;border-radius:10px;overflow:auto";box.append(container);
+  if(book.kind==="audio"){const audio=document.createElement("audio");audio.controls=true;audio.preload="metadata";audio.controlsList="nodownload";audio.style.cssText="display:block;width:100%;margin:35px auto";audio.src=url;container.append(audio);}
+  else if(/\.epub$/i.test(book.storage_path||"")) {
+    const target=document.createElement("div");target.style.cssText="height:100%;min-height:360px";container.append(target);
+    const lib=document.createElement("script");lib.src="https://cdn.jsdelivr.net/npm/epubjs@0.3.93/dist/epub.min.js";lib.onload=()=>{try{window.ePub(url).renderTo(target,{width:"100%",height:"100%"}).display()}catch(e){target.textContent="EPUB preview unavailable. Contact the library moderator."}};lib.onerror=()=>target.textContent="EPUB viewer unavailable right now.";document.head.append(lib);
+  } else {const pdf=document.createElement("iframe");pdf.src=url+"#toolbar=0&navpanes=0";pdf.title="ReadMalawi PDF reader";pdf.style.cssText="height:100%;min-height:360px;width:100%;border:0";container.append(pdf)}
+  const foot=document.createElement("p");foot.style.cssText="color:#e9f4ed;font-size:.8rem;margin:0";foot.textContent="No site download option for online-only works. Browser tools and recording may still copy content; this is not DRM.";box.append(foot);document.body.append(box);close.focus();
+}
+
 function filterAndRender(){
  const term=$("#search").value.trim().toLowerCase(),cat=$("#category").value,lang=$("#language").value,sort=$("#sort").value;
  const items=app.local.concat(app.remote).filter(b=>(app.kind==="all"||b.kind===app.kind)&&(cat==="all"||b.category===cat)&&(lang==="all"||b.language===lang)&&(!term||[b.title,b.author,b.category,b.language,b.description].join(" ").toLowerCase().includes(term)));
@@ -75,9 +94,9 @@ $("#login-form").addEventListener("submit",async e=>{e.preventDefault();if(!app.
 $("#logout-btn").addEventListener("click",async()=>{if(app.client)await app.client.auth.signOut()});
 async function loadApproved(){
  if(!app.client)return;
- const {data,error}=await app.client.from("readmalawi_books").select("id,title,author,description,kind,category,language,storage_path").eq("status","approved").order("created_at",{ascending:false}).limit(100);
+ const {data,error}=await app.client.from("library_books").select("id,title,author,description,media_type,category,language,file_path,access_mode").eq("status","approved").order("created_at",{ascending:false}).limit(100);
  if(error){$("#fetch-message").textContent="Approved member catalogue unavailable: "+error.message;return}
- app.local=(data||[]).map(b=>({...b,source:"member",rank:2}));filterAndRender();
+ app.local=(data||[]).map(b=>({...b,kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",rank:2}));filterAndRender();
 }
 $("#upload-kind").addEventListener("change",()=>{$("#upload-file").value=""});
 $("#upload-form").addEventListener("submit",async e=>{
@@ -87,27 +106,27 @@ $("#upload-form").addEventListener("submit",async e=>{
  if(!formats.includes(ext)||f.size>cap*1024*1024){show("#upload-status","Invalid format or file size. Choose "+formats.join("/")+" under "+cap+" MB.",false);return}
  if(!$("#upload-consent").checked){show("#upload-status","Permission confirmation is required.",false);return}
  $("#upload-submit").disabled=true;
- const path=app.user.id+"/"+crypto.randomUUID()+"."+ext;const bucket=kind==="audio"?"readmalawi-audio":"readmalawi-books";
+ const path=app.user.id+"/"+crypto.randomUUID()+"."+ext;const bucket="readmalawi-library";
  try{
   const uploaded=await app.client.storage.from(bucket).upload(path,f,{upsert:false,contentType:f.type||undefined});
   if(uploaded.error)throw uploaded.error;
-  const row={uploader_id:app.user.id,title:$("#upload-title").value.trim(),author:$("#upload-author").value.trim(),kind,category:$("#upload-category").value,language:$("#upload-language").value,rights_basis:$("#upload-rights").value,rights_evidence:$("#upload-evidence").value.trim(),storage_path:path,status:"pending"};
-  const result=await app.client.from("readmalawi_books").insert(row);
+  const rightsBasis=$("#upload-rights").value;const row={uploaded_by:app.user.id,title:$("#upload-title").value.trim(),author:$("#upload-author").value.trim(),media_type:kind==="audio"?"audiobook":"ebook",category:$("#upload-category").value,language:$("#upload-language").value,origin:$("#upload-origin").value,access_mode:$("#upload-access").value,rights_basis:rightsBasis,rights_url:$("#upload-evidence").value.trim(),attested_rights:rightsBasis!=="unknown",file_path:path,mime_type:({pdf:"application/pdf",epub:"application/epub+zip",mp3:"audio/mpeg",m4a:"audio/mp4"})[ext],description:""};
+  const result=await app.client.from("library_books").insert(row);
   if(result.error)throw result.error;
-  $("#upload-form").reset();show("#upload-status","Received for review. Your file is private until an administrator approves it.",true);
+  $("#upload-form").reset();show("#upload-status","Submitted successfully. Your file remains private until rights checks are completed. Every Malawian work requires moderator approval.",true);
  }catch(err){show("#upload-status","Submission could not be completed: "+err.message+". If the file uploaded before this error, contact the administrator for cleanup.",false)}
  finally{$("#upload-submit").disabled=!app.user}
 });
 $("#request-form").addEventListener("submit",async e=>{
  e.preventDefault();if(!app.client||!app.user)return;
  $("#request-submit").disabled=true;
- try{const {error}=await app.client.from("readmalawi_requests").insert({requester_id:app.user.id,title:$("#request-title").value.trim(),author:$("#request-author").value.trim(),notes:$("#request-notes").value.trim(),status:"open"});
+ try{const {error}=await app.client.from("book_requests").insert({requested_by:app.user.id,title:$("#request-title").value.trim(),author:$("#request-author").value.trim(),notes:$("#request-notes").value.trim(),status:"open"});
  if(error)throw error;$("#request-form").reset();show("#request-status","Request published. Other members can now offer a lawful source.",true);await loadRequests()
  }catch(err){show("#request-status","Could not publish request: "+err.message,false)}
  finally{$("#request-submit").disabled=!app.user}
 });
 async function loadRequests(){
- if(!app.client)return;const {data,error}=await app.client.from("readmalawi_requests").select("id,title,author,notes,status,created_at").order("created_at",{ascending:false}).limit(30);
+ if(!app.client)return;const {data,error}=await app.client.from("book_requests").select("id,title,author,notes,status,created_at").order("created_at",{ascending:false}).limit(30);
  if(error){$("#requests-list").textContent="Requests unavailable.";return}
  const parent=$("#requests-list");parent.replaceChildren();
  if(!data?.length){const p=document.createElement("p");p.className="muted";p.textContent="No public requests yet. Be the first to suggest a title.";parent.appendChild(p);return}
@@ -117,7 +136,7 @@ async function offer(id){
  if(!app.client||!app.user){alert("Please sign in first. Your private details will not be posted publicly.");return}
  const note=prompt("Share a legal source link or explain how you can help. Do not offer pirated files.");if(!note||!note.trim())return;
  if(note.length>800){alert("Please keep your message under 800 characters.");return}
- const {error}=await app.client.from("readmalawi_request_offers").insert({request_id:id,helper_id:app.user.id,note:note.trim()});
+ const {error}=await app.client.from("book_request_offers").insert({request_id:id,offered_by:app.user.id,message:note.trim()});
  alert(error?"Could not submit your offer: "+error.message:"Thank you. Your offer was recorded privately for administrator coordination.");
 }
 filterAndRender();loadCatalogue().catch(()=>{});backend().catch(()=>{});
