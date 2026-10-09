@@ -1,9 +1,7 @@
-// Public configuration only. Never place a Supabase service_role key or payment credentials here.
-// Fill in AFTER completing LIBRARY_SETUP.md and running the database policies.
+// Public Supabase configuration. Publishable keys are browser-safe; never put service_role keys here.
 window.READMALAWI_CONFIG = Object.freeze({
-  supabaseUrl: "",
-  supabasePublishableKey: "",
-  // The site deliberately has NO payment service or live donation collection yet.
+  supabaseUrl: "https://ezejmipymjzfsnemgaig.supabase.co",
+  supabasePublishableKey: "sb_publishable_SOOUwuIbpj2aTgUsfuEHdA_unL2aMUb",
   paymentsEnabled: false,
   donationsEnabled: false
 });
