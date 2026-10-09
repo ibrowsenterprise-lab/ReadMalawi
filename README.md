@@ -22,3 +22,12 @@ Go to **Settings → Pages → Deploy from a branch → main → /(root) → Sav
 GitHub Pages is for the free educational pilot, not a paid e-commerce or SaaS platform. Future paid training or charitable receipts need suitable hosting and legal arrangements.
 
 See [ROADMAP.md](ROADMAP.md) and [TRANSLATION_REVIEW.md](TRANSLATION_REVIEW.md).
+
+
+## Community library (new)
+- [Open the searchable e-book and audiobook library](library.html). It has title/author search, category, language, e-book/audiobook filters, and automatically fetches legal-source CATALOGUE METADATA from Project Gutenberg and LibriVox.
+- Member PDFs/EPUBs, audiobooks, book requests and helpful responses are built as a secure Supabase integration, but **cannot yet accept uploads** until Supabase credentials, SQL policies and moderation/testing are configured.
+- See [LIBRARY_SETUP.md](LIBRARY_SETUP.md) and [the database schema](supabase/readmalawi_schema.sql) for deployment and security requirements.
+- Permission checks and administrator approval must precede public publication of any member file.
+- Proposed five-free-download / MK500 scheme and MK100 minimum donations are **not active**. No website payment processing or charitable collection has been enabled.
+- A publicly viewable file can still be saved; a future paid content-access model requires a dedicated server and payment validation, not merely JavaScript counters.
