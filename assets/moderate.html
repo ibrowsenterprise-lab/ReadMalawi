@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Library Review Desk | ReadMalawi</title>
+<style>
+:root{--dark:#092e2b;--green:#12684e;--muted:#576b65;--line:#d8e5dc}*{box-sizing:border-box}
+body{margin:0;background:#f7f9f4;color:#192f28;font:16px/1.5 system-ui,Arial,sans-serif}
+header{background:var(--dark);color:white;padding:18px max(17px,calc((100% - 990px)/2))}
+header a{color:#f2d297}main{max-width:1000px;margin:auto;padding:22px 16px 60px}
+h1{margin:9px 0;font-size:clamp(1.6rem,4vw,2.3rem)}h2{margin:0 0 8px}p{margin:0 0 15px}
+.panel{border:1px solid var(--line);padding:21px;background:white;border-radius:16px;margin:17px 0;box-shadow:0 8px 30px #092e2b0a}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.btn{background:var(--green);color:white;border:0;border-radius:10px;padding:11px 15px;font:inherit;font-weight:700;cursor:pointer}
+.btn.secondary{background:#eaf1ed;color:#173d31;border:1px solid #c5dbcc}.btn.danger{background:#a83a36}.btn:disabled{opacity:.5;cursor:wait}
+small,.hint{color:var(--muted)}.notice{background:#fff2d9;border:1px solid #ebd19b;padding:12px;border-radius:10px}
+.list{display:grid;gap:16px}.book{border:1px solid var(--line);border-radius:14px;padding:18px;background:#fff}
+.book h3{margin:0 0 5px;word-break:break-word}.book .meta{font-size:.84rem;color:var(--muted);margin-bottom:16px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin:10px 0 18px}
+label.field{font-size:.85rem;font-weight:700;display:flex;flex-direction:column;gap:5px}
+input,select{width:100%;padding:11px;border:1px solid #bdcec2;border-radius:8px;background:white;font:inherit;color:#18352a}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:.9rem}.check input{width:auto;margin:5px 0}
+.status{font-weight:650;padding:8px 0;white-space:pre-wrap}.status.error{color:#a83a36}.status.good{color:#117249}
+.hide{display:none!important}@media(max-width:640px){.fields{grid-template-columns:1fr}.panel{padding:16px}}
+</style></head><body><header><a href="../library.html">← Back to ReadMalawi library</a></header><main>
+<p style="text-transform:uppercase;letter-spacing:.12em;color:#83631d;font-weight:800;font-size:.72rem">Private librarian workspace</p>
+<h1>Book Review Desk</h1>
+<p class="hint">Thank contributors by keeping uploads easy. Review their books privately, improve the information, then approve only material ReadMalawi has permission to distribute.</p>
+<div class="notice"><strong>Admins only.</strong> Book donations are not automatically public. Check authorship, licensing, special online-only requirements and suitability for children before publishing. In particular, all Malawian works require explicit moderator approval.</div>
+<section class="panel"><h2>Admin access</h2><p id="auth-status" role="status">Checking your ReadMalawi session…</p>
+<div class="row"><a href="../library.html#contribute" class="btn secondary" style="text-decoration:none">Sign in on library</a><button id="refresh" class="btn" disabled>Refresh reviews</button></div></section>
+<section class="panel hide" id="moderation"><h2>Contributions awaiting review</h2><p class="hint" id="summary"></p>
+<div id="book-list" class="list"></div></section>
+</main><script src="../readmalawi-config.js"></script><script type="module" src="moderate.js"></script></body></html>
