@@ -1,11 +1,24 @@
-# ReadMalawi
+# ReadMalawi — Digital Literacy Project
 
-ReadMalawi is a digital-first community literacy initiative founded by Jones Nalikungwi, originally featured in Malawian news coverage in 2019.
+Founded by Jones Nalikungwi. ReadMalawi's proposed literacy and book-donation project was publicly reported in 2019 after historical discussions with the late DD Phiri. To date, its recorded achievement is sharing digital books in an existing WhatsApp community of 126 members. No physical book deliveries or NGO registration have taken place.
 
-Current achievement: sharing digital books in a WhatsApp community of 126 members. The project is not a registered NGO and has not yet conducted physical book donations.
+## Digital reading hub
 
-Our pilot reading hub supports English and Malawian-language learning activities with human review for AI-assisted translations.
+- Mobile-friendly free reading links, original quiz and AI learning prompts.
+- Language choices: English, Chichewa, Chitumbuka, Chiyao, Chilomwe, Chisena and Chitonga.
+- **Not** a complete seven-language translation: local-language content requires review by fluent speakers.
+- The site doesn't process donations or payments.
 
-This repository is independent from IBROWS Enterprise.
+## Brand
 
-Website publication and translations are work in progress.
+The emblem concept joins a book, the Malawi silhouette and expanding access to knowledge. `assets/readmalawi-symbol.svg` is a compact site icon. The approved larger logo will appear on the landing page after `assets/readmalawi-logo.png` is uploaded to the assets folder.
+
+## GitHub Pages
+
+Repository: `ibrowsenterprise-lab/ReadMalawi` (separate from IBROWS).
+
+Go to **Settings → Pages → Deploy from a branch → main → /(root) → Save**. After successful deployment, the conventional address is `https://ibrowsenterprise-lab.github.io/ReadMalawi/`.
+
+GitHub Pages is for the free educational pilot, not a paid e-commerce or SaaS platform. Future paid training or charitable receipts need suitable hosting and legal arrangements.
+
+See [ROADMAP.md](ROADMAP.md) and [TRANSLATION_REVIEW.md](TRANSLATION_REVIEW.md).
