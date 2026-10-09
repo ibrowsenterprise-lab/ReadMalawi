@@ -31,13 +31,13 @@
 <div class="banner" style="margin-top:22px"><strong>More free books:</strong> <a href="https://www.africanstorybook.org/" target="_blank" rel="noopener noreferrer">African Storybook</a> · <a href="https://www.gutenberg.org/" target="_blank" rel="noopener noreferrer">Project Gutenberg</a> · <a href="https://librivox.org/" target="_blank" rel="noopener noreferrer">LibriVox</a>. Content rights and availability vary by book and country.</div>
 </div></section>
 <section class="section subtle" id="contribute"><div class="wrap">
-<div class="eyebrow">Help grow ReadMalawi</div><h2>Contribute a book or audiobook</h2><p class="intro">Creators and rights holders are welcome to share their work. Files are held privately for review and become public only after an administrator verifies redistribution permission and approves them.</p>
+<div class="eyebrow">Help grow ReadMalawi</div><h2>Contribute a book or audiobook</h2><p class="intro">Any member may submit an e-book or audiobook into a private review queue, even if they are unsure about publication rights. Malawian works always require specific administrator approval. Verified trusted contributors can publish eligible international works automatically.</p>
 <div class="two"><div class="panel">
 <h3>Member access</h3><p class="small muted">Sign in by email to propose a title, upload a file, or respond to a request.</p>
 <div id="service-message" class="notice">Secure submissions are being prepared. Please do not upload copyrighted books without permission.</div>
 <form id="login-form" class="login"><input id="email" type="email" autocomplete="email" placeholder="Your email address" required aria-label="Email address"><button type="submit" class="btn" id="login-btn" disabled>Email sign-in</button></form>
 <div class="small" id="user-status">Sign-in will be enabled when ReadMalawi storage is connected.</div><button class="btn secondary hide" id="logout-btn" type="button" style="margin-top:10px">Sign out</button>
-<hr><h3>Publishing rules</h3><p class="small">Allowed: your own original work, works licensed for public sharing, or confirmed public-domain files. Please supply evidence of permission.</p><p class="small">Not allowed: copies of commercial books or audiobooks merely because you bought or downloaded them.</p>
+<hr><h3>Publishing rules</h3><p class="small">Anyone can submit a book privately. Only original, licensed or otherwise authorised works can be made public. For unknown rights, select 'Unsure' and a reviewer can investigate.</p><p class="small">Possessing a copy does not establish permission to publish it. Submission is not automatic public distribution.</p>
 </div><div class="panel">
 <h3>Submit material for review</h3>
 <form id="upload-form" class="formgrid">
@@ -46,11 +46,11 @@
 <label class="field">Format<select id="upload-kind"><option value="book">E-book</option><option value="audio">Audiobook</option></select></label>
 <label class="field">Category<select id="upload-category"><option>Fiction</option><option>Children</option><option>Education</option><option>History</option><option>Science</option><option>Poetry</option><option>Biography</option><option>Language</option><option>Other</option></select></label>
 <label class="field">Language<select id="upload-language"><option>English</option><option>Chichewa</option><option>Chitumbuka</option><option>Chiyao</option><option>Chilomwe</option><option>Chisena</option><option>Chitonga</option><option>Other</option></select></label>
-<label class="field">Permission basis<select id="upload-rights"><option value="original">I am the original rights holder</option><option value="licensed">Written redistribution permission / open licence</option><option value="public_domain">Confirmed public-domain work in Malawi</option></select></label>
-<label class="field full">Permission evidence or licence URL<textarea id="upload-evidence" maxlength="1500" required placeholder="Describe your rights, name the rights holder and provide a licence link or written authorisation."></textarea></label>
+<label class="field">Country of origin<select id="upload-origin"><option value="Malawian">Malawian work — admin approval</option><option value="International">International work</option></select></label><label class="field">Access type<select id="upload-access"><option value="download">Reading and download if permitted</option><option value="online_only">Special: read/listen online only</option></select></label><label class="field">Permission basis<select id="upload-rights"><option value="unknown">Unsure — private review only</option><option value="original_creator">I am the original rights holder</option><option value="authorised">Written permission from rights holder</option><option value="open_licence">Open licence allows distribution</option><option value="public_domain">Confirmed public-domain work</option></select></label>
+<label class="field full">Permission evidence or licence URL (optional when unsure)<textarea id="upload-evidence" maxlength="1500" placeholder="Provide a rights-holder confirmation or link to a licence, where available."></textarea></label>
 <label class="field full">Choose a PDF, EPUB, MP3 or M4A file<input id="upload-file" type="file" accept=".pdf,.epub,.mp3,.m4a,application/pdf,application/epub+zip,audio/mpeg,audio/mp4" required><span class="formhint">Suggested maximum: e-books 20 MB; audiobooks 50 MB for the initial trial.</span></label>
-<label class="checkline full"><input type="checkbox" id="upload-consent" required><span>I confirm I have the legal right to allow ReadMalawi to host and publicly provide this work, and I understand review may reject it.</span></label>
-<button type="submit" class="btn full" id="upload-submit" disabled>Submit for review</button><div id="upload-status" class="status full" aria-live="polite"></div>
+<label class="checkline full"><input type="checkbox" id="upload-consent" required><span>I understand that uploading a file does not give ReadMalawi permission to publish it. Works with uncertain rights will remain private.</span></label>
+<button type="submit" class="btn full" id="upload-submit" disabled>Submit privately</button><div id="upload-status" class="status full" aria-live="polite"></div>
 </form>
 </div></div>
 </div></section>
@@ -69,7 +69,7 @@
 <p class="notice" style="margin-top:17px">Public viewing does not technically prevent a reader from saving a digital file. A future paid-download service therefore needs a carefully designed reader, permissions model and server-side payment enforcement—not merely a browser counter.</p>
 </div></section>
 </main>
-<footer class="footer"><div class="wrap"><strong>ReadMalawi</strong> · Books • Technology • Knowledge for All<br><span class="small">Digital literacy community founded by Jones Nalikungwi. The proposed nonprofit is not yet registered. Member uploads and payment functions are not live until activated.</span><br><a href="index.html">Return to the reading hub</a></div></footer>
+<footer class="footer"><div class="wrap"><strong>ReadMalawi</strong> · Books • Technology • Knowledge for All<br><span class="small">Digital literacy community founded by Jones Nalikungwi. The proposed nonprofit is not yet registered. Member uploads and payments require secure backend activation.</span><br><a href="index.html">Return to the reading hub</a></div></footer>
 <script src="readmalawi-config.js"></script>
 <script type="module" src="library.js"></script>
 </body></html>
