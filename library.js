@@ -50,6 +50,8 @@ function filterAndRender(){
  else items.forEach(b=>target.appendChild(entry(b)));
  $("#count").textContent=items.length+" listing"+(items.length===1?"":"s")+" shown";
 }
+const preselectedCategory=new URLSearchParams(location.search).get("category");
+if(preselectedCategory&&Array.from($("#category").options).some(opt=>opt.value===preselectedCategory))$("#category").value=preselectedCategory;
 for(const id of ["search","category","language","sort"]){$( "#"+id).addEventListener(id==="search"?"input":"change",filterAndRender)}
 document.querySelectorAll("[data-kind]").forEach(btn=>btn.addEventListener("click",()=>{app.kind=btn.dataset.kind;document.querySelectorAll("[data-kind]").forEach(b=>b.setAttribute("aria-pressed",String(b===btn)));filterAndRender()}));
 const fetchJSON=async (url,timeout=9500)=>{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),timeout);try{const r=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json"}});if(!r.ok)throw Error(String(r.status));return await r.json()}finally{clearTimeout(timer)}};
