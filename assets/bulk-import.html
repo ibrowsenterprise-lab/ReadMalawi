@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bulk PDF Catalogue | ReadMalawi</title>
+<meta name="description" content="Scan many PDF books to draft a ReadMalawi catalogue automatically, without uploading the PDF files.">
+<style>
+:root{color-scheme:light;--dark:#092e2b;--gold:#d9ab53;--green:#0c5a48;--muted:#4a5d56;--line:#dce5dc}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,Arial,sans-serif;background:#faf8f1;color:#162b25}
+header{background:var(--dark);color:white;padding:20px max(20px,calc((100% - 1000px)/2))}header a{color:#f5d596;text-decoration:none}main{max-width:1000px;margin:0 auto;padding:24px 18px 64px}
+h1{margin:5px 0 10px;font-size:clamp(1.65rem,4vw,2.3rem)}.lead{color:var(--muted);max-width:730px}
+.panel{border:1px solid var(--line);padding:22px;border-radius:17px;background:white;margin:16px 0;box-shadow:0 8px 25px #092e2b0b}
+label{display:block;font-weight:700}input[type=file]{width:100%;padding:15px;border:2px dashed #aacbbb;background:#f7fbf8;border-radius:12px;margin:9px 0 18px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.btn{font:inherit;font-weight:750;background:var(--green);color:white;border:0;border-radius:10px;padding:12px 17px;cursor:pointer;text-decoration:none}.btn.secondary{background:#eef6ee;border:1px solid #bbd2bc;color:var(--dark)}.btn:disabled{opacity:.4;cursor:not-allowed}
+.notice{background:#fff4db;border:1px solid #e9d08f;padding:12px 15px;border-radius:10px;font-size:.9rem}.fine{color:var(--muted);font-size:.88rem}.status{padding:12px 0;white-space:pre-wrap}.progress{width:100%}
+.table{overflow:auto;max-height:520px;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;min-width:720px;width:100%;font-size:.86rem}td,th{padding:9px 11px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#eaf3ec;position:sticky;top:0}td[contenteditable]{background:#fffdfa;outline-offset:-2px}td[contenteditable]:focus{outline:2px solid #b78c35}td.confidence{font-weight:700}footer{padding:16px;color:var(--muted);font-size:.85rem}
+</style></head><body>
+<header><a href="../library.html">← ReadMalawi Library</a></header>
+<main>
+<p style="text-transform:uppercase;color:#91661a;font-size:.75rem;font-weight:850;letter-spacing:.12em">ReadMalawi · Catalogue Builder</p>
+<h1>Catalogue hundreds of PDFs in one batch</h1>
+<p class="lead">Select your PDF files or a folder on your computer. This tool reads existing PDF metadata and first-page text, drafts titles, authors, ISBNs, subjects and languages, then creates a spreadsheet. No typing each book.</p>
+<div class="notice"><strong>Private local scan:</strong> the PDF contents remain on your computer during this step. Only when you decide to share the catalogue with ReadMalawi will its metadata be submitted. This tool is <strong>automatic extraction, not full AI enrichment</strong>; you can share the generated CSV here for AI-based cleanup and classification. Copyright or publication permission is never inferred from ownership of a file.</div>
+<section class="panel">
+<label for="files">Select your PDF books (multiple selection)</label><input type="file" id="files" accept=".pdf,application/pdf" multiple>
+<label for="folder">Or select a whole folder of books (desktop Chrome / Edge)</label><input type="file" id="folder" accept=".pdf" webkitdirectory multiple>
+<div class="actions"><button class="btn" id="analyse">Analyse PDFs</button><button class="btn secondary" id="cancel" disabled>Stop</button><span class="fine" id="selection">No files selected</span></div>
+<progress class="progress" id="progress" max="1" value="0" hidden></progress><div role="status" id="status" class="status" aria-live="polite">Ready. This tool supports large collections but scans one PDF at a time to limit memory use.</div>
+</section>
+<section class="panel" id="results" hidden><h2>Draft catalogue</h2>
+<p class="fine">Click a cell to correct an uncertain entry. Rows marked <b>Review</b> may be scans, poorly labelled PDFs, or missing authors. All publication permissions remain unverified.</p>
+<div class="actions"><button class="btn" id="download">Download catalogue CSV</button><button class="btn secondary" id="clear">Clear results</button><span class="fine" id="count"></span></div>
+<p class="fine">Preview displays the first 60 results to keep the page fast. The CSV includes all processed books and any edits made to the displayed rows.</p>
+<div class="table"><table><thead><tr><th>Title</th><th>Author</th><th>Category</th><th>Language</th><th>ISBN</th><th>Quality</th></tr></thead><tbody id="rows"></tbody></table></div>
+</section>
+<footer>ReadMalawi · The generated catalogue contains metadata only. No PDF files are uploaded or made public, and no payments are collected.</footer>
+</main><script type="module" src="bulk-import.js"></script></body></html>
