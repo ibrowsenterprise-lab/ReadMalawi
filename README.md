@@ -31,3 +31,11 @@ See [ROADMAP.md](ROADMAP.md) and [TRANSLATION_REVIEW.md](TRANSLATION_REVIEW.md).
 - Permission checks and administrator approval must precede public publication of any member file.
 - Proposed five-free-download / MK500 scheme and MK100 minimum donations are **not active**. No website payment processing or charitable collection has been enabled.
 - A publicly viewable file can still be saved; a future paid content-access model requires a dedicated server and payment validation, not merely JavaScript counters.
+
+## Render preview (2026-10-09)
+
+- Frontend deployment: https://readmalawi-library.onrender.com/
+- Public library page: https://readmalawi-library.onrender.com/library.html
+- Service: `readmalawi-library` (Render static site), tracked from `main` with automatic deployments.
+- This is a **frontend preview**: signed-in uploads, private audiobook storage, book requests, donations and paid download access are **not enabled** until the dedicated Supabase database, authentication, moderation and payment infrastructure have been configured and verified.
+- **Do not upload commercial copyrighted works for public release without rights clearance.** Special online-only playback is not DRM.
