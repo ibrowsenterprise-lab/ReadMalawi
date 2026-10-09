@@ -41,6 +41,23 @@ create table if not exists public.readmalawi_request_offers (
   created_at timestamptz not null default now()
 );
 
+
+-- Restrict public API access to non-sensitive catalogue/request fields.
+-- Rights evidence and private offer details must not be broadly exposed via SELECT *.
+revoke all on table public.readmalawi_books from anon,authenticated;
+grant select(id,uploader_id,title,author,description,kind,category,language,storage_path,status,created_at)
+on public.readmalawi_books to anon,authenticated;
+grant insert(uploader_id,title,author,description,kind,category,language,rights_basis,rights_evidence,storage_path,status)
+on public.readmalawi_books to authenticated;
+revoke all on table public.readmalawi_requests from anon,authenticated;
+grant select(id,requester_id,title,author,notes,status,created_at)
+on public.readmalawi_requests to anon,authenticated;
+grant insert(requester_id,title,author,notes,status)
+on public.readmalawi_requests to authenticated;
+revoke all on table public.readmalawi_request_offers from anon,authenticated;
+grant select(id,request_id,helper_id,note,created_at) on public.readmalawi_request_offers to authenticated;
+grant insert(request_id,helper_id,note) on public.readmalawi_request_offers to authenticated;
+
 alter table public.readmalawi_books enable row level security;
 alter table public.readmalawi_requests enable row level security;
 alter table public.readmalawi_request_offers enable row level security;
