@@ -3,24 +3,33 @@ const app={kind:"all",local:[],remote:[],client:null,user:null,requests:[],backe
 const cfg=window.READMALAWI_CONFIG||{};
 const types={book:"E-book",audio:"Audiobook"};
 const show=(id,text,good)=>{const el=$(id);el.textContent=text;el.className="status "+(good?"ok":"err")};
-const langCode=code=>code==="en"?"English":code==="ny"?"Chichewa":code==="tum"?"Chitumbuka":code==="yao"?"Chiyao":"Other";
+const langCode=code=>({en:"English",ny:"Chichewa",tum:"Chitumbuka",ya:"Chiyao",yao:"Chiyao",lom:"Chilomwe",seh:"Chisena",toi:"Chitonga",fr:"French",es:"Spanish",pt:"Portuguese",sw:"Swahili",ar:"Arabic",de:"German",hi:"Hindi",zh:"Chinese",ja:"Japanese",ko:"Korean",ru:"Russian",it:"Italian",nl:"Dutch",af:"Afrikaans",zu:"Zulu",xh:"Xhosa",sn:"Shona"}[String(code||"").toLowerCase().split("-")[0]]||String(code||"Unconfirmed"));
 const categoryFrom=subjects=>{const a=(subjects||[]).join(" ").toLowerCase();if(/children|juvenile|fairy/.test(a))return"Children";if(/history|historical/.test(a))return"History";if(/science|chemistry|physics|biology/.test(a))return"Science";if(/poetry|poems/.test(a))return"Poetry";if(/biography|autobiography|memoir/.test(a))return"Biography";if(/language|linguistic/.test(a))return"Language";if(/education|learning|textbook/.test(a))return"Education";return"Fiction"};
 const secureURL=url=>{try{const u=new URL(url);return u.protocol==="https:"?u.href:null}catch(e){return null}};
-const entry=(data)=>{
- const card=document.createElement("article");card.className="card";
- const meta=document.createElement("div");meta.className="meta";
- const type=document.createElement("span");type.className="tag "+(data.kind==="audio"?"audio":"");type.textContent=types[data.kind]||"E-book";meta.appendChild(type);
- for(const m of [data.category,data.language]){const tag=document.createElement("span");tag.className="tag";tag.textContent=m||"Other";meta.appendChild(tag)} card.appendChild(meta);
- const h=document.createElement("h3");h.textContent=data.title||"Untitled";card.appendChild(h);
- const who=document.createElement("p");who.textContent="By "+(data.author||"Unknown author");card.appendChild(who);
- const source=document.createElement("p");source.textContent=data.source==="member"?"ReadMalawi community · Approved":data.source==="librivox"?"LibriVox · External source":"Project Gutenberg · External source";card.appendChild(source);
- const note=document.createElement("p");note.textContent=data.source==="member"?"Rights-attested community submission. Publication may follow moderator review or trusted-publisher rules.":data.source==="gutenberg"?"US public-domain catalogue; verify copyright status in Malawi.":"Open audiobook catalogue hosted by LibriVox.";card.appendChild(note);
- const actions=document.createElement("div");actions.className="card-actions";
- const link=document.createElement("a");link.className="btn";link.textContent=data.kind==="audio"?"Listen / details":"Read / details";
- if(data.source==="member"){
-   link.href="#";link.textContent=data.kind==="audio"?"Listen online":"Read online";link.addEventListener("click",async e=>{e.preventDefault();if(!app.client)return;link.textContent="Opening…";try{const result=await app.client.storage.from("readmalawi-library").createSignedUrl(data.storage_path,120);if(result.error)throw result.error;const url=secureURL(result.data?.signedUrl);if(!url)throw Error("Cannot safely open the approved book");openReader(url,data)}catch(err){alert("Unable to open this book yet: "+err.message)}finally{link.textContent=data.kind==="audio"?"Listen online":"Read online"}});
- }else{link.href=secureURL(data.url)||"#";link.target="_blank";link.rel="noopener noreferrer";}
- actions.appendChild(link);card.appendChild(actions);return card;
+const entry=data=>{
+ const card=document.createElement("article");card.className="card book-tile";
+ const pict=document.createElement("div");pict.className="book-pict "+(data.kind==="audio"?"audio-icon":"ebook-icon");
+ pict.textContent=data.kind==="audio"?"🎧":data.category==="Children"?"📗":"📖";
+ pict.setAttribute("aria-hidden","true");card.append(pict);
+ const h=document.createElement("h3");h.textContent=data.title||"Untitled book";h.title=h.textContent;card.append(h);
+ const author=document.createElement("p");author.className="book-author";author.textContent=data.author&&data.author!=="Unknown"&&data.author!=="Unknown author"?data.author:"Author not listed";card.append(author);
+ const tags=document.createElement("p");tags.className="book-label";tags.textContent=[data.language&&data.language!=="Unconfirmed"?data.language:null,data.category].filter(Boolean).join(" · ")||"Book";card.append(tags);
+ const link=document.createElement("a");link.className="btn book-action";
+ const isHosted=data.source==="member";
+ link.textContent=isHosted?(data.kind==="audio"?"Listen free":"Read free"):(data.kind==="audio"?"Listen at source":"Open source");
+ if(isHosted){
+  link.href="#";link.addEventListener("click",async e=>{
+   e.preventDefault();if(!app.client)return;
+   const previous=link.textContent;link.textContent="Opening…";
+   try{
+    const result=await app.client.storage.from("readmalawi-library").createSignedUrl(data.storage_path,120);
+    if(result.error)throw result.error;const url=secureURL(result.data?.signedUrl);
+    if(!url)throw Error("Approved book link unavailable");openReader(url,data);
+   }catch(err){alert("Unable to open this book: "+err.message)}
+   finally{link.textContent=previous}
+  });
+ }else{link.href=secureURL(data.url)||"#";link.target="_blank";link.rel="noopener noreferrer";link.title="Open original provider. ReadMalawi cannot embed every external work."}
+ card.append(link);return card;
 };
 
 function openReader(url,book){
@@ -42,21 +51,28 @@ function openReader(url,book){
 }
 
 function filterAndRender(){
- const term=$("#search").value.trim().toLowerCase(),cat=$("#category").value,lang=$("#language").value,sort=$("#sort").value;
- const items=app.local.concat(app.remote).filter(b=>(app.kind==="all"||b.kind===app.kind)&&(cat==="all"||b.category===cat)&&(lang==="all"||b.language===lang)&&(!term||[b.title,b.author,b.category,b.language,b.description].join(" ").toLowerCase().includes(term)));
+ const term=$("#search").value.trim().toLowerCase();
+ const cat=$("#category").value;
+ const lang=$("#language").value.trim().toLowerCase();
+ const sort=$("#sort").value;
+ const items=app.local.concat(app.remote).filter(book=>
+   (app.kind==="all"||book.kind===app.kind)
+   &&(cat==="all"||book.category===cat)
+   &&(!lang||String(book.language||"").toLowerCase().includes(lang))
+   &&(!term||[book.title,book.author,book.category,book.language,book.description].join(" ").toLowerCase().includes(term)));
  items.sort((a,b)=>sort==="recent"?(b.rank||0)-(a.rank||0):(a.title||"").localeCompare(b.title||""));
  const target=$("#catalogue");target.replaceChildren();
- if(!items.length){const blank=document.createElement("div");blank.className="notice";blank.textContent="No matching books yet. Try another category or search phrase, or request a title below.";target.appendChild(blank)}
- else items.forEach(b=>target.appendChild(entry(b)));
+ if(!items.length){const notice=document.createElement("div");notice.className="notice";notice.textContent="No matching books yet. Try another language or search for a title.";target.append(notice)}
+ else items.forEach(book=>target.append(entry(book)));
  $("#count").textContent=items.length+" listing"+(items.length===1?"":"s")+" shown";
 }
 const preselectedCategory=new URLSearchParams(location.search).get("category");
 if(preselectedCategory&&Array.from($("#category").options).some(opt=>opt.value===preselectedCategory))$("#category").value=preselectedCategory;
-for(const id of ["search","category","language","sort"]){$( "#"+id).addEventListener(id==="search"?"input":"change",filterAndRender)}
+for(const id of ["search","category","language","sort"]){$("#"+id).addEventListener(["search","language"].includes(id)?"input":"change",filterAndRender)}
 document.querySelectorAll("[data-kind]").forEach(btn=>btn.addEventListener("click",()=>{app.kind=btn.dataset.kind;document.querySelectorAll("[data-kind]").forEach(b=>b.setAttribute("aria-pressed",String(b===btn)));filterAndRender()}));
 const fetchJSON=async (url,timeout=9500)=>{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),timeout);try{const r=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json"}});if(!r.ok)throw Error(String(r.status));return await r.json()}finally{clearTimeout(timer)}};
 async function loadCatalogue(){
- const books=fetchJSON("https://gutendex.com/books/?copyright=false&languages=en");
+ const books=fetchJSON("https://gutendex.com/books/?copyright=false");
  const audio=fetchJSON("https://librivox.org/api/feed/audiobooks/?format=json&limit=18");
  const results=await Promise.allSettled([books,audio]);let found=0;
  if(results[0].status==="fulfilled"){
@@ -64,7 +80,7 @@ async function loadCatalogue(){
    for(const x of list){if(!x.id||x.copyright!==false)continue;app.remote.push({title:x.title,author:(x.authors||[]).map(a=>a.name).join(", ")||"Unknown author",category:categoryFrom(x.subjects),kind:"book",language:langCode((x.languages||[])[0]),source:"gutenberg",url:"https://www.gutenberg.org/ebooks/"+x.id,rank:1});found++}
  }
  if(results[1].status==="fulfilled"){
-   for(const x of results[1].value.books||[]){const url=secureURL(x.url_librivox)||"https://librivox.org/";app.remote.push({title:x.title,author:(x.authors||[]).map(a=>[a.first_name,a.last_name].filter(Boolean).join(" ")).join(", ")||"Unknown author",category:"Fiction",kind:"audio",language:langCode(x.language==="English"?"en":""),source:"librivox",url,rank:1});found++}
+   for(const x of results[1].value.books||[]){const url=secureURL(x.url_librivox)||"https://librivox.org/";app.remote.push({title:x.title,author:(x.authors||[]).map(a=>[a.first_name,a.last_name].filter(Boolean).join(" ")).join(", ")||"Unknown author",category:"Fiction",kind:"audio",language:langCode(x.language||""),source:"librivox",url,rank:1});found++}
  }
  if(!found)$("#fetch-message").textContent="Live catalogue sources could not be reached. You can still use the source-directory links above and try again later.";
  else $("#fetch-message").textContent="External listings are retrieved automatically. These are links to source websites, not books hosted or sold by ReadMalawi.";
