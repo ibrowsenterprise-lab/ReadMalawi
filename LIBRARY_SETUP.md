@@ -3,20 +3,20 @@
 ## Current state (October 2026)
 - Website `library.html` and `library.js` contain categories, search, e-book and audiobook discovery, member forms and a private in-site reader.
 - Project Gutenberg (via Gutendex) and LibriVox results are **linked** to original providers. They are never copied automatically onto ReadMalawi.
-- Member uploads, sign-in, requests and assistance offers are **NOT YET LIVE**. They require a private storage/database service configured and tested.
+- Supabase authentication and private book submissions are now connected. Email verification and one private PDF upload have been confirmed. Other member uploads, review transitions and requests require further real-user acceptance tests.
 - MK500 access and MK100 donations are proposals only. **No money is collected**.
 - ReadMalawi is not currently a registered NGO.
 
 ## Required backend: Supabase (separate project from IBROWS)
-1. Create a **separate** Supabase project with a budget/spend alert and enable email OTP sign-in.
-2. In the SQL Editor, run **only** `supabase/schema.sql`. This is the canonical schema. Do not use older `readmalawi_schema.sql` references in prior instructions.
+1. ReadMalawi has a **separate** Supabase project and email sign-in. Set a budget/spend alert before scaling the storage.
+2. Database migrations have already been applied via the Supabase connector; do **not** rerun the baseline `supabase/schema.sql` in the live project. For a fresh project use the canonical schema and then later migrations. Do not use older `readmalawi_schema.sql` references.
 3. Sign into the Supabase project's Auth system using the email that will serve as your administrator. In SQL Editor, add **your own account** as administrator:
 ```sql
 insert into public.readmalawi_admins(user_id)
 select id from auth.users where email = 'YOUR-ADMIN-EMAIL'
 on conflict (user_id) do nothing;
 ```
-4. Set the correct GitHub Pages URL as an allowed redirect in Supabase Auth URL Configuration. Keep email provider limits and anti-abuse rules in place.
+4. Set the actual Render URL `https://readmalawi-library.onrender.com/` as the authentication Site URL and `https://readmalawi-library.onrender.com/**` as an allowed redirect. Keep email provider limits and anti-abuse rules in place.
 5. Put your project's **public project URL** and **publishable/anon key** into `readmalawi-config.js`. NEVER add the service-role key, database password, or payment webhook keys to GitHub.
 6. Test signed-in submission using a book or audio recording you **created yourself**. The metadata enters `public.library_books` with `status=pending` and the file enters the PRIVATE `readmalawi-library` bucket.
 7. Verify identity, rights and file safety before approval; in the Supabase SQL Editor or Table Editor set `verified_rights=true, status='approved', reviewed_at=now(), reviewer_id=<admin-user-id>`. Only the approved record should become publicly searchable.
@@ -55,3 +55,14 @@ on conflict (user_id) do nothing;
 - Private buckets: https://supabase.com/docs/guides/storage/buckets/fundamentals
 - Malawi Copyright Act: https://malawilii.org/akn/mw/act/2016/26/eng%402017-12-31
 - Automatic open metadata: https://gutendex.com/
+
+
+## Easy donation flow (2026-10-09)
+- Members sign in by email once, select one or multiple files, and tap **Donate books**. No title/author/language/category/origin/rights form or checkbox is required.
+- Current supported files are PDF, EPUB, MP3 and M4A, each up to 50 MB (Supabase bucket technical limit). Do not imply unlimited uploads or unlimited free storage.
+- New uploads automatically receive a filename-based title draft, author **Unknown**, category **Other**, language **Unconfirmed**, origin **Unspecified**, rights **unknown**, access **online_only** and **pending** review. Metadata extraction/AI enrichment is not yet guaranteed.
+- Files are stored in a private bucket; moderator-only edits and publishing take place via [Review Desk](https://readmalawi-library.onrender.com/assets/moderate.html), with RLS enforced in the database. Members cannot publish by changing website JavaScript.
+- Moderators privately preview, correct metadata and inspect permission. Publication requires an explicit permission basis and verified-rights flag. Malawian works require moderator approval; uncertain origin must also be reviewed.
+- Admin review/edit screens should not become a copyright-clearance shortcut; reject or keep private works without redistribution rights.
+- A children’s reading link has been added. A guardian should complete account sign-in and submissions for younger readers.
+- Current pilot has no live paid downloads or donation payments. Online-only reader controls are not DRM.
