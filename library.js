@@ -108,7 +108,7 @@ $("#upload-form").addEventListener("submit",async e=>{
  $("#upload-submit").disabled=true;
  const path=app.user.id+"/"+crypto.randomUUID()+"."+ext;const bucket="readmalawi-library";
  try{
-  const uploaded=await app.client.storage.from(bucket).upload(path,f,{upsert:false,contentType:f.type||undefined});
+  const mediaContentType=({pdf:"application/pdf",epub:"application/epub+zip",mp3:"audio/mpeg",m4a:"audio/mp4"})[ext];const uploaded=await app.client.storage.from(bucket).upload(path,f,{upsert:false,contentType:mediaContentType});
   if(uploaded.error)throw uploaded.error;
   const rightsBasis=$("#upload-rights").value;const row={uploaded_by:app.user.id,title:$("#upload-title").value.trim(),author:$("#upload-author").value.trim(),media_type:kind==="audio"?"audiobook":"ebook",category:$("#upload-category").value,language:$("#upload-language").value,origin:$("#upload-origin").value,access_mode:$("#upload-access").value,rights_basis:rightsBasis,rights_url:$("#upload-evidence").value.trim(),attested_rights:rightsBasis!=="unknown",file_path:path,mime_type:({pdf:"application/pdf",epub:"application/epub+zip",mp3:"audio/mpeg",m4a:"audio/mp4"})[ext],description:""};
   const result=await app.client.from("library_books").insert(row);
