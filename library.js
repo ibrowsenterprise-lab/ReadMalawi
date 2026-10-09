@@ -85,12 +85,28 @@ async function backend(){
 }
 function updateUser(user){
  app.user=user;
- $("#user-status").textContent=user?"Signed in as "+user.email:"Sign in by email to propose a book or request a title.";
+ $("#user-status").textContent=user?"Signed in as "+user.email:"Sign in with email to share books and stories.";
  $("#logout-btn").classList.toggle("hide",!user);
- $("#upload-submit").disabled=!user;
+ $("#upload-submit").disabled=!user||uploadRunning;
  $("#request-submit").disabled=!user;
+ updateAdminLink(user);
 }
-$("#login-form").addEventListener("submit",async e=>{e.preventDefault();if(!app.client)return;const email=$("#email").value.trim();try{const r=await app.client.auth.signInWithOtp({email,options:{emailRedirectTo:location.href.split("#")[0]}});if(r.error)throw r.error;$("#user-status").textContent="Check your email for the secure sign-in link."}catch(err){$("#user-status").textContent="Sign-in unsuccessful: "+err.message}});
+async function updateAdminLink(user){
+ const link=$("#admin-link");link.classList.add("hide");if(!user||!app.client)return;
+ try{
+  const {data,error}=await app.client.from("readmalawi_admins").select("user_id").eq("user_id",user.id).maybeSingle();
+  if(!error&&data&&app.user?.id===user.id)link.classList.remove("hide");
+ }catch(_){}
+}
+$("#login-form").addEventListener("submit",async e=>{
+ e.preventDefault();if(!app.client)return;
+ const email=$("#email").value.trim();
+ try{
+  const r=await app.client.auth.signInWithOtp({email,options:{emailRedirectTo:location.href.split("#")[0]}});
+  if(r.error)throw r.error;
+  $("#user-status").textContent="Check your inbox for your secure sign-in link.";
+ }catch(err){$("#user-status").textContent="Sign-in unsuccessful: "+err.message}
+});
 $("#logout-btn").addEventListener("click",async()=>{if(app.client)await app.client.auth.signOut()});
 async function loadApproved(){
  if(!app.client)return;
@@ -98,24 +114,52 @@ async function loadApproved(){
  if(error){$("#fetch-message").textContent="Approved member catalogue unavailable: "+error.message;return}
  app.local=(data||[]).map(b=>({...b,kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",rank:2}));filterAndRender();
 }
-$("#upload-kind").addEventListener("change",()=>{$("#upload-file").value=""});
+let uploadRunning=false;
+const uploadExtensions={pdf:["ebook","application/pdf"],epub:["ebook","application/epub+zip"],mp3:["audiobook","audio/mpeg"],m4a:["audiobook","audio/mp4"]};
+const titleFromFilename=name=>{
+ const base=name.replace(/\.(pdf|epub|mp3|m4a)$/i,"").replace(/[_]+/g," ").replace(/\s+/g," ").trim();
+ return (base||"Untitled book").slice(0,240);
+};
+$("#upload-file").addEventListener("change",()=>{
+ const files=Array.from($("#upload-file").files||[]);
+ $("#upload-selection").textContent=files.length===0?"No books selected yet.":files.length===1?
+  "Selected: "+files[0].name:files.length+" books ready to share: "+files.slice(0,3).map(x=>x.name).join(", ")+(files.length>3?" and more…":"");
+});
 $("#upload-form").addEventListener("submit",async e=>{
- e.preventDefault();if(!app.client||!app.user)return;
- const f=$("#upload-file").files[0];if(!f)return;
- const kind=$("#upload-kind").value;const ext=(f.name.split(".").pop()||"").toLowerCase();const formats=kind==="audio"?["mp3","m4a"]:["pdf","epub"];const cap=kind==="audio"?50:20;
- if(!formats.includes(ext)||f.size>cap*1024*1024){show("#upload-status","Invalid format or file size. Choose "+formats.join("/")+" under "+cap+" MB.",false);return}
- if(!$("#upload-consent").checked){show("#upload-status","Permission confirmation is required.",false);return}
- $("#upload-submit").disabled=true;
- const path=app.user.id+"/"+crypto.randomUUID()+"."+ext;const bucket="readmalawi-library";
- try{
-  const mediaContentType=({pdf:"application/pdf",epub:"application/epub+zip",mp3:"audio/mpeg",m4a:"audio/mp4"})[ext];const uploaded=await app.client.storage.from(bucket).upload(path,f,{upsert:false,contentType:mediaContentType});
-  if(uploaded.error)throw uploaded.error;
-  const rightsBasis=$("#upload-rights").value;const row={uploaded_by:app.user.id,title:$("#upload-title").value.trim(),author:$("#upload-author").value.trim(),media_type:kind==="audio"?"audiobook":"ebook",category:$("#upload-category").value,language:$("#upload-language").value,origin:$("#upload-origin").value,access_mode:$("#upload-access").value,rights_basis:rightsBasis,rights_url:$("#upload-evidence").value.trim(),attested_rights:rightsBasis!=="unknown",file_path:path,mime_type:({pdf:"application/pdf",epub:"application/epub+zip",mp3:"audio/mpeg",m4a:"audio/mp4"})[ext],description:""};
-  const result=await app.client.from("library_books").insert(row);
-  if(result.error)throw result.error;
-  $("#upload-form").reset();show("#upload-status","Submitted successfully. Your file remains private until rights checks are completed. Every Malawian work requires moderator approval.",true);
- }catch(err){show("#upload-status","Submission could not be completed: "+err.message+". If the file uploaded before this error, contact the administrator for cleanup.",false)}
- finally{$("#upload-submit").disabled=!app.user}
+ e.preventDefault();if(!app.client||!app.user||uploadRunning)return;
+ const files=Array.from($("#upload-file").files||[]);if(!files.length){show("#upload-status","Choose your books first.",false);return}
+ const progress=$("#upload-progress");progress.hidden=false;progress.max=files.length;progress.value=0;
+ uploadRunning=true;$("#upload-submit").disabled=true;
+ let done=0,failed=[];
+ for(const [i,file] of files.entries()){
+  const ext=(file.name.split(".").pop()||"").toLowerCase(),def=uploadExtensions[ext];
+  if(!def||file.size<1||file.size>50*1024*1024){
+   failed.push(file.name+" (unsupported file or over 50 MB)");progress.value=i+1;continue;
+  }
+  show("#upload-status","Adding book "+(i+1)+" of "+files.length+": "+file.name+"…",true);
+  const path=app.user.id+"/"+crypto.randomUUID()+"."+ext;
+  try{
+   const uploaded=await app.client.storage.from("readmalawi-library").upload(path,file,{upsert:false,contentType:def[1]});
+   if(uploaded.error)throw uploaded.error;
+   const row={
+    uploaded_by:app.user.id,title:titleFromFilename(file.name),author:"Unknown",
+    media_type:def[0],category:"Other",language:"Unconfirmed",origin:"Unspecified",
+    access_mode:"online_only",rights_basis:"unknown",rights_url:null,attested_rights:false,
+    file_path:path,mime_type:def[1],description:""
+   };
+   const {error}=await app.client.from("library_books").insert(row);
+   if(error)throw error;
+   done++;
+  }catch(err){failed.push(file.name+" ("+(err.message||"upload failed")+")")}
+  progress.value=i+1;
+ }
+ uploadRunning=false;$("#upload-submit").disabled=!app.user;$("#upload-form").reset();
+ $("#upload-selection").textContent="No books selected yet.";
+ if(failed.length){
+  show("#upload-status",done+" book(s) received. "+failed.length+" could not be submitted. "+failed.slice(0,3).join("; ")+(failed.length>3?" and others":""),false);
+ }else{
+  show("#upload-status","Thank you! "+done+" book"+(done===1?"":"s")+" received. Our librarian will organise the details and check which can be shared publicly.",true);
+ }
 });
 $("#request-form").addEventListener("submit",async e=>{
  e.preventDefault();if(!app.client||!app.user)return;
