@@ -1,62 +1,57 @@
-# ReadMalawi Community Library — setup and operational checklist
+# ReadMalawi Community Library — activation guide
 
-## Status
-- Public library page and search/category/type/language filters: implemented.
-- Automatic discovery: the browser fetches Project Gutenberg and LibriVox metadata and links to original providers. It DOES NOT bulk-download or rehost files.
-- Member PDF/EPUB and MP3/M4A submissions: integration code written; NOT active until dedicated Supabase is configured and policies applied.
-- Member requests/offers: integration ready; NOT live until backend setup.
-- MK500 download payments and MK100 donations: NOT live or collected.
+## Current state (October 2026)
+- Website `library.html` and `library.js` contain categories, search, e-book and audiobook discovery, member forms and a private in-site reader.
+- Project Gutenberg (via Gutendex) and LibriVox results are **linked** to original providers. They are never copied automatically onto ReadMalawi.
+- Member uploads, sign-in, requests and assistance offers are **NOT YET LIVE**. They require a private storage/database service configured and tested.
+- MK500 access and MK100 donations are proposals only. **No money is collected**.
+- ReadMalawi is not currently a registered NGO.
 
-## Backend setup (a separate Supabase project)
-1. Create a brand-new Supabase project for ReadMalawi, separate from IBROWS.
-2. Use Supabase SQL Editor to run the contents of supabase/readmalawi_schema.sql with an authorised admin session.
-3. Configure Authentication > Email; enable email sign-in, use the actual website URL and allow the hosted site in the redirect URL list. Consider anti-spam/rate limiting.
-4. Place the project PUBLIC URL and PUBLIC publishable/anon key in readmalawi-config.js. NEVER add a service_role key, payment secret or other private credential to GitHub or browser code.
-5. Test sign-in and submit only a short ORIGINAL book for which you own the rights. The database record must begin in pending status and its file remain private.
-6. Review uploaded books and evidence in the secured Supabase Dashboard. After verifying ownership and permitted redistribution, an authorised admin may update readmalawi_books.status to approved in Table Editor. Keep evidence and takedown records.
-7. Refresh site; only approved items should appear. Test opening a temporary link, testing both signed-out and signed-in users.
-8. Test request submission and offers by signed-in members. Offers are private to helpers and administrators; do not expose personal emails publicly.
+## Required backend: Supabase (separate project from IBROWS)
+1. Create a **separate** Supabase project with a budget/spend alert and enable email OTP sign-in.
+2. In the SQL Editor, run **only** `supabase/schema.sql`. This is the canonical schema. Do not use older `readmalawi_schema.sql` references in prior instructions.
+3. Sign into the Supabase project's Auth system using the email that will serve as your administrator. In SQL Editor, add **your own account** as administrator:
+```sql
+insert into public.readmalawi_admins(user_id)
+select id from auth.users where email = 'YOUR-ADMIN-EMAIL'
+on conflict (user_id) do nothing;
+```
+4. Set the correct GitHub Pages URL as an allowed redirect in Supabase Auth URL Configuration. Keep email provider limits and anti-abuse rules in place.
+5. Put your project's **public project URL** and **publishable/anon key** into `readmalawi-config.js`. NEVER add the service-role key, database password, or payment webhook keys to GitHub.
+6. Test signed-in submission using a book or audio recording you **created yourself**. The metadata enters `public.library_books` with `status=pending` and the file enters the PRIVATE `readmalawi-library` bucket.
+7. Verify identity, rights and file safety before approval; in the Supabase SQL Editor or Table Editor set `verified_rights=true, status='approved', reviewed_at=now(), reviewer_id=<admin-user-id>`. Only the approved record should become publicly searchable.
+8. Test with an independent signed-out browser session that pending books and files cannot be read, while approved files can be opened.
+9. Test book requests and private helper offers. Keep members' private contact details off the public request board.
 
-## Security controls required BEFORE open invitations
-- Administrator review before publishing, evidence of rights, abuse reports and takedown route.
-- File scanning, MIME+signature validation, upload rate limits and member-authentication abuse protection. The provided SQL bucket restrictions are just a baseline.
-- Data minimisation and transparent retention policies. Audios can consume high storage and streaming costs.
-- A published file that can be viewed can often also be saved/copied. A simple download button counter is not secure.
+## Submissions and publication
+- **Any signed-in member may SUBMIT** a PDF/EPUB e-book or MP3/M4A audiobook, including a work with unknown rights, for PRIVATE review. This is not blanket permission to redistribute.
+- ALL **Malawian** works require a moderator's explicit approval before public access.
+- New international contributors are also reviewed initially. The admin may whitelist *verified trusted publishers* in `public.readmalawi_trusted_publishers` for automatic approval of eligible non-Malawian works with supported rights evidence. Do not give this role to ordinary users.
+- Site “online only” removes the download button and opens an embedded PDF/EPUB reader or audio player. It is NOT a DRM guarantee: web-capable devices can capture or copy media.
+- Audiobook narration/recording may have different rights from the underlying text. Obtain both rights where necessary.
+- Do not describe copyrighted PDFs circulating on WhatsApp as public domain merely because members possess copies.
 
-## Automatic catalogue imports
-- Live Gutendex results are metadata links to Gutenberg titles in the US public-domain catalogue. Public domain in the US does not automatically mean public domain in Malawi.
-- LibriVox feed results are links to the original audiobook pages.
-- African Storybook has item-specific open licensing, including restrictions on commercial uses in some cases. Link to source initially.
-- Do not automatically copy books or recordings into local storage without a recorded rights review.
+## Required moderation and security before public launch
+- Anti-spam controls, upload frequency limits, copyright reporting/takedown contact, evidence logs, file-type signature validation, malware scanning and storage quotas.
+- Moderator should view potentially malicious PDFs **safely**, never download/open untrusted files on personal devices.
+- Restrict admin privileges. Periodically remove orphaned storage objects if metadata insertion fails.
+- Accessibility/mobile testing, local-language review by fluent people, data privacy policy and retention/deletion requests.
+- Never use a public storage bucket for hosted works. Supabase private storage access is enforced with RLS; signed URLs must be short-lived.
 
-## MK500 and five-download model — PLANNED ONLY
-Proposed policy: 5 free eligible ReadMalawi-hosted downloads per 30-day period, then a MK500 access pass for a separately specified allowance or period. Founder has not yet selected the period or pass details.
-- External source links remain free.
-- Only commercially redistributable original/licensed works could participate in a paid service; check licence scope explicitly.
-- A later paid backend needs verified merchant webhooks, protected download grants, signed short-lived content access, tamper-resistant entitlements and receipts.
-- Never infer payment from uploaded screenshots or browser-side claims.
-- GitHub Pages must not be used primarily as a commercial payments/SaaS site. Move the transactional component to appropriate infrastructure if activated.
+## MK500 download rule — not active
+- The proposal is **five free ReadMalawi-hosted permitted downloads**, followed by **MK500** for further access. The allowance reset period, pass entitlement and exceptions still need your approval.
+- This **must be enforced server-side** after authentication with verified provider webhooks, secure entitlement records and audited download grants. A browser counter is trivial to bypass.
+- Currently hosted material is preview-only; no functioning paid download action is connected.
+- Original external book/audiobook links are never charged or counted.
+- Confirm the right to charge for each work; avoid charging for material that is non-commercial licensed or requires continued free redistribution.
 
-## MK100 voluntary support — NOT ACCEPTING FUNDS
-- ReadMalawi is not registered as an NGO. Confirm permitted legal status, fiscal sponsor and fundraising arrangements before soliciting real donations.
-- When lawful: show fundraising entity identity, use of funds, approved payment provider, receipts, financial reconciliation, refunds/contact and impact reporting.
-- Check provider minimums and fees: MK100 may be impractical for some methods.
+## Donations — not active
+- Proposed voluntary support starts at **MK100**, subject to the payment provider's minimum transfer and fee rules.
+- Because ReadMalawi is not registered as an NGO, get advice about appropriate registration or partnership with a compliant fiscal host before publicly collecting charitable donations.
+- The eventual donations page must disclose the legal recipient, programme purpose, fees where relevant, privacy, payment receipts, reconciliation and financial reporting.
 
-## Copyright and confidentiality
-- Members may submit their own original works, documented licensed works or confirmed public-domain works under Malawi law.
-- Do not accept commercially published PDFs just because someone purchased or found them on WhatsApp.
-- Respect translators, authors, narrators and performance rights. Audiobook rights can be separate from text rights.
-- Do not expose member emails or payment references on public pages.
-
-## Local run
-Start a local static server from the project root, e.g. with Python module http.server port 8000, then browse to http://localhost:8000/library.html. Use browser developer tools for errors. Before Supabase setup, the request and upload buttons should be disabled.
-
-## Links
-https://docs.github.com/en/site-policy/github-terms/github-terms-for-additional-products-and-features
-https://supabase.com/docs/guides/storage/security/access-control
-https://supabase.com/docs/guides/storage/serving/downloads
-https://github.com/GabiGlazberg/gutendex
-https://librivox.org/api/info
-https://www.gutenberg.org/policy/license
-https://africanstorybook.org/terms.html
-https://ngora.mw/registration/
+## Relevant documentation
+- Supabase Storage RLS: https://supabase.com/docs/guides/storage/security/access-control
+- Private buckets: https://supabase.com/docs/guides/storage/buckets/fundamentals
+- Malawi Copyright Act: https://malawilii.org/akn/mw/act/2016/26/eng%402017-12-31
+- Automatic open metadata: https://gutendex.com/
