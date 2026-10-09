@@ -159,3 +159,13 @@ create policy "owners and verified-approved book readers access files" on storag
 -- Before activating paid downloads: implement SERVER-SIDE entitlements and
 -- download counts, restrict issuing signed URLs, and record verified payments.
 -- Read-only controls suppress a download button but cannot provide DRM.
+
+-- Applied after initial database setup: move the RLS administrator check outside the exposed public API schema.
+-- PostgreSQL tracks dependent RLS policies when the function changes schema.
+create schema if not exists readmalawi_private;
+revoke all on schema readmalawi_private from public;
+grant usage on schema readmalawi_private to anon, authenticated;
+alter function public.is_readmalawi_admin() set schema readmalawi_private;
+revoke all on function readmalawi_private.is_readmalawi_admin() from public;
+grant execute on function readmalawi_private.is_readmalawi_admin() to anon, authenticated;
+-- Migration: move_readmalawi_admin_check_out_of_public_api
