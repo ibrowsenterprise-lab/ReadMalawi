@@ -32,7 +32,7 @@ create table if not exists public.library_books (
  title text not null check (char_length(title) between 1 and 240),
  author text not null check (char_length(author) between 1 and 180),
  description text not null default '',
- category text not null check (category in ('Fiction','Education','History','Children','Religion','Technology','Language','Other')),
+ category text not null check (category in ('Fiction','Education','History','Children','Religion','Technology','Language','Science','Poetry','Biography','Other')),
  language text not null check (char_length(language) between 2 and 80),
  origin text not null check (origin in ('Malawian','International')),
  media_type text not null check (media_type in ('ebook','audiobook')),
@@ -85,8 +85,8 @@ create policy "browse only rights-verified approved books" on public.library_boo
 create policy "signed in users submit book metadata" on public.library_books
  for insert to authenticated
  with check (
- uploaded_by=auth.uid() and attested_rights
- and rights_basis <> 'unknown'
+ uploaded_by=auth.uid()
+ and rights_basis in ('public_domain','open_licence','original_creator','authorised','unknown')
  and split_part(file_path,'/',1)=auth.uid()::text
  and ((media_type='ebook' and mime_type in ('application/pdf','application/epub+zip'))
   or (media_type='audiobook' and mime_type in ('audio/mpeg','audio/mp4','audio/ogg','audio/wav')))
@@ -155,6 +155,7 @@ create policy "owners and verified-approved book readers access files" on storag
 );
 
 -- No DELETE/UPDATE grants for ordinary storage objects.
+-- Submissions of uncertain rights are held pending and PRIVATE; they cannot be published until documentation is verified.
 -- Before activating paid downloads: implement SERVER-SIDE entitlements and
 -- download counts, restrict issuing signed URLs, and record verified payments.
 -- Read-only controls suppress a download button but cannot provide DRM.
