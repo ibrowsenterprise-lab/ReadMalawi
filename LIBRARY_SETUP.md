@@ -4,7 +4,7 @@
 - Website `library.html` and `library.js` contain categories, search, e-book and audiobook discovery, member forms and a private in-site reader.
 - Project Gutenberg (via Gutendex) and LibriVox results are **linked** to original providers. They are never copied automatically onto ReadMalawi.
 - Supabase authentication and private book submissions are now connected. Email verification and one private PDF upload have been confirmed. Other member uploads, review transitions and requests require further real-user acceptance tests.
-- MK500 access and MK100 donations are proposals only. **No money is collected**.
+- User-approved membership prices have replaced the older MK500 draft. **All memberships, download entitlements and payments remain disabled. No money is collected on ReadMalawi.**
 - ReadMalawi is not currently a registered NGO.
 
 ## Required backend: Supabase (separate project from IBROWS)
@@ -66,3 +66,19 @@ on conflict (user_id) do nothing;
 - Admin review/edit screens should not become a copyright-clearance shortcut; reject or keep private works without redistribution rights.
 - A children’s reading link has been added. A guardian should complete account sign-in and submissions for younger readers.
 - Current pilot has no live paid downloads or donation payments. Online-only reader controls are not DRM.
+
+
+## October 9: Compact catalogue, languages, membership specifications
+- Books appear as **small icon-led catalogue tiles**, with title, author, language/category, and a Read free/Listen free link for approved local titles. External catalogue links lead to their original provider; embedded reading is not guaranteed for third-party sources.
+- `library.html` allows visitors to **type any language** to filter listings, with Malawian languages suggested first. The homepage's learning language dropdown includes Malawian languages first plus a free-text Other option. This is not an automatic translator and not a claim that books exist in every language.
+- Preserve the exact user-requested slogan **Tiyeni tiwelenge**. (Any later linguistic standardisation requires founder approval.)
+- Reader policy: approved hosted books remain **free to read online**; an eventual secure download service offers **five lifetime e-book downloads at no cost**, then the following proposed passes:
+  - MWK 1,500 per month for 10 additional eligible e-book downloads.
+  - MWK 3,000 per month for 20 eligible e-book downloads.
+  - MWK 5,000 per month for 5 eligible audiobook downloads.
+  - MWK 50,000 per year for unlimited eligible e-book downloads.
+  - MWK 75,000 per year for unlimited eligible e-book and audiobook downloads.
+- `public.readmalawi_membership_plans` stores these amounts with `enabled=false`; `public.readmalawi_reader_subscriptions` and `public.readmalawi_download_ledger` are RLS-protected, **read-only to readers**, and cannot self-activate passes. A secure server endpoint, verified payment callback/ledger, atomic allowance checks, currency/account reconciliation, and a paid download UI remain to be implemented and audited.
+- Planned payment destinations (provided by founder): Airtel Money `0999242594`, TNM Mpamba `0882242594`, FCB `0041502003599`. Website prominently says **do not send funds yet**. Confirm legal merchant/payment eligibility and official account holder details before enabling checkout. Never treat screenshots, pasted payment references, or contributor claims as verified payment.
+- Intended use of future subscription income: source physical books for schools and prisons, **subject to recipient permission and partners**. This is a proposed initiative, not an accomplished book distribution or registered charitable operation. Keep reporting evidence-based.
+- Online-only special works have no site download button, but no browser-based reader provides perfect copying prevention; download allowance is only enforceable within a controlled access workflow, subject to licensing and terms.
