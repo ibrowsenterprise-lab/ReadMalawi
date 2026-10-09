@@ -4,32 +4,60 @@ const cfg=window.READMALAWI_CONFIG||{};
 const types={book:"E-book",audio:"Audiobook"};
 const show=(id,text,good)=>{const el=$(id);el.textContent=text;el.className="status "+(good?"ok":"err")};
 const langCode=code=>({en:"English",ny:"Chichewa",tum:"Chitumbuka",ya:"Chiyao",yao:"Chiyao",lom:"Chilomwe",seh:"Chisena",toi:"Chitonga",fr:"French",es:"Spanish",pt:"Portuguese",sw:"Swahili",ar:"Arabic",de:"German",hi:"Hindi",zh:"Chinese",ja:"Japanese",ko:"Korean",ru:"Russian",it:"Italian",nl:"Dutch",af:"Afrikaans",zu:"Zulu",xh:"Xhosa",sn:"Shona"}[String(code||"").toLowerCase().split("-")[0]]||String(code||"Unconfirmed"));
-const categoryFrom=subjects=>{const a=(subjects||[]).join(" ").toLowerCase();if(/children|juvenile|fairy/.test(a))return"Children";if(/history|historical/.test(a))return"History";if(/science|chemistry|physics|biology/.test(a))return"Science";if(/poetry|poems/.test(a))return"Poetry";if(/biography|autobiography|memoir/.test(a))return"Biography";if(/language|linguistic/.test(a))return"Language";if(/education|learning|textbook/.test(a))return"Education";return"Fiction"};
+const categoryFrom=subjects=>{
+ const s=(subjects||[]).join(" ").toLowerCase();
+ if(/children|juvenile|fairy|kids|young readers/.test(s))return "Children";
+ if(/poetry|poems|verse|epic poems|epic poetry/.test(s))return "Poetry";
+ if(/biography|autobiography|memoir/.test(s))return "Biography";
+ if(/bible|scripture|religion|theology|qur.?an|christian|islam/.test(s))return "Religion";
+ if(/language|linguistics|dictionary|grammar/.test(s))return "Language";
+ if(/education|learning|textbook|school/.test(s))return "Education";
+ if(/science|chemistry|physics|biology|mathematics/.test(s))return "Science";
+ // Project Gutenberg often labels novels "historical fiction": classify those as fiction.
+ if(/fiction|novel|romances|short stories|tales|literary collections/.test(s))return "Fiction";
+ if(/history|historical|chronicle/.test(s))return "History";
+ return "Fiction";
+};
 const secureURL=url=>{try{const u=new URL(url);return u.protocol==="https:"?u.href:null}catch(e){return null}};
 const entry=data=>{
- const card=document.createElement("article");card.className="card book-tile";
- const pict=document.createElement("div");pict.className="book-pict "+(data.kind==="audio"?"audio-icon":"ebook-icon");
+ const row=document.createElement("article");
+ row.className="card book-row";
+ const pict=document.createElement("div");
+ pict.className="book-pict "+(data.kind==="audio"?"audio-icon":"ebook-icon");
  pict.textContent=data.kind==="audio"?"🎧":data.category==="Children"?"📗":"📖";
- pict.setAttribute("aria-hidden","true");card.append(pict);
- const h=document.createElement("h3");h.textContent=data.title||"Untitled book";h.title=h.textContent;card.append(h);
- const author=document.createElement("p");author.className="book-author";author.textContent=data.author&&data.author!=="Unknown"&&data.author!=="Unknown author"?data.author:"Author not listed";card.append(author);
- const tags=document.createElement("p");tags.className="book-label";tags.textContent=[data.language&&data.language!=="Unconfirmed"?data.language:null,data.category].filter(Boolean).join(" · ")||"Book";card.append(tags);
- const link=document.createElement("a");link.className="btn book-action";
- const isHosted=data.source==="member";
- link.textContent=isHosted?(data.kind==="audio"?"Listen free":"Read free"):(data.kind==="audio"?"Listen at source":"Open source");
+ pict.setAttribute("aria-hidden","true");
+ const details=document.createElement("div");details.className="book-info";
+ const heading=document.createElement("h3");heading.textContent=data.title||"Untitled book";
+ heading.title=heading.textContent;
+ const author=document.createElement("p");author.className="book-author";
+ author.textContent=data.author&&data.author!=="Unknown"&&data.author!=="Unknown author"?data.author:"Author not listed";
+ const meta=document.createElement("p");meta.className="book-label";
+ meta.textContent=[data.language&&data.language!=="Unconfirmed"?data.language:null,data.category].filter(Boolean).join(" · ")||"Book";
+ details.append(heading,author,meta);
+ const link=document.createElement("a");link.className="book-action";
+ const isHosted=data.source==="member",isAudio=data.kind==="audio";
+ link.textContent=isHosted?(isAudio?"Listen ›":"Read ›"):"Source ↗";
+ link.setAttribute("aria-label",(isHosted?(isAudio?"Listen online: ":"Read online: "):"Open original source: ")+(data.title||"Untitled book"));
  if(isHosted){
-  link.href="#";link.addEventListener("click",async e=>{
-   e.preventDefault();if(!app.client)return;
-   const previous=link.textContent;link.textContent="Opening…";
-   try{
-    const result=await app.client.storage.from("readmalawi-library").createSignedUrl(data.storage_path,120);
-    if(result.error)throw result.error;const url=secureURL(result.data?.signedUrl);
-    if(!url)throw Error("Approved book link unavailable");openReader(url,data);
-   }catch(err){alert("Unable to open this book: "+err.message)}
-   finally{link.textContent=previous}
-  });
- }else{link.href=secureURL(data.url)||"#";link.target="_blank";link.rel="noopener noreferrer";link.title="Open original provider. ReadMalawi cannot embed every external work."}
- card.append(link);return card;
+   link.href="#";
+   link.addEventListener("click",async e=>{
+     e.preventDefault();if(!app.client)return;
+     const previous=link.textContent;link.textContent="Opening…";
+     try{
+       const result=await app.client.storage.from("readmalawi-library").createSignedUrl(data.storage_path,120);
+       if(result.error)throw result.error;
+       const url=secureURL(result.data?.signedUrl);
+       if(!url)throw Error("Approved book link unavailable");
+       openReader(url,data);
+     }catch(err){alert("Unable to open this book: "+err.message)}
+     finally{link.textContent=previous}
+   });
+ }else{
+   link.href=secureURL(data.url)||"#";link.target="_blank";link.rel="noopener noreferrer";
+   link.title="Opens an external library or book provider";
+ }
+ row.append(pict,details,link);
+ return row;
 };
 
 function openReader(url,book){
