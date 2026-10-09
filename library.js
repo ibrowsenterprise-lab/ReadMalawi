@@ -14,7 +14,7 @@ const entry=(data)=>{
  const h=document.createElement("h3");h.textContent=data.title||"Untitled";card.appendChild(h);
  const who=document.createElement("p");who.textContent="By "+(data.author||"Unknown author");card.appendChild(who);
  const source=document.createElement("p");source.textContent=data.source==="member"?"ReadMalawi community · Approved":data.source==="librivox"?"LibriVox · External source":"Project Gutenberg · External source";card.appendChild(source);
- const note=document.createElement("p");note.textContent=data.source==="member"?"Submitted with declared sharing rights; admin-approved.":data.source==="gutenberg"?"US public-domain catalogue; verify copyright status in Malawi.":"Open audiobook catalogue hosted by LibriVox.";card.appendChild(note);
+ const note=document.createElement("p");note.textContent=data.source==="member"?"Rights-attested community submission. Publication may follow moderator review or trusted-publisher rules.":data.source==="gutenberg"?"US public-domain catalogue; verify copyright status in Malawi.":"Open audiobook catalogue hosted by LibriVox.";card.appendChild(note);
  const actions=document.createElement("div");actions.className="card-actions";
  const link=document.createElement("a");link.className="btn";link.textContent=data.kind==="audio"?"Listen / details":"Read / details";
  if(data.source==="member"){
@@ -74,7 +74,7 @@ async function backend(){
  const mod=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
  app.client=mod.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey||cfg.supabaseAnonKey);
  app.backend=true;
- $("#service-message").className="message";
+ $("#service-message").className="notice";
  $("#service-message").textContent="Community submissions are enabled. Submitted files remain private until administrator approval.";
  $("#login-btn").disabled=false;
  const session=await app.client.auth.getSession();
@@ -94,7 +94,7 @@ $("#login-form").addEventListener("submit",async e=>{e.preventDefault();if(!app.
 $("#logout-btn").addEventListener("click",async()=>{if(app.client)await app.client.auth.signOut()});
 async function loadApproved(){
  if(!app.client)return;
- const {data,error}=await app.client.from("library_books").select("id,title,author,description,media_type,category,language,file_path,access_mode").eq("status","approved").order("created_at",{ascending:false}).limit(100);
+ const {data,error}=await app.client.from("library_books").select("id,title,author,description,media_type,category,language,file_path,access_mode").eq("status","approved").order("submitted_at",{ascending:false}).limit(100);
  if(error){$("#fetch-message").textContent="Approved member catalogue unavailable: "+error.message;return}
  app.local=(data||[]).map(b=>({...b,kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",rank:2}));filterAndRender();
 }
