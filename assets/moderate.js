@@ -1,4 +1,4 @@
-const $=id=>document.getElementById(id);
+const $=id=>document.getElementById(id.startsWith("#")?id.slice(1):id);
 const cfg=window.READMALAWI_CONFIG||{};
 const bookCategories=["Other","Children","Education","Fiction","History","Science","Biography","Poetry","Religion","Technology","Language"];
 const countries=["Unspecified","Malawian","International"];
