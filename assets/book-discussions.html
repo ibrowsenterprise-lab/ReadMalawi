@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A friendly, moderated reading discussion for one ReadMalawi book.">
+<meta name="theme-color" content="#092e2b"><title>Talk About a Book | ReadMalawi</title>
+<style>
+:root{--dark:#092e2b;--green:#12684e;--ink:#19352a;--muted:#516b5e;--line:#d7e3d9}
+*{box-sizing:border-box}body{margin:0;background:#f9faf6;color:var(--ink);font:16px/1.52 system-ui,-apple-system,Arial,sans-serif}
+a{color:#0e604c}header{background:var(--dark);color:#fff}header .wrap{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+header a{color:#f0d795;text-decoration:none}main,.wrap{max-width:850px;margin:auto;padding:0 17px}
+main{padding-top:26px;padding-bottom:65px}.eyebrow{color:#167252;letter-spacing:.12em;text-transform:uppercase;font-weight:800;font-size:.74rem}
+h1{font-size:clamp(1.75rem,4.7vw,2.6rem);line-height:1.17;letter-spacing:-.04em;overflow-wrap:anywhere;margin:10px 0}
+h2{font-size:1.35rem;margin:0 0 6px}.muted{color:var(--muted)}.panel{background:white;border:1px solid var(--line);padding:23px;border-radius:17px;margin:19px 0}
+.panel p{margin:8px 0}.button{font:inherit;font-weight:750;cursor:pointer;border:0;border-radius:10px;padding:10px 15px;min-height:45px;background:var(--green);color:white}
+.button:disabled{opacity:.55;cursor:wait}.secondary{background:#ebf4ed;border:1px solid #c5d8ca;color:var(--dark)}
+input,textarea{font:inherit;width:100%;border:1px solid #b6cbbd;border-radius:9px;padding:12px;color:var(--ink);background:white}
+textarea{min-height:120px;resize:vertical}
+input:focus-visible,button:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid #dca94c;outline-offset:3px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.login input{flex:1;min-width:170px}.status{font-size:.92rem;font-weight:700;min-height:1.3em;margin-top:11px}
+.notice{background:#fdf1d7;border:1px solid #ead5a9;border-radius:12px;padding:14px;color:#6a5028}
+.comment{border:1px solid var(--line);border-radius:13px;background:#fff;padding:16px;margin:12px 0}
+.comment p{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0}.comment small{color:var(--muted)}
+.comment .reply{margin:12px 0 2px 17px;border-left:3px solid #91c2a9;background:#f4faf5;padding:12px;border-radius:0 9px 9px 0}
+.comment .row{gap:8px}.text-button{border:0;background:none;color:#16674c;font:inherit;cursor:pointer;text-decoration:underline;font-size:.88rem;padding:5px}
+#discussion-list:empty:after{content:"No approved comments yet. Be the first to share a thought!";color:var(--muted)}
+.form-label{display:block;font-weight:750;margin:12px 0 7px}.small{font-size:.86rem}footer{text-align:center;color:var(--muted);padding:20px}
+@media(max-width:530px){.panel{padding:16px}.comment{padding:13px}.row.login{align-items:stretch}.login button{width:100%}}
+</style></head><body>
+<header><div class="wrap"><a href="../library.html">← Back to books</a><strong>ReadMalawi 📚</strong></div></header>
+<main>
+<span class="eyebrow">Book Club · Tiyeni tiwelenge</span>
+<h1 id="book-title">Let's talk about a book!</h1>
+<p id="book-author" class="muted"></p>
+<div class="panel">
+<h2>What do other readers think?</h2>
+<p class="muted">A friendly space to share ideas about this book. You can read comments without signing in.</p>
+<div class="notice small">Be kind. Talk about the story, not private details. Do not post links, email addresses or phone numbers. A parent or teacher should help younger readers. Every comment is checked before it appears.</div>
+<div id="discussion-summary" class="status" role="status">Loading book discussion…</div>
+<div id="discussion-list" aria-live="polite"></div>
+<button class="button secondary" id="load-more" type="button" hidden>Show more comments</button>
+</div>
+<div class="panel" id="write">
+<h2>Share your thoughts 💬</h2>
+<p class="muted small">What did you enjoy or learn? What would you ask another reader?</p>
+<div id="signin" class="login">
+<form id="login-form" class="row login"><input type="email" id="login-email" aria-label="Your email" autocomplete="email" required placeholder="Your email for private sign-in"><button class="button" type="submit" id="login-button" disabled>Sign in to comment</button></form>
+<p class="small muted">Your email will never appear in the public conversation. Readers under 13 should use a parent or guardian's account with their help.</p>
+</div>
+<div id="signedin" hidden><p class="small muted" id="signedin-status"></p>
+<form id="comment-form">
+<div class="row" id="reply-indicator" hidden><strong id="reply-label" class="small">Replying to a reader</strong><button class="text-button" id="cancel-reply" type="button">Cancel reply</button></div>
+<label class="form-label" for="comment-body">Your comment</label>
+<textarea id="comment-body" minlength="10" maxlength="1200" required placeholder="I liked this book because…"></textarea>
+<p class="small muted">10–1,200 characters. No public profiles, private messages or personal contact details.</p>
+<button class="button" id="post-button" type="submit">Send for review</button>
+</form></div>
+<div class="status" id="post-status" role="status" aria-live="polite"></div>
+</div>
+</main><footer>ReadMalawi · Tiyeni tiwelenge.<br>Simple, safe book conversations.</footer>
+<script src="../readmalawi-config.js"></script>
+<script type="module" src="book-discussions.js"></script></body></html>
