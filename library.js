@@ -48,7 +48,7 @@ const entry=data=>{
  const link=document.createElement("a");link.className="book-action";
  const isHosted=data.source==="member",isAudio=data.kind==="audio";
  link.textContent=isHosted?(isAudio?"Listen ›":"Read ›"):"Read ›";
- link.setAttribute("aria-label",(isHosted?(isAudio?"Listen online: ":"Read online: "):"Open original source: ")+(data.title||"Untitled book"));
+ link.setAttribute("aria-label",(isAudio?"Listen on ReadMalawi: ":"Read on ReadMalawi: ")+(data.title||"Untitled book"));
  if(data.source==="original"){
    link.href=data.url;
  }else if(isHosted){
