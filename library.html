@@ -50,15 +50,16 @@
 </head>
 <body>
 <a href="#library" class="skip">Skip to library</a>
-<header><div class="wrap"><a class="brand" href="index.html">Read<span>Malawi</span></a><nav aria-label="Main navigation"><a href="index.html">Home</a><a href="#library">Library</a><a href="#book-club">Book Club</a><a href="#contribute">Contribute</a><a href="#requests">Book requests</a><a href="#support">Support</a><a href="assets/partners.html">Global partners</a></nav></div></header>
+<header><div class="wrap"><a class="brand" href="index.html">Read<span>Malawi</span></a><nav aria-label="Main navigation"><a href="index.html">Home</a><a href="#library">📚 Books</a><a href="#book-club">💬 Book Club</a><a href="#contribute">Share a Book</a><a href="#requests">Ask for a Book</a><a href="#support">Plans</a></nav></div></header>
 <main>
 <section class="hero"><div class="wrap">
 <div class="eyebrow">Tiyeni tiwelenge · ReadMalawi</div><h1>Small books. Big ideas. Every language.</h1>
 <p>Read approved community books online for free. Browse children’s stories, listen to audiobooks and discover books in Malawian and world languages. Donate a book in a few taps.</p>
-<div class="chips"><a class="chip" style="text-decoration:none;background:#f4d58f;color:#203a2f;border-color:#f4d58f" href="?category=Children#library">🧒 Kids’ stories</a><span class="chip">E-books</span><span class="chip">Audiobooks</span><span class="chip">English & Malawian languages</span><span class="chip">Community book requests</span></div>
+<div class="chips"><a class="chip" style="text-decoration:none;background:#f4d58f;color:#203a2f;border-color:#f4d58f" href="?category=Children#library">🧒 Kids' books</a><a class="chip" href="#library" style="text-decoration:none">📚 Find books</a><a class="chip" href="#book-club" style="text-decoration:none">💬 Book Club</a><a class="chip" href="#contribute" style="text-decoration:none">📤 Share a book</a></div>
 </div></section>
 <section class="section" id="library"><div class="wrap">
 <div class="eyebrow">Explore the catalogue</div><h2>Your digital reading shelf</h2><p class="intro">Tap a small book to start reading. Approved ReadMalawi-hosted books are free to read online; books from external catalogues open on the original provider’s website. Search any language, with Malawian languages first.</p>
+<div id="book-club" class="banner" style="margin:16px 0 19px;scroll-margin-top:12px"><strong>💬 Book Club:</strong> Choose any book below and tap <strong>Discuss this book</strong>. You can read comments for free. New comments are checked by a librarian before appearing.</div>
 <div class="filters">
 <label class="field">Search books or authors<input type="search" id="search" placeholder="Title, author, subject..." autocomplete="off"></label>
 <label class="field">Category<select id="category"><option value="all">All categories</option><option>Fiction</option><option>Children</option><option>Education</option><option>History</option><option>Science</option><option>Poetry</option><option>Biography</option><option>Language</option><option>Other</option></select></label>
@@ -68,12 +69,6 @@
 <div class="controls"><div class="switches" role="group" aria-label="Publication type"><button class="pill" data-kind="all" aria-pressed="true">All</button><button class="pill" data-kind="book" aria-pressed="false">E-books</button><button class="pill" data-kind="audio" aria-pressed="false">Audiobooks</button></div><span class="muted small" id="count" aria-live="polite">Loading catalogue…</span></div>
 <div id="catalogue" class="cards" aria-live="polite"></div><p id="fetch-message" class="formhint" aria-live="polite"></p>
 <div class="banner" style="margin-top:22px"><strong>More free books:</strong> <a href="https://www.africanstorybook.org/" target="_blank" rel="noopener noreferrer">African Storybook</a> · <a href="https://www.gutenberg.org/" target="_blank" rel="noopener noreferrer">Project Gutenberg</a> · <a href="https://librivox.org/" target="_blank" rel="noopener noreferrer">LibriVox</a>. Content rights and availability vary by book and country.</div>
-</div></section>
-<section class="section subtle" id="book-club"><div class="wrap">
-<div class="eyebrow">Read together · Tiyeni tiwelenge</div>
-<h2>Talk about your favourite book 💬</h2>
-<p class="intro">Want to share what you learned? Find a book above and tap <strong>💬 Discuss this book</strong>. Every title has its own conversation. Reading is open to everyone; posting needs a free email sign-in and librarian review.</p>
-<div class="banner"><strong>Be kind, have fun, stay safe.</strong> Younger readers should ask a parent or teacher to help. No private messages, public profiles, phone numbers or links.</div>
 </div></section>
 <section class="section subtle" id="contribute"><div class="wrap">
 <div class="banner" style="margin-bottom:24px"><strong>Have a big PDF collection?</strong> Our <a href="assets/bulk-import.html"><strong>Bulk PDF Catalogue Builder</strong></a> can create a draft list from a folder of books without typing their details.</div>
@@ -146,7 +141,7 @@
 <p class="formhint" style="margin-top:18px">Downloads cannot be restricted reliably by a visible button alone; the future service requires server-verified payment records, download entitlements and licensed content. Online-only special works will not receive download links. No subscription is currently for sale.</p>
 </div></section>
 </main>
-<footer class="footer"><div class="wrap"><strong>ReadMalawi</strong> · Books • Technology • Knowledge for All<br><span class="small">Digital literacy community founded by Jones Nalikungwi. The proposed nonprofit is not yet registered. Member uploads and payments require secure backend activation.</span><br><a href="index.html">Return to the reading hub</a> · <a href="https://ibrows-whatsapp-ai-1.onrender.com/" target="_blank" rel="noopener noreferrer">IBROWS Enterprise ↗</a></div></footer>
+<footer class="footer"><div class="wrap"><strong>ReadMalawi</strong> · Books • Technology • Knowledge for All<br><span class="small">Independent reading community. Book uploads are private until reviewed; memberships and payments are not active.</span><br><a href="index.html#story">Our Story</a> · <a href="assets/partners.html">Partners</a> · <a href="index.html">Home</a></div></footer>
 <script src="readmalawi-config.js"></script>
 <script type="module" src="library.js"></script>
 </body></html>
