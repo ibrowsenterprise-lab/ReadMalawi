@@ -165,5 +165,6 @@
     document.querySelector('#reset-progress').addEventListener('click',()=>{try{localStorage.removeItem('readmalawi-day1')}catch(err){}quiz.reset();feedback.textContent='';updateResult();showToast('Reading result cleared.')});
     document.querySelector('#year').textContent=new Date().getFullYear();updateResult();
   </script>
+<script defer src="assets/readmalawi-chat-widget.js"></script>
 </body>
 </html>
