@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#092e2b">
+<meta name="description" content="Ask ReadMalawi Reading Buddy to help you find and enjoy books, all on the ReadMalawi website.">
+<title>Reading Buddy | ReadMalawi</title>
+<style>
+:root{--deep:#092e2b;--green:#13684e;--muted:#56695f;--border:#d7e3d9}
+*{box-sizing:border-box}body{margin:0;background:#fafbf7;color:#1d362a;font:16px/1.5 system-ui,Arial,sans-serif}
+a{color:#115b43}header{background:var(--deep);color:white;padding:14px 16px}header .wrap{max-width:790px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:14px}
+header a{color:#f6d497;text-decoration:none;font-weight:800}main{max-width:790px;padding:22px 16px 55px;margin:auto}
+h1{font-size:clamp(1.8rem,4vw,2.45rem);line-height:1.14;margin:5px 0 10px;letter-spacing:-.04em}
+.sub{color:var(--muted);margin:0 0 17px}.chat{background:white;border:1px solid var(--border);border-radius:17px;overflow:hidden}
+.chat-head{padding:16px 17px;background:#e8f3ea;display:flex;gap:10px;align-items:center}
+.chat-head .icon{font-size:2rem}.chat-head strong{display:block}.chat-head small{font-size:.85rem;color:var(--muted)}
+.messages{height:min(48vh,400px);min-height:270px;overflow-y:auto;background:#f8fbf7;padding:16px;display:flex;flex-direction:column;gap:11px}
+.bubble{padding:12px;border-radius:13px;max-width:94%;font-size:.95rem;overflow-wrap:anywhere;white-space:pre-wrap}
+.bubble.bot{background:white;border:1px solid #d8e5dd;align-self:flex-start}.bubble.me{background:#dff2e7;align-self:flex-end}
+.links{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}.links a{border-radius:10px;background:#126a4d;color:white;text-decoration:none;padding:9px 12px;font-weight:700;font-size:.88rem}
+.choices{display:flex;gap:8px;flex-wrap:wrap;padding:13px 15px;background:white}
+.choices button{border-radius:99px;padding:8px 12px;border:1px solid #b6d2bf;background:#eaf4ed;color:#174a3d;font-weight:750;cursor:pointer;font:inherit;font-size:.86rem}
+form{padding:12px 15px;background:white;border-top:1px solid var(--border);display:flex;gap:10px}
+input{flex:1;min-width:0;border-radius:10px;border:1px solid #b4cabe;padding:12px;font:inherit;min-height:46px}
+button.submit{background:var(--green);color:white;border:0;padding:10px 15px;border-radius:10px;font-weight:800;font:inherit;cursor:pointer;min-height:46px}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #efba6c;outline-offset:2px}
+.notice{padding:14px;border-radius:11px;background:#fff4da;border:1px solid #e5d4ab;color:#70541f;margin-top:17px;font-size:.9rem}
+.note{font-size:.81rem;color:var(--muted);padding:8px 15px 15px;background:white}
+footer{padding:20px;text-align:center;color:var(--muted);font-size:.87rem}
+@media(max-width:550px){main{padding:17px 10px 35px}.messages{min-height:320px;height:48dvh}.chat-head{padding:12px}.choices{padding:11px}form{padding:9px}}
+</style></head><body>
+<header><div class="wrap"><a href="../index.html">← ReadMalawi</a><a href="../library.html">📚 Books</a></div></header>
+<main>
+<h1>📚 Reading Buddy</h1>
+<p class="sub">Moni! Let's find something wonderful to read.</p>
+<section class="chat" aria-label="Chat with Reading Buddy">
+<div class="chat-head"><span class="icon" aria-hidden="true">📖</span><div><strong>Your ReadMalawi helper</strong><small>Ask in everyday words. Easy to use.</small></div></div>
+<div id="messages" class="messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+<div id="quick" class="choices" aria-label="Try asking"></div>
+<form id="chat-form"><input id="question" type="text" minlength="2" maxlength="280" placeholder="Ask me about books…" aria-label="Ask Reading Buddy a question" autocomplete="off" required><button class="submit" type="submit">Send</button></form>
+<p class="note">Your messages stay in this browser tab. Please don't share private information here.</p>
+</section>
+<div class="notice"><strong>What I can do:</strong> Help you find books, children's stories, audiobooks and the Book Club on ReadMalawi. This is a guided website chatbot, not yet a full AI model. I cannot read or explain any book chapter on demand yet.</div>
+</main><footer>ReadMalawi · Tiyeni tiwelenge.</footer>
+<script src="reading-buddy.js"></script>
+</body></html>
