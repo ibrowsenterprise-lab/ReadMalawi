@@ -78,7 +78,7 @@
     <section id="challenge" class="tint"><div class="container"><div class="section-heading"><span class="kicker">Try it right now</span><h2>Your first five-minute reading challenge</h2><p>This is an original, fictional practice story written for the ReadMalawi starter website — not a report of an actual donation.</p></div><div class="challenge"><div class="challenge-info"><span class="tag">Day 1 · Sample lesson</span><h3>A little reading, every day.</h3><p>Short, enjoyable activities are a practical way to reconnect a quiet reading community. This starter exercise runs entirely in your browser.</p><div class="timeline"><strong>Your result:</strong><p id="saved-result">No attempt yet.</p><button type="button" class="btn btn-light" id="reset-progress">Clear my result</button></div></div><div class="story-panel"><span class="pill">Short story · Fiction</span><h3>The Book on the Bench</h3><p>On her way home, Chisomo noticed a book lying on a bench near the market. Inside the front cover was a message: “Please read me, then pass me on.”</p><p>She opened the book and found a story about a young girl who loved solving difficult problems. Chisomo read a few pages while waiting for her friend. Soon, she was so interested that she forgot about the noisy market around her.</p><p>That evening, Chisomo told her younger brother about the story. He asked whether he could read it too. They agreed to take turns, then return the book to the bench with a new note inviting another reader to enjoy it.</p><div class="question-box"><strong>Question: Why did Chisomo and her brother agree to return the book?</strong><form id="reading-quiz"><div class="answers"><label><input type="radio" name="answer" value="a" required> They did not enjoy the story.</label><label><input type="radio" name="answer" value="b"> They wanted another person to read it.</label><label><input type="radio" name="answer" value="c"> They wanted to sell the book.</label></div><button class="btn btn-primary" type="submit">Check my answer</button></form><p id="quiz-feedback" class="feedback" role="status" aria-live="polite"></p></div></div></div></div></section>
     <section id="coach"><div class="container"><div class="section-heading">
 <span class="kicker">Ask for help</span><h2>Meet Reading Buddy. 📚</h2>
-<p>Our own friendly reading helper lives right here on ReadMalawi. No ChatGPT link, no leaving the website.</p></div>
+<p>Our friendly reading helper lives right here on ReadMalawi. You'll stay on our website.</p></div>
 <div class="coach"><div class="coach-box"><h3>What would you like to read?</h3>
 <p>Ask Reading Buddy to find children's books, explore the library or join book discussions.</p>
 <a class="btn btn-dark" href="assets/reading-buddy.html">💬 Chat with Reading Buddy</a></div>
@@ -99,7 +99,7 @@
   </article>
 </div></section>
     <section class="faq"><div class="container"><div class="section-heading"><span class="kicker">Quick answers</span><h2>Good to know.</h2></div>
-<details><summary>Can I read for free?</summary><p>Yes. You can read approved ReadMalawi-hosted books online at no charge and open free resources at their original libraries. Some external books may have different rights or access conditions.</p></details>
+<details><summary>Can I read for free?</summary><p>Yes. You can read original ReadMalawi stories and approved library books online at no charge. Other contributed books appear only after permission checks.</p></details>
 <details><summary>How do I talk about a book?</summary><p>Choose a title in <a href="library.html#library">the library</a> and tap “Discuss this book.” Comments require email sign-in and librarian approval.</p></details>
 <details><summary>Can I share a book?</summary><p>Yes. You can <a href="library.html#contribute">submit a book privately</a>; librarians check its publication rights before making it public.</p></details>
 <details><summary>Can I learn in Chichewa or another language?</summary><p>You can choose your preferred language to search for books. Local-language titles are added as permissions and translations are reviewed.</p></details>
@@ -112,20 +112,20 @@
   (function(){var img=new Image();img.onload=function(){var e=document.querySelector(".hero-art");if(e)e.classList.add("logo-ready")};img.src="assets/readmalawi-logo.png"})();
     'use strict';
     const languages={
-      en:{name:'English',status:'English interface available. Select a Malawian language to prepare a reading prompt.',sample:'On her way home, Chisomo found a book near the market. She enjoyed the story and decided to share it with her brother. Together they planned to pass the book to the next reader.',label:'English — original'},
+      en:{name:'English',status:'English interface available. Choose another language to find matching books.',sample:'On her way home, Chisomo found a book near the market. She enjoyed the story and decided to share it with her brother. Together they planned to pass the book to the next reader.',label:'English — original'},
       ny:{name:'Chichewa',status:'Chichewa: a short AI-assisted sample draft is available below, but has not yet been independently reviewed by a fluent volunteer.',sample:'Ali paulendo wobwerera kunyumba, Chisomo anapeza buku pafupi ndi msika. Anasangalala ndi nkhani ya m’bukulo ndipo anaganiza zogawana bukulo ndi m’bale wake. Onse awiri anagwirizana kuti adzalipatsenso munthu wina kuti awerenge.',label:'Chichewa — draft awaiting fluent review'},
       tum:{name:'Chitumbuka',status:'Chitumbuka: Reading language chosen; look for available books in this language. Published translation is awaiting fluent community review.'},
       yao:{name:'Chiyao',status:'Chiyao: Reading language chosen; look for available books in this language. Published translation is awaiting fluent community review.'},
       lom:{name:'Chilomwe',status:'Chilomwe: Reading language chosen; look for available books in this language. Published translation is awaiting fluent community review.'},
       seh:{name:'Chisena',status:'Chisena: Reading language chosen; look for available books in this language. Published translation is awaiting fluent community review.'},
       toi:{name:'Chitonga',status:'Chitonga: Reading language chosen; look for available books in this language. Published translation is awaiting fluent community review.'},
-      sw:{name:"Swahili",status:"Swahili learning prompts available; text translation is not automatically verified."},
-      fr:{name:"French",status:"French learning prompts available; translation is not automatically verified."},
-      pt:{name:"Portuguese",status:"Portuguese learning prompts available; translation is not automatically verified."},
-      es:{name:"Spanish",status:"Spanish learning prompts available; translation is not automatically verified."},
-      ar:{name:"Arabic",status:"Arabic learning prompts available; translation is not automatically verified."},
-      zh:{name:"Chinese",status:"Chinese learning prompts available; translation is not automatically verified."},
-      hi:{name:"Hindi",status:"Hindi learning prompts available; translation is not automatically verified."},
+      sw:{name:"Swahili",status:"Swahili book searches supported; text translation is not automatically verified."},
+      fr:{name:"French",status:"French book searches supported; translation is not automatically verified."},
+      pt:{name:"Portuguese",status:"Portuguese book searches supported; translation is not automatically verified."},
+      es:{name:"Spanish",status:"Spanish book searches supported; translation is not automatically verified."},
+      ar:{name:"Arabic",status:"Arabic book searches supported; translation is not automatically verified."},
+      zh:{name:"Chinese",status:"Chinese book searches supported; translation is not automatically verified."},
+      hi:{name:"Hindi",status:"Hindi book searches supported; translation is not automatically verified."},
       other:{name:"Other language",status:"Type your preferred language. Search the library for your language; not all languages have books yet."}
     };
     const originalSample=languages.en.sample;
