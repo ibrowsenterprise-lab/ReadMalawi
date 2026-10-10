@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#092e2b"><title>Book Club Review | ReadMalawi</title>
+<style>
+:root{--dark:#092e2b;--green:#16644d;--line:#d5e3d9;--muted:#53685b}
+*{box-sizing:border-box}body{margin:0;background:#f8faf5;color:#18352a;font:16px/1.5 system-ui,Arial,sans-serif}
+header{background:var(--dark);color:white;padding:17px max(16px,calc((100% - 960px)/2))}header a{color:#efcf8d}
+main{max-width:960px;padding:25px 16px 70px;margin:auto}h1{line-height:1.12;letter-spacing:-.04em}h2{font-size:1.34rem}
+.panel,.item{background:white;border:1px solid var(--line);border-radius:14px;padding:19px;margin:15px 0}
+.list{display:grid;gap:13px}.item{margin:0}.item h3{font-size:1.06rem;margin:0 0 5px;overflow-wrap:anywhere}.item p{white-space:pre-wrap;overflow-wrap:anywhere}
+.meta{font-size:.86rem;color:var(--muted)}.status{font-size:.89rem;font-weight:750;padding:9px 0}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.button{background:var(--green);color:white;font:inherit;font-weight:750;border:0;border-radius:9px;padding:10px 13px;cursor:pointer}
+.button:disabled{opacity:.6;cursor:wait}.button.alt{background:#eaf3ec;border:1px solid #b9d4c2;color:var(--dark)}.button.danger{background:#8b392e}
+.notice{background:#fff1d5;border:1px solid #ead09a;padding:12px;border-radius:9px}
+h2{margin-bottom:5px}section{margin-top:25px}
+</style></head><body>
+<header><a href="moderate.html">← Book Review Desk</a></header><main>
+<p style="font-size:.76rem;letter-spacing:.11em;text-transform:uppercase;color:#99691d;font-weight:850">Private librarian area</p>
+<h1>Book Club Review 💬</h1>
+<p>Approve kind, book-related comments. Hide unsafe content. Reports stay private.</p>
+<div class="notice">For children's safety, do not approve phone numbers, email addresses, personal addresses, bullying, advertising, hate or inappropriate content. Never publicly identify a reader from their account.</div>
+<div class="panel"><strong>Admin access</strong><p id="auth-status" class="status">Checking librarian sign-in…</p>
+<button type="button" id="refresh" class="button" disabled>Refresh review queue</button></div>
+<section><h2>Comments waiting for approval</h2><p class="meta" id="pending-count"></p><div id="pending" class="list"></div></section>
+<section><h2>Comments reported by readers</h2><p class="meta" id="reports-count"></p><div id="reports" class="list"></div></section>
+</main><script src="../readmalawi-config.js"></script><script type="module" src="book-discussion-review.js"></script>
+</body></html>
