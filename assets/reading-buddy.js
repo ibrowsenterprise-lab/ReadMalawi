@@ -39,7 +39,147 @@ function respond(phrase){
  if(has(s,["hello","hi","hey","help","what can you do","start"]))return ["Hello! 👋 I can help you find books, join the Book Club, or practise reading. What would you like to do?",[route.books,route.club,route.learn]];
  return ["I can help you find books and explore ReadMalawi. For now I can't answer every open-ended question. Choose one of these to begin!",[route.books,route.club,route.learn]];
 }
-function send(text){const phrase=text.trim().slice(0,280);if(!phrase)return;bubble(phrase,"me");const [reply,links]=respond(phrase);bubble(reply,"bot",links)}
+const cfg=window.READMALAWI_CONFIG||{};
+const aiRoute="readmalawi-reading-ai";
+let aiReady=false,aiMode=false,aiBusy=false,client=null,reader=null;
+let dialogue=[];
+let approved=[{title:"The Book on the Bench",author:"ReadMalawi",category:"Children",language:"English",media_type:"original"}];
+const aiStatus=text=>find("ai-status").textContent=text;
+const modeLabel=()=>find("chat-mode").textContent=aiMode?"✨ AI reading help (10 questions per day)":"📚 Guided book help";
+function catalogueSuggestion(phrase){
+ const q=phrase.toLowerCase().replace(/\b(find|show|book|books|stories|story|read|looking|please|give|me|do|you|have|available|what|is|about|the|a|an)\b/g," ").replace(/\s+/g," ").trim();
+ if(q.length<3)return null;
+ const found=approved.filter(book=>{
+  const title=String(book.title||"").toLowerCase(),author=String(book.author||"").toLowerCase();
+  return title.includes(q)||author.includes(q)||(q.length>=7&&q.includes(title)&&title.length>6);
+ }).slice(0,3);
+ if(!found.length)return null;
+ return ["I found "+found.length+" book"+(found.length===1?"":"s")+" you can read on ReadMalawi:",found.map(book=>["../library.html?q="+encodeURIComponent(book.title)+"#library",book.title+" →"])];
+}
+async function send(text){
+ const phrase=text.trim().slice(0,750);
+ if(!phrase||aiBusy)return;
+ bubble(phrase,"me");
+ if(!aiMode){
+  const match=catalogueSuggestion(phrase);
+  const [reply,links]=match||respond(phrase);
+  bubble(reply,"bot",links);
+  return;
+ }
+ if(!aiReady||!client||!reader){
+   bubble("Advanced AI is not available yet. I can still help you find books on ReadMalawi.","bot",[route.books]);
+   aiMode=false;modeLabel();return;
+ }
+ aiBusy=true;find("chat-form").querySelector("button[type=submit]").disabled=true;
+ const thinking=item("div","bubble bot","Reading Buddy is thinking…");messages.append(thinking);messages.scrollTop=messages.scrollHeight;
+ try{
+   const session=await client.auth.getSession();
+   const token=session.data?.session?.access_token;
+   if(!token)throw Error("Please sign in again to ask AI.");
+   const response=await fetch(cfg.supabaseUrl+"/functions/v1/"+aiRoute,{
+     method:"POST",
+     headers:{"Content-Type":"application/json","apikey":cfg.supabasePublishableKey,"Authorization":"Bearer "+token},
+     body:JSON.stringify({question:phrase,history:dialogue.slice(-6)}),
+     signal:AbortSignal.timeout(25000)
+   });
+   const data=await response.json();
+   if(!response.ok)throw Error(data?.message||(
+      response.status===429?"Please wait a moment or come back tomorrow.":
+      "Advanced AI could not answer right now. Try again later."
+   ));
+   if(typeof data.answer!=="string")throw Error("No answer received.");
+   thinking.remove();
+   bubble(data.answer,"bot");
+   dialogue.push({role:"user",content:phrase},{role:"assistant",content:data.answer.slice(0,750)});
+   dialogue=dialogue.slice(-6);
+ }catch(error){
+   thinking.remove();
+   bubble(error.message||"Advanced AI is temporarily unavailable. You can still use guided help.","bot",[route.books,route.learn]);
+ }finally{
+   aiBusy=false;find("chat-form").querySelector("button[type=submit]").disabled=false;field.focus();
+ }
+}
+async function initBookSearch(){
+ if(!cfg.supabaseUrl||!cfg.supabasePublishableKey)return;
+ try{
+  const response=await fetch(cfg.supabaseUrl+"/rest/v1/library_books?select=title,author,category,language,media_type&status=eq.approved&verified_rights=eq.true&limit=200",{
+   headers:{"apikey":cfg.supabasePublishableKey},
+   signal:AbortSignal.timeout(6500)
+  });
+  if(!response.ok)return;
+  const rows=await response.json();
+  if(Array.isArray(rows))approved=[...approved,...rows.filter(x=>x&&typeof x.title==="string")];
+ }catch{} // Book recommendations remain available for the original story.
+}
+function updateAISignIn(){
+ find("ai-user").hidden=!reader;
+ if(reader)find("ai-user").textContent="Signed in for AI reading: "+reader.email;
+ find("ai-signin-form").hidden=!!reader || !aiReady;
+ find("ai-enable").hidden=!aiReady;
+ find("ai-enable").textContent=reader?"✨ Ask AI":"✨ Sign in to ask AI";
+ if(aiReady&&!aiMode){
+   aiStatus(reader?"Advanced AI is ready. You can ask reading questions.":"Advanced AI is available after private email sign-in.");
+ }
+}
+async function initAI(){
+ if(!cfg.supabaseUrl||!cfg.supabasePublishableKey){
+   aiStatus("Guided Reading Buddy is ready. Advanced AI is not configured.");return;
+ }
+ try{
+  const ping=await fetch(cfg.supabaseUrl+"/functions/v1/"+aiRoute,{
+   headers:{"apikey":cfg.supabasePublishableKey},
+   signal:AbortSignal.timeout(6500)
+  });
+  const data=await ping.json();
+  aiReady=ping.ok && data?.ai_enabled===true;
+  if(!aiReady){
+    aiStatus("Guided help works now. Advanced AI is awaiting activation.");
+    return;
+  }
+  const module=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
+  client=module.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey);
+  const current=await client.auth.getUser();reader=current.data?.user||null;
+  client.auth.onAuthStateChange((event,session)=>{
+    reader=session?.user||null;
+    if(!reader&&aiMode){aiMode=false;find("ai-basic").hidden=true;modeLabel()}
+    updateAISignIn();
+  });
+  updateAISignIn();
+ }catch(error){
+  aiStatus("Guided help is available. Advanced AI could not connect.");
+ }
+}
+find("ai-enable").addEventListener("click",()=>{
+ if(!aiReady)return;
+ if(!reader){
+   find("ai-signin-form").hidden=false;
+   find("ai-email").focus();
+   aiStatus("Enter an adult's email. Check that inbox for a secure sign-in link.");
+   return;
+ }
+ aiMode=true;find("ai-basic").hidden=false;find("ai-enable").hidden=true;modeLabel();
+ aiStatus("AI is ready. Please share only short, lawful reading excerpts.");
+ bubble("✨ AI mode is ready! Ask me to explain a word, practise reading or talk about a story. I may make mistakes, so check important answers.","bot");
+ field.focus();
+});
+find("ai-basic").addEventListener("click",()=>{
+ aiMode=false;find("ai-basic").hidden=true;dialogue=[];
+ updateAISignIn();modeLabel();bubble("Back to simple guided book help.","bot",[route.books]);
+});
+find("ai-signin-form").addEventListener("submit",async event=>{
+ event.preventDefault();
+ if(!client)return;
+ const button=find("ai-signin-submit"),email=find("ai-email").value.trim();
+ button.disabled=true;aiStatus("Sending your sign-in email…");
+ try{
+  const sent=await client.auth.signInWithOtp({email,options:{emailRedirectTo:location.href.split("#")[0]}});
+  if(sent.error)throw sent.error;
+  aiStatus("Check your email for a secure sign-in link, then return to Reading Buddy.");
+ }catch(e){aiStatus("Couldn't sign in: "+e.message)}
+ finally{button.disabled=false}
+});
+initBookSearch();
+initAI();
 const presets=[["📚 Find books","Find books"],["🧒 Kids' stories","Children's books"],["💬 Book Club","Book Club"],["🌍 Languages","Chichewa"]];
 for(const [label,q] of presets){const b=item("button","",label);b.type="button";b.addEventListener("click",()=>send(q));quick.append(b)}
 form.addEventListener("submit",e=>{e.preventDefault();send(field.value);field.value="";field.focus()});
