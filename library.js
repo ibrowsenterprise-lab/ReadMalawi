@@ -34,6 +34,16 @@ const entry=data=>{
  const meta=document.createElement("p");meta.className="book-label";
  meta.textContent=[data.language&&data.language!=="Unconfirmed"?data.language:null,data.category].filter(Boolean).join(" · ")||"Book";
  details.append(heading,author,meta);
+ const bookKey=data.discussion_key;
+ if(bookKey){
+   const talk=document.createElement("a");
+   talk.className="book-discuss";
+   talk.textContent="💬 Discuss this book";
+   const p=new URLSearchParams({book:bookKey,title:(data.title||"Untitled book").slice(0,240),author:(data.author||"").slice(0,180)});
+   talk.href="assets/book-discussions.html?"+p.toString();
+   talk.setAttribute("aria-label","Discuss "+(data.title||"this book")+" with other readers");
+   details.append(talk);
+ }
  const link=document.createElement("a");link.className="book-action";
  const isHosted=data.source==="member",isAudio=data.kind==="audio";
  link.textContent=isHosted?(isAudio?"Listen ›":"Read ›"):"Source ↗";
@@ -57,6 +67,10 @@ const entry=data=>{
    link.title="Opens an external library or book provider";
  }
  row.append(pict,details,link);
+ row.addEventListener("click",event=>{
+   if(event.target.closest("a,button,input,select,textarea"))return;
+   link.click();
+ });
  return row;
 };
 
@@ -105,10 +119,10 @@ async function loadCatalogue(){
  const results=await Promise.allSettled([books,audio]);let found=0;
  if(results[0].status==="fulfilled"){
    const list=results[0].value.results||[];
-   for(const x of list){if(!x.id||x.copyright!==false)continue;app.remote.push({title:x.title,author:(x.authors||[]).map(a=>a.name).join(", ")||"Unknown author",category:categoryFrom(x.subjects),kind:"book",language:langCode((x.languages||[])[0]),source:"gutenberg",url:"https://www.gutenberg.org/ebooks/"+x.id,rank:1});found++}
+   for(const x of list){if(!x.id||x.copyright!==false)continue;app.remote.push({title:x.title,author:(x.authors||[]).map(a=>a.name).join(", ")||"Unknown author",category:categoryFrom(x.subjects),kind:"book",language:langCode((x.languages||[])[0]),source:"gutenberg",url:"https://www.gutenberg.org/ebooks/"+x.id,discussion_key:"gutenberg:"+x.id,rank:1});found++}
  }
  if(results[1].status==="fulfilled"){
-   for(const x of results[1].value.books||[]){const url=secureURL(x.url_librivox)||"https://librivox.org/";app.remote.push({title:x.title,author:(x.authors||[]).map(a=>[a.first_name,a.last_name].filter(Boolean).join(" ")).join(", ")||"Unknown author",category:"Fiction",kind:"audio",language:langCode(x.language||""),source:"librivox",url,rank:1});found++}
+   for(const x of results[1].value.books||[]){const url=secureURL(x.url_librivox)||"https://librivox.org/";app.remote.push({title:x.title,author:(x.authors||[]).map(a=>[a.first_name,a.last_name].filter(Boolean).join(" ")).join(", ")||"Unknown author",category:"Fiction",kind:"audio",language:langCode(x.language||""),source:"librivox",url,discussion_key:/^\\d{1,12}$/.test(String(x.id||""))?"librivox:"+x.id:null,rank:1});found++}
  }
  if(!found)$("#fetch-message").textContent="Live catalogue sources could not be reached. You can still use the source-directory links above and try again later.";
  else $("#fetch-message").textContent="External listings are retrieved automatically. These are links to source websites, not books hosted or sold by ReadMalawi.";
@@ -158,7 +172,7 @@ async function loadApproved(){
  if(!app.client)return;
  const {data,error}=await app.client.from("library_books").select("id,title,author,description,media_type,category,language,file_path,access_mode").eq("status","approved").order("submitted_at",{ascending:false}).limit(100);
  if(error){$("#fetch-message").textContent="Approved member catalogue unavailable: "+error.message;return}
- app.local=(data||[]).map(b=>({...b,kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",rank:2}));filterAndRender();
+ app.local=(data||[]).map(b=>({...b,kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",discussion_key:"member:"+b.id,rank:2}));filterAndRender();
 }
 let uploadRunning=false;
 const uploadExtensions={pdf:["ebook","application/pdf"],epub:["ebook","application/epub+zip"],mp3:["audiobook","audio/mpeg"],m4a:["audiobook","audio/mp4"]};
