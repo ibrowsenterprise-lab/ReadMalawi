@@ -36,7 +36,12 @@
 .book-row p.book-author,.book-row p.book-label{font-size:.75rem;line-height:1.28;margin:0;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .book-row p.book-label{font-size:.71rem;color:#577961}
 .book-row .book-action{grid-column:3;min-width:0;display:flex;align-items:center;justify-content:center;align-self:center;min-height:40px;border-radius:9px;background:#ebf5ef;color:#155a47;padding:5px 6px;text-decoration:none;font-size:.74rem;font-weight:800;white-space:nowrap}
-.book-row .book-action::after{content:"";position:absolute;inset:0;border-radius:12px}
+.book-row .book-action::after{display:none}
+.book-row{cursor:pointer}
+.book-row .book-discuss{display:inline-block;align-self:flex-start;margin-top:3px;padding:2px 5px;border-radius:6px;background:#eff8f1;color:#0c6b4f;font-size:.73rem;font-weight:800;text-decoration:none;min-height:25px}
+.book-row .book-discuss:hover,.book-row .book-discuss:focus-visible{text-decoration:underline;background:#ddf1e4}
+.book-row .book-action:hover{background:#d7ebe0;text-decoration:underline}
+@media(max-width:720px){.book-row .book-discuss{font-size:.73rem}}
 .book-row:hover{border-color:#a6cbb4;background:#fcfefa}
 .book-row:focus-within{outline:3px solid #e6aa35;outline-offset:1px}
 .book-row .book-action:focus-visible{outline:none}
@@ -45,7 +50,7 @@
 </head>
 <body>
 <a href="#library" class="skip">Skip to library</a>
-<header><div class="wrap"><a class="brand" href="index.html">Read<span>Malawi</span></a><nav aria-label="Main navigation"><a href="index.html">Home</a><a href="#library">Library</a><a href="#contribute">Contribute</a><a href="#requests">Book requests</a><a href="#support">Support</a><a href="assets/partners.html">Global partners</a></nav></div></header>
+<header><div class="wrap"><a class="brand" href="index.html">Read<span>Malawi</span></a><nav aria-label="Main navigation"><a href="index.html">Home</a><a href="#library">Library</a><a href="#book-club">Book Club</a><a href="#contribute">Contribute</a><a href="#requests">Book requests</a><a href="#support">Support</a><a href="assets/partners.html">Global partners</a></nav></div></header>
 <main>
 <section class="hero"><div class="wrap">
 <div class="eyebrow">Tiyeni tiwelenge · ReadMalawi</div><h1>Small books. Big ideas. Every language.</h1>
@@ -63,6 +68,12 @@
 <div class="controls"><div class="switches" role="group" aria-label="Publication type"><button class="pill" data-kind="all" aria-pressed="true">All</button><button class="pill" data-kind="book" aria-pressed="false">E-books</button><button class="pill" data-kind="audio" aria-pressed="false">Audiobooks</button></div><span class="muted small" id="count" aria-live="polite">Loading catalogue…</span></div>
 <div id="catalogue" class="cards" aria-live="polite"></div><p id="fetch-message" class="formhint" aria-live="polite"></p>
 <div class="banner" style="margin-top:22px"><strong>More free books:</strong> <a href="https://www.africanstorybook.org/" target="_blank" rel="noopener noreferrer">African Storybook</a> · <a href="https://www.gutenberg.org/" target="_blank" rel="noopener noreferrer">Project Gutenberg</a> · <a href="https://librivox.org/" target="_blank" rel="noopener noreferrer">LibriVox</a>. Content rights and availability vary by book and country.</div>
+</div></section>
+<section class="section subtle" id="book-club"><div class="wrap">
+<div class="eyebrow">Read together · Tiyeni tiwelenge</div>
+<h2>Talk about your favourite book 💬</h2>
+<p class="intro">Want to share what you learned? Find a book above and tap <strong>💬 Discuss this book</strong>. Every title has its own conversation. Reading is open to everyone; posting needs a free email sign-in and librarian review.</p>
+<div class="banner"><strong>Be kind, have fun, stay safe.</strong> Younger readers should ask a parent or teacher to help. No private messages, public profiles, phone numbers or links.</div>
 </div></section>
 <section class="section subtle" id="contribute"><div class="wrap">
 <div class="banner" style="margin-bottom:24px"><strong>Have a big PDF collection?</strong> Our <a href="assets/bulk-import.html"><strong>Bulk PDF Catalogue Builder</strong></a> can create a draft list from a folder of books without typing their details.</div>
