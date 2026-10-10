@@ -122,7 +122,7 @@ async function loadCatalogue(){
    for(const x of list){if(!x.id||x.copyright!==false)continue;app.remote.push({title:x.title,author:(x.authors||[]).map(a=>a.name).join(", ")||"Unknown author",category:categoryFrom(x.subjects),kind:"book",language:langCode((x.languages||[])[0]),source:"gutenberg",url:"https://www.gutenberg.org/ebooks/"+x.id,discussion_key:"gutenberg:"+x.id,rank:1});found++}
  }
  if(results[1].status==="fulfilled"){
-   for(const x of results[1].value.books||[]){const url=secureURL(x.url_librivox)||"https://librivox.org/";app.remote.push({title:x.title,author:(x.authors||[]).map(a=>[a.first_name,a.last_name].filter(Boolean).join(" ")).join(", ")||"Unknown author",category:"Fiction",kind:"audio",language:langCode(x.language||""),source:"librivox",url,discussion_key:/^\\d{1,12}$/.test(String(x.id||""))?"librivox:"+x.id:null,rank:1});found++}
+   for(const x of results[1].value.books||[]){const url=secureURL(x.url_librivox)||"https://librivox.org/";app.remote.push({title:x.title,author:(x.authors||[]).map(a=>[a.first_name,a.last_name].filter(Boolean).join(" ")).join(", ")||"Unknown author",category:"Fiction",kind:"audio",language:langCode(x.language||""),source:"librivox",url,discussion_key:/^\d{1,12}$/.test(String(x.id||""))?"librivox:"+x.id:null,rank:1});found++}
  }
  if(!found)$("#fetch-message").textContent="Live catalogue sources could not be reached. You can still use the source-directory links above and try again later.";
  else $("#fetch-message").textContent="External listings are retrieved automatically. These are links to source websites, not books hosted or sold by ReadMalawi.";
