@@ -1,5 +1,6 @@
 const $=s=>document.querySelector(s);
-const app={kind:"all",local:[],remote:[],client:null,user:null,requests:[],backend:false};
+const sampleBook={title:"The Book on the Bench",author:"ReadMalawi",description:"An original short practice story about sharing a book.",category:"Children",language:"English",kind:"book",source:"original",discussion_key:"readmalawi:bench",url:"assets/the-book-on-the-bench.html",rank:100};
+const app={kind:"all",local:[sampleBook],remote:[],client:null,user:null,requests:[],backend:false};
 const cfg=window.READMALAWI_CONFIG||{};
 const types={book:"E-book",audio:"Audiobook"};
 const show=(id,text,good)=>{const el=$(id);el.textContent=text;el.className="status "+(good?"ok":"err")};
@@ -46,9 +47,11 @@ const entry=data=>{
  }
  const link=document.createElement("a");link.className="book-action";
  const isHosted=data.source==="member",isAudio=data.kind==="audio";
- link.textContent=isHosted?(isAudio?"Listen ›":"Read ›"):"Source ↗";
+ link.textContent=isHosted?(isAudio?"Listen ›":"Read ›"):"Read ›";
  link.setAttribute("aria-label",(isHosted?(isAudio?"Listen online: ":"Read online: "):"Open original source: ")+(data.title||"Untitled book"));
- if(isHosted){
+ if(data.source==="original"){
+   link.href=data.url;
+ }else if(isHosted){
    link.href="#";
    link.addEventListener("click",async e=>{
      e.preventDefault();if(!app.client)return;
@@ -62,9 +65,6 @@ const entry=data=>{
      }catch(err){alert("Unable to open this book: "+err.message)}
      finally{link.textContent=previous}
    });
- }else{
-   link.href=secureURL(data.url)||"#";link.target="_blank";link.rel="noopener noreferrer";
-   link.title="Opens an external library or book provider";
  }
  row.append(pict,details,link);
  row.addEventListener("click",event=>{
@@ -108,24 +108,18 @@ function filterAndRender(){
  else items.forEach(book=>target.append(entry(book)));
  $("#count").textContent=items.length+" listing"+(items.length===1?"":"s")+" shown";
 }
-const preselectedCategory=new URLSearchParams(location.search).get("category");
+const searchParams=new URLSearchParams(location.search);
+const preselectedCategory=searchParams.get("category");
+const preselectedQuery=searchParams.get("q");
+if(preselectedQuery)$("#search").value=preselectedQuery.slice(0,120);
+const preselectedLanguage=searchParams.get("lang");
+if(preselectedLanguage)$("#language").value=preselectedLanguage.slice(0,65);
 if(preselectedCategory&&Array.from($("#category").options).some(opt=>opt.value===preselectedCategory))$("#category").value=preselectedCategory;
 for(const id of ["search","category","language","sort"]){$("#"+id).addEventListener(["search","language"].includes(id)?"input":"change",filterAndRender)}
 document.querySelectorAll("[data-kind]").forEach(btn=>btn.addEventListener("click",()=>{app.kind=btn.dataset.kind;document.querySelectorAll("[data-kind]").forEach(b=>b.setAttribute("aria-pressed",String(b===btn)));filterAndRender()}));
 const fetchJSON=async (url,timeout=9500)=>{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),timeout);try{const r=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json"}});if(!r.ok)throw Error(String(r.status));return await r.json()}finally{clearTimeout(timer)}};
-async function loadCatalogue(){
- const books=fetchJSON("https://gutendex.com/books/?copyright=false");
- const audio=fetchJSON("https://librivox.org/api/feed/audiobooks/?format=json&limit=18");
- const results=await Promise.allSettled([books,audio]);let found=0;
- if(results[0].status==="fulfilled"){
-   const list=results[0].value.results||[];
-   for(const x of list){if(!x.id||x.copyright!==false)continue;app.remote.push({title:x.title,author:(x.authors||[]).map(a=>a.name).join(", ")||"Unknown author",category:categoryFrom(x.subjects),kind:"book",language:langCode((x.languages||[])[0]),source:"gutenberg",url:"https://www.gutenberg.org/ebooks/"+x.id,discussion_key:"gutenberg:"+x.id,rank:1});found++}
- }
- if(results[1].status==="fulfilled"){
-   for(const x of results[1].value.books||[]){const url=secureURL(x.url_librivox)||"https://librivox.org/";app.remote.push({title:x.title,author:(x.authors||[]).map(a=>[a.first_name,a.last_name].filter(Boolean).join(" ")).join(", ")||"Unknown author",category:"Fiction",kind:"audio",language:langCode(x.language||""),source:"librivox",url,discussion_key:/^\d{1,12}$/.test(String(x.id||""))?"librivox:"+x.id:null,rank:1});found++}
- }
- if(!found)$("#fetch-message").textContent="Live catalogue sources could not be reached. You can still use the source-directory links above and try again later.";
- else $("#fetch-message").textContent="External listings are retrieved automatically. These are links to source websites, not books hosted or sold by ReadMalawi.";
+function loadCatalogue(){
+ $("#fetch-message").textContent="Only books available to read here on ReadMalawi are listed. New submissions appear after librarian approval and permission checks.";
  filterAndRender();
 }
 async function backend(){
@@ -172,7 +166,7 @@ async function loadApproved(){
  if(!app.client)return;
  const {data,error}=await app.client.from("library_books").select("id,title,author,description,media_type,category,language,file_path,access_mode").eq("status","approved").order("submitted_at",{ascending:false}).limit(100);
  if(error){$("#fetch-message").textContent="Approved member catalogue unavailable: "+error.message;return}
- app.local=(data||[]).map(b=>({...b,kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",discussion_key:"member:"+b.id,rank:2}));filterAndRender();
+ app.local=[sampleBook,...(data||[]).map(b=>({...b,kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",discussion_key:"member:"+b.id,rank:2}))];filterAndRender();
 }
 let uploadRunning=false;
 const uploadExtensions={pdf:["ebook","application/pdf"],epub:["ebook","application/epub+zip"],mp3:["audiobook","audio/mpeg"],m4a:["audiobook","audio/mp4"]};
