@@ -1,4 +1,4 @@
-const $=id=>document.getElementById(id);
+const $=id=>document.getElementById(id.startsWith("#")?id.slice(1):id);
 const cfg=window.READMALAWI_CONFIG||{};
 const statuses=["new","contacted","in_discussion","closed"];
 let client=null,user=null;
