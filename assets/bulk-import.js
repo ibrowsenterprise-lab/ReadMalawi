@@ -76,7 +76,7 @@ $("analyse").addEventListener("click",async()=>{
    $("progress").value=i+1;
    if(i%5===0)await new Promise(resolve=>setTimeout(resolve,0));
   }
-  $("status").textContent=draft.length+" entries processed, "+failed+" need file inspection. "+(cancelled?"Stopped early. ":"")+"Download the CSV and share it in ChatGPT for AI enrichment. No PDF was uploaded.";
+  $("status").textContent=draft.length+" entries processed, "+failed+" need file inspection. "+(cancelled?"Stopped early. ":"")+"Download the CSV to keep your catalogue. No PDF was uploaded to ReadMalawi.";
   showTable();
  }catch(err){$("status").textContent="Could not start PDF analysis: "+err.message+". Check internet access for the PDF reader library."}
  finally{active=false;$("analyse").disabled=false;$("cancel").disabled=true}
