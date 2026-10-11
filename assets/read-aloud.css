@@ -1,0 +1,7 @@
+.read-aloud-controls{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:0 0 25px;padding:13px 14px;background:#eaf4ed;border:1px solid #d0e1d4;border-radius:13px;font:15px/1.45 system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+.read-aloud-button{border:0;border-radius:10px;background:#11654c;color:#fff;padding:12px 17px;min-height:46px;font:750 15px system-ui,-apple-system,Segoe UI,Arial,sans-serif;cursor:pointer;margin:0}
+.read-aloud-button.secondary{background:#e1e9e1;color:#164a38}
+.read-aloud-button[hidden]{display:none}
+.read-aloud-button:focus-visible{outline:3px solid #d9a83e;outline-offset:3px}
+.read-aloud-status{color:#4f6b5f;font-size:.84rem;flex:1;min-width:130px}
+@media print{.read-aloud-controls{display:none}}
