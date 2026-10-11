@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#092e2b">
+<meta name="robots" content="noindex,nofollow">
+<title>Chichewa Review Desk | ReadMalawi</title>
+<style>
+:root{--deep:#092e2b;--green:#11654c;--bg:#f7faf5;--line:#d7e6db;--muted:#52685e;--gold:#f3dc9b}
+*{box-sizing:border-box}
+body{background:var(--bg);color:#15372c;font:16px/1.5 system-ui,-apple-system,Segoe UI,Arial,sans-serif;margin:0}
+a{color:#16694e}
+header{background:var(--deep);color:white;padding:14px 17px}
+header .wrap{max-width:920px;margin:auto;display:flex;align-items:center;gap:20px;justify-content:space-between;flex-wrap:wrap}
+header a{color:var(--gold);font-weight:750;text-decoration:none}
+main{max-width:920px;margin:auto;padding:28px 17px 70px}
+h1{font-size:clamp(1.75rem,5vw,2.5rem);letter-spacing:-.04em;margin:5px 0}
+h2{font-size:1.2rem;margin:0 0 9px}
+p{margin:8px 0 15px}.muted{color:var(--muted)}
+.small{font-size:.87rem}.kicker{font-size:.75rem;letter-spacing:.11em;text-transform:uppercase;color:#15714f;font-weight:850}
+.banner{background:#fff3d7;border:1px solid #e8d2a0;border-radius:13px;padding:16px;margin:18px 0}
+.summary{background:#e5f2e9;border-radius:12px;padding:15px 17px;margin:18px 0}
+.panel{background:white;border:1px solid var(--line);border-radius:15px;padding:19px;margin:15px 0;box-shadow:0 4px 20px #173d2910}
+.story-header{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.story-header h2{margin:0}
+.pill{background:#edf4eb;color:#185846;border-radius:30px;padding:5px 9px;font-size:.76rem;font-weight:750}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin:14px 0}
+.field{display:flex;flex-direction:column;gap:5px;font-weight:750;font-size:.88rem}
+.field input,.field select,.field textarea{padding:11px 12px;min-height:45px;background:white;border:1px solid #b9d0c2;border-radius:9px;color:#173d32;font:inherit;width:100%}
+.field textarea{min-height:94px;resize:vertical}
+.field.wide{grid-column:1/-1}
+.checks{background:#f4faf5;border:1px solid #d4e7da;border-radius:11px;padding:12px}
+.checks label{display:flex;align-items:flex-start;gap:9px;margin:8px 0;cursor:pointer}
+.checks input{width:18px;height:18px;flex:0 0 auto;margin:3px 0}
+button{background:var(--green);color:#fff;border:0;border-radius:10px;min-height:45px;padding:11px 17px;font:750 15px system-ui,Arial,sans-serif;cursor:pointer}
+button.secondary{background:#ebf4ed;color:var(--green);border:1px solid #bbd7c4}
+button:disabled{opacity:.55;cursor:not-allowed}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #d8a439;outline-offset:3px}
+.feedback{min-height:20px;color:#167045;font-size:.88rem;font-weight:700}
+details>summary{cursor:pointer;font-weight:750;color:#155942;list-style-position:inside}
+.hide{display:none!important}
+@media(max-width:630px){.fields{grid-template-columns:1fr}.panel{padding:15px}main{padding:22px 14px 55px}}
+</style></head>
+<body>
+<header><div class="wrap"><a href="../library.html#library">← ReadMalawi Books</a><a href="moderate.html">Librarian Desk</a></div></header>
+<main>
+<div class="kicker">Private librarian workspace</div>
+<h1>Chichewa Review Desk</h1>
+<p class="muted">Track the review of all ten original stories. Reviewers correct the Word drafts first; this page records the sign-off.</p>
+<div class="banner"><strong>Not for public release.</strong> Draft Chichewa translations are kept in the two private Word review packs. Approval here is a record of human checking, <strong>not a publication button</strong>. The English library remains unchanged.</div>
+<section class="panel" aria-label="Librarian access">
+<h2>Secure access</h2><p id="auth-status" role="status">Checking sign-in…</p>
+<a href="../library.html#contribute">Sign in on ReadMalawi →</a>
+<button id="refresh" class="secondary" disabled style="margin-left:10px">Refresh status</button>
+</section>
+<div id="review-workspace" class="hide">
+<div class="summary" id="summary" role="status">Loading translation reviews…</div>
+<div id="review-list"></div>
+</div>
+</main>
+<script src="../readmalawi-config.js"></script>
+<script type="module" src="translation-review.js"></script>
+</body></html>
