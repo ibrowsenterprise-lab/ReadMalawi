@@ -39,3 +39,9 @@ See [ROADMAP.md](ROADMAP.md) and [TRANSLATION_REVIEW.md](TRANSLATION_REVIEW.md).
 - Service: `readmalawi-library` (Render static site), tracked from `main` with automatic deployments.
 - This is a **frontend preview**: signed-in uploads, private audiobook storage, book requests, donations and paid download access are **not enabled** until the dedicated Supabase database, authentication, moderation and payment infrastructure have been configured and verified.
 - **Do not upload commercial copyrighted works for public release without rights clearance.** Special online-only playback is not DRM.
+
+## Original on-site stories (11 October 2026)
+
+The pilot reading shelf now contains **10 free, original English stories**. Each has a dedicated ReadMalawi reading page, a short comprehension question and a Book Club discussion link. The latest six stories cover reading access, basic mathematics, careful science observations, language and human translation review, online safety, and checking facts before making accusations. Stories are original educational fiction, not historical records of ReadMalawi programmes.
+
+Languages other than English must not be labelled as translated or published until a fluent human reviewer approves the text. The digital library still does not charge readers or accept charitable payments.
