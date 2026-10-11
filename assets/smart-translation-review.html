@@ -50,22 +50,22 @@ input[type=search],select{min-height:44px;padding:9px 12px;border:1px solid #bdd
 </style></head>
 <body><header><nav><a href="translation-review.html">← Translation Review Desk</a><a href="../library.html">ReadMalawi</a></nav></header>
 <main>
-<div class="eyebrow">Private librarian tool · On-device analysis</div>
+<div class="eyebrow">On-device review · No account required for basic checks</div>
 <h1>Smart English ↔ Chichewa Review</h1>
 <p class="muted">Let the computer catch obvious problems first. Reviewers can focus on sentences that need attention.</p>
 <div class="warning"><strong>Drafts stay private.</strong> The Word files are opened and examined inside your browser. This tool does not upload them or publish translations. Automated checks are clues, not proof that a sentence is correct.</div>
 <section class="panel" aria-label="Authorisation">
-<h2>1. Sign in as a ReadMalawi librarian</h2>
-<p id="auth-status" role="status">Checking whether you are signed in as a ReadMalawi librarian…</p>
-<a href="../library.html#member-access" style="display:inline-block;background:#13674e;color:white;padding:12px 18px;border-radius:11px;font-weight:750;text-decoration:none">Sign in to ReadMalawi →</a> <a href="#open-word" style="margin-left:10px">Find Word review section ↓</a>
+<h2>1. Start reviewing — no sign-in needed</h2>
+<p><strong>Word checking and dictionary lookup are free and run on your device.</strong> Sign-in is needed only for optional AI checks and recording a final approval.</p><p id="auth-status" role="status">Checking optional librarian access for AI…</p>
+<a href="#open-word" style="display:inline-block;background:#13674e;color:white;padding:12px 18px;border-radius:11px;font-weight:750;text-decoration:none">Open Word review section ↓</a> <a href="../library.html#member-access" style="margin-left:10px">Librarian sign-in (optional)</a>
 </section>
 <div id="workspace">
 <section class="panel" id="open-word" aria-labelledby="scan-title" style="scroll-margin-top:18px">
 <h2 id="scan-title">2. Open your Word review pack</h2>
-<div class="warning" id="unlock-message" role="status" style="margin:12px 0"><strong>🔒 Sign in required.</strong> This section is visible, but the Word file button unlocks only after ReadMalawi confirms librarian access. <a href="../library.html#member-access">Sign in to ReadMalawi here</a>, then return to this page.</div>
+<div class="warning" id="unlock-message" role="status" style="margin:12px 0"><strong>Ready to check.</strong> Choose your Word file below. It stays on your device and is not uploaded or made public.</div>
 <p class="small muted">Choose one or both existing .docx review documents. English and Chichewa columns will be matched automatically. Nothing is uploaded.</p>
-<input id="word-files" type="file" disabled accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple aria-label="Select Chichewa Word draft documents">
-<div class="row" style="margin-top:12px"><button id="scan" disabled>Find possible problems</button><button id="export" class="secondary" disabled>Download review report</button></div>
+<input id="word-files" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple aria-label="Select Chichewa Word draft documents">
+<div class="row" style="margin-top:12px"><button id="scan">Find possible problems</button><button id="export" class="secondary" disabled>Download review report</button></div>
 <p class="small" id="scan-status" role="status">Ready to review.</p>
 <div class="grid hide" id="counts" aria-live="polite">
 <div class="number"><strong id="pair-count">0</strong><small>English–Chichewa pairs</small></div>
