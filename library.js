@@ -175,8 +175,45 @@ function updateUser(user){
  $("#logout-btn").classList.toggle("hide",!user);
  $("#upload-submit").disabled=!user||uploadRunning;
  $("#request-submit").disabled=!user;
+ $("#my-submission-refresh").disabled=!user;
+ if(user)loadMyContributions(user);
+ else $("#my-submission-list").replaceChildren(submissionMessage("Sign in to see your submissions."));
  updateAdminLink(user);
 }
+function submissionMessage(message){
+ const p=document.createElement("p");p.className="small muted";p.textContent=message;return p;
+}
+async function loadMyContributions(user=app.user){
+ const target=$("#my-submission-list");
+ if(!user||!app.client){target.replaceChildren(submissionMessage("Sign in to see your submissions."));return}
+ target.replaceChildren(submissionMessage("Checking private submissions…"));
+ try{
+  const {data,error}=await app.client.from("library_books")
+   .select("id,title,media_type,status,verified_rights,submitted_at")
+   .eq("uploaded_by",user.id)
+   .order("submitted_at",{ascending:false}).limit(30);
+  if(app.user?.id!==user.id)return;
+  if(error)throw error;
+  target.replaceChildren();
+  if(!data?.length){target.append(submissionMessage("No submissions yet."));return}
+  for(const book of data){
+   const card=document.createElement("div");
+   card.style.cssText="border:1px solid var(--line);border-radius:10px;background:#fff;padding:10px 12px;margin-bottom:8px";
+   const title=document.createElement("strong");title.textContent=book.title||"Untitled submission";
+   title.style.cssText="display:block;overflow-wrap:anywhere";
+   const meta=document.createElement("p");meta.className="small";
+   meta.style.cssText="margin:3px 0 0;color:var(--muted)";
+   const label=book.status==="approved"&&book.verified_rights?"Published":
+     book.status==="pending"?"Awaiting librarian review":
+     book.status==="rejected"?"Not approved for publication":
+     book.status==="removed"?"Withdrawn":"Not publicly available";
+   meta.textContent=(book.media_type==="audiobook"?"Audiobook":"E-book")+" · "+label;
+   card.append(title,meta);target.append(card);
+  }
+  if(data.length===30)target.append(submissionMessage("Showing your 30 most recent submissions."));
+ }catch(e){if(app.user?.id===user.id)target.replaceChildren(submissionMessage("Unable to load submissions: "+e.message))}
+}
+$("#my-submission-refresh").addEventListener("click",()=>loadMyContributions());
 async function updateAdminLink(user){
  const link=$("#admin-link");link.classList.add("hide");if(!user||!app.client)return;
  try{
@@ -244,8 +281,9 @@ $("#upload-form").addEventListener("submit",async e=>{
  if(failed.length){
   show("#upload-status",done+" book(s) received. "+failed.length+" could not be submitted. "+failed.slice(0,3).join("; ")+(failed.length>3?" and others":""),false);
  }else{
-  show("#upload-status","Thank you! "+done+" book"+(done===1?"":"s")+" received. Our librarian will organise the details and check which can be shared publicly.",true);
+  show("#upload-status","Thank you! "+done+" book"+(done===1?"":"s")+" received. They are private until a librarian checks the details and permissions.",true);
  }
+ if(done)await loadMyContributions(app.user);
 });
 $("#request-form").addEventListener("submit",async e=>{
  e.preventDefault();if(!app.client||!app.user)return;
