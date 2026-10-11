@@ -174,6 +174,7 @@ function updateUser(user){
  $("#user-status").textContent=user?"Signed in as "+user.email:"Sign in with email to share books and stories.";
  $("#logout-btn").classList.toggle("hide",!user);
  $("#upload-submit").disabled=!user||uploadRunning;
+ $("#upload-gate-note").hidden=!!user;
  $("#request-submit").disabled=!user;
  $("#my-submission-refresh").disabled=!user;
  if(user)loadMyContributions(user);
