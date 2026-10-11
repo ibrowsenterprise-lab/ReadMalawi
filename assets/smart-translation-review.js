@@ -3,7 +3,7 @@
 const $=id=>document.getElementById(id),cfg=window.READMALAWI_CONFIG||{};
 const W="http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 const unique=a=>[...new Set(a)];
-let library=[],pairs=[],authorised=false;
+let library=[],pairs=[],authorised=false,db=null,aiEnabled=false;
 const htmlEscape=s=>String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
 const key=s=>String(s||"").toLocaleLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
 const note=(id,message)=>{$(id).textContent=message};
@@ -11,14 +11,14 @@ async function secure(){
   if(!cfg.supabaseUrl||!(cfg.supabasePublishableKey||cfg.supabaseAnonKey)){note("auth-status","Library configuration unavailable.");return;}
   try{
     const mod=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
-    const db=mod.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey||cfg.supabaseAnonKey);
+    db=mod.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey||cfg.supabaseAnonKey);
     const auth=await db.auth.getUser(),user=auth.data?.user;
     if(!user){note("auth-status","Please sign in on the library page, then return.");return}
     const {data,error}=await db.from("readmalawi_admins").select("user_id").eq("user_id",user.id).maybeSingle();
     if(error||!data){note("auth-status","Only authorised ReadMalawi librarians can use this private review tool.");return}
     authorised=true;note("auth-status","Authorised ReadMalawi librarian: "+user.email);
     $("workspace").classList.remove("hide");
-    await loadGlossary();
+    await Promise.all([loadGlossary(),checkAI()]);
   }catch(err){note("auth-status","Unable to verify librarian access: "+err.message)}
 }
 async function loadGlossary(){
@@ -190,7 +190,7 @@ async function scan(){
   $("pair-count").textContent=String(pairs.length);
   $("flag-count").textContent=String(flagged.length);
   $("story-count").textContent=String(stories.length);
-  $("export").disabled=!pairs.length;
+  $("export").disabled=!pairs.length;$("ai-check").disabled=!aiEnabled||!pairs.length;
   note("scan-status",pairs.length+" English–Chichewa pairs checked from "+files.length+" file(s). "+flagged.length+" flagged for closer review."+(errors.length?" Issues: "+errors.join(" "):""));
   $("scan").disabled=false;
   renderPairs();
@@ -208,6 +208,54 @@ function saveReport(){
   const link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download="ReadMalawi_Chichewa_Review_Flags.tsv";
   link.click();setTimeout(()=>URL.revokeObjectURL(link.href),3000);
 }
+async function checkAI(){
+  const state=$("ai-status"),button=$("ai-check");button.disabled=true;aiEnabled=false;
+  if(!authorised)return;
+  state.textContent="Checking AI availability…";
+  try{
+    const response=await fetch(cfg.supabaseUrl+"/functions/v1/readmalawi-translation-ai",{method:"GET",cache:"no-store"});
+    if(!response.ok)throw Error("Server replied "+response.status);
+    const info=await response.json();
+    aiEnabled=!!info.ai_enabled;
+    button.disabled=!aiEnabled||pairs.length===0;
+    state.textContent=aiEnabled?"Secure AI meaning review is available. Choose the Word files and scan first.":"AI meaning review is not funded or activated yet. Automatic checks and glossary search remain free.";
+  }catch(err){state.textContent="AI check unavailable: "+err.message+". Local document checks still work."}
+}
+async function runAI(){
+  if(!authorised||!aiEnabled||!pairs.length||!db)return;
+  const eligible=pairs.filter(x=>x.warnings.length&&x.english.length>=8&&x.chichewa.length>=8&&x.english.length<=1200&&x.chichewa.length<=1600).slice(0,3);
+  const chosen=eligible.length?eligible:pairs.filter(x=>x.english.length>=8&&x.chichewa.length>=8&&x.english.length<=1200&&x.chichewa.length<=1600).slice(0,3);
+  if(!chosen.length){note("ai-status","No pairs within the AI review length limits. Local flags remain available.");return;}
+  if(!confirm("Send "+chosen.length+" short English–Chichewa passage(s) to the AI provider for an opt-in paid review? Only this selected text is shared. This cannot approve or publish any translation."))return;
+  const button=$("ai-check"),results=$("ai-results");button.disabled=true;results.replaceChildren();note("ai-status","Running a private AI check on "+chosen.length+" selected passage(s)…");
+  try{
+    const session=await db.auth.getSession(),token=session.data?.session?.access_token;
+    if(!token)throw Error("Please sign in again before using AI.");
+    const response=await fetch(cfg.supabaseUrl+"/functions/v1/readmalawi-translation-ai",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","authorization":"Bearer "+token,"apikey":cfg.supabasePublishableKey||cfg.supabaseAnonKey},
+      body:JSON.stringify({pairs:chosen.map(x=>({english:x.english,chichewa:x.chichewa}))})
+    });
+    const body=await response.json().catch(()=>({error:"invalid_server_response"}));
+    if(!response.ok)throw Error(body.message||body.error||"AI meaning check unavailable");
+    if(!Array.isArray(body.reviews))throw Error("Review result format was invalid");
+    for(const [i,item] of body.reviews.entries()){
+      const record=chosen[i];if(!record)continue;
+      const card=document.createElement("article");card.className="pair"+(item.priority!=="none"?" warn":"");
+      const title=document.createElement("h3");title.textContent=record.story+" · Suggested urgency: "+(item.priority||"unknown");
+      const q=document.createElement("p");q.className="small";q.textContent="Possible issues: "+(Array.isArray(item.issues)&&item.issues.length?item.issues.join("; "):"No specific issue reported. Still needs human review.");
+      card.append(title,q);
+      if(item.backtranslation){const back=document.createElement("p");back.textContent="Back-translation: "+item.backtranslation;card.append(back)}
+      if(item.suggestion){const suggested=document.createElement("p");suggested.textContent="AI-suggested wording (unverified): "+item.suggestion;card.append(suggested)}
+      results.append(card);
+    }
+    note("ai-status","AI suggestions received. They are not proof of accuracy; a fluent reviewer must confirm any edits.");
+  }catch(err){note("ai-status","AI review did not finish: "+err.message)}
+  finally{button.disabled=!aiEnabled;}
+}
+$("ai-check").addEventListener("click",runAI);
+$("ai-refresh").addEventListener("click",checkAI);
+
 $("scan").addEventListener("click",scan);
 $("filter").addEventListener("change",renderPairs);
 $("pair-search").addEventListener("input",renderPairs);
