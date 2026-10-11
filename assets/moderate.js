@@ -25,7 +25,7 @@ async function init(){
   const lookup=await client.from("readmalawi_admins").select("user_id").eq("user_id",user.id).maybeSingle();
   if(lookup.error||!lookup.data){$("#auth-status").textContent="Signed in, but this account does not have librarian permission.";return}
   admin=true;$("#auth-status").textContent="Signed in as "+user.email+" · Authorised librarian";
-  $("#refresh").disabled=false;$("#moderation").classList.remove("hide");
+  $("#refresh").disabled=false;$("#moderation").classList.remove("hide");$("#published-section").classList.remove("hide");
   await load();
  }catch(e){$("#auth-status").textContent="Could not connect to the secure library: "+e.message}
 }
@@ -33,11 +33,49 @@ async function load(){
  if(!admin)return;
  $("#summary").textContent="Loading private submissions…";
  const {data,error}=await client.from("library_books").select("id,title,author,description,category,language,origin,media_type,access_mode,file_path,status,submitted_at,verified_rights").eq("status","pending").order("submitted_at",{ascending:false}).limit(100);
- if(error){$("#summary").textContent="Cannot load reviews: "+error.message;return}
+ if(error){$("#summary").textContent="Cannot load reviews: "+error.message;await loadPublished();return}
  $("#summary").textContent=(data||[]).length+" pending submission(s)"+((data||[]).length===100?" · Showing first 100":"");
  const out=$("#book-list");out.replaceChildren();
- if(!data?.length){out.append(el("p","hint","Nothing waiting right now. Thank you for reviewing contributions!"));return}
- for(const book of data)out.append(render(book));
+ if(!data?.length)out.append(el("p","hint","Nothing waiting right now. Thank you for reviewing contributions!"));
+ else for(const book of data)out.append(render(book));
+ await loadPublished();
+}
+async function loadPublished(){
+ if(!admin)return;
+ $("#published-summary").textContent="Loading published titles…";
+ const {data,error}=await client.from("library_books")
+  .select("id,title,author,media_type,language,category,access_mode,origin,reviewed_at")
+  .eq("status","approved").eq("verified_rights",true)
+  .order("reviewed_at",{ascending:false}).limit(50);
+ const target=$("#published-list");target.replaceChildren();
+ if(error){$("#published-summary").textContent="Cannot load published books: "+error.message;return}
+ $("#published-summary").textContent=(data||[]).length+" published book(s)"+((data||[]).length===50?" · Showing first 50":"");
+ if(!data?.length){target.append(el("p","hint","No uploaded books are currently published."));return}
+ for(const book of data){
+  const card=el("article","book");
+  card.append(el("h3","",book.title||"Untitled book"));
+  card.append(el("p","meta",[book.author||"Unknown author",book.language,book.category,book.media_type==="audiobook"?"Audiobook":"E-book",book.access_mode==="download"?"Download-eligible record":"Online reading",book.origin].filter(Boolean).join(" · ")));
+  const actions=el("div","row");
+  const open=el("a","btn secondary","View public listing");
+  open.href="../library.html?q="+encodeURIComponent(book.title||"")+"#library";
+  open.style.textDecoration="none";
+  const withdraw=el("button","btn danger","Return to private review");withdraw.type="button";
+  const note=el("div","status");note.setAttribute("role","status");
+  withdraw.addEventListener("click",async()=>{
+   if(!confirm("Remove this book from public reading and return it to the private review queue? The file and its record will be kept. Readers with an already issued temporary link may retain access until it expires."))return;
+   withdraw.disabled=true;
+   try{
+    const {data:changed,error:saveError}=await client.from("library_books")
+      .update({status:"pending",verified_rights:false})
+      .eq("id",book.id).eq("status","approved").select("id");
+    if(saveError)throw saveError;
+    if(!changed?.length)throw Error("The book status changed before your action. Refresh the queue.");
+    status(note,"Book returned to private review.",true);
+    await load();
+   }catch(e){status(note,"Could not withdraw book: "+e.message,false);withdraw.disabled=false}
+  });
+  actions.append(open,withdraw);card.append(actions,note);target.append(card);
+ }
 }
 function render(book){
  const card=el("article","book"),title=el("h3","",book.title||"Unlabelled book");card.append(title);
