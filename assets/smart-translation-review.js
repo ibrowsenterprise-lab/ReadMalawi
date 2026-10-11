@@ -13,11 +13,13 @@ async function secure(){
     const mod=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
     db=mod.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey||cfg.supabaseAnonKey);
     const auth=await db.auth.getUser(),user=auth.data?.user;
-    if(!user){note("auth-status","Please sign in on the library page, then return.");return}
+    if(!user){note("auth-status","You are not signed in. Tap the green Sign in to ReadMalawi button below. After signing in, return here to unlock Step 2.");return}
     const {data,error}=await db.from("readmalawi_admins").select("user_id").eq("user_id",user.id).maybeSingle();
-    if(error||!data){note("auth-status","Only authorised ReadMalawi librarians can use this private review tool.");return}
-    authorised=true;note("auth-status","Authorised ReadMalawi librarian: "+user.email);
-    $("workspace").classList.remove("hide");
+    if(error||!data){note("auth-status","You are signed in, but this account has not been given librarian access. Contact the ReadMalawi administrator before using the Word review tool.");return}
+    authorised=true;note("auth-status","Librarian access confirmed: "+user.email+". Step 2 is now unlocked.");
+    $("word-files").disabled=false;
+    $("scan").disabled=false;
+    $("unlock-message").classList.add("hide");
     await Promise.all([loadGlossary(),checkAI()]);
   }catch(err){note("auth-status","Unable to verify librarian access: "+err.message)}
 }
