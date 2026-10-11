@@ -308,4 +308,15 @@ async function offer(id){
  const {error}=await app.client.from("book_request_offers").insert({request_id:id,offered_by:app.user.id,message:note.trim()});
  alert(error?"Could not submit your offer: "+error.message:"Thank you. Your offer was recorded privately for administrator coordination.");
 }
-filterAndRender();loadCatalogue().catch(()=>{});backend().catch(()=>{});
+// The catalogue renderer is synchronous; it has no Promise to catch.
+// Start authentication independently so a catalogue rendering fault cannot disable sign-in.
+backend().catch(error=>{
+  const state=$("#service-message");
+  if(state)state.textContent="Library sign-in could not start. Please refresh or open this page in Chrome.";
+});
+try {
+  loadCatalogue();
+} catch(error) {
+  const message=$("#fetch-message");
+  if(message)message.textContent="The book list could not load. Email sign-in is still available.";
+}
