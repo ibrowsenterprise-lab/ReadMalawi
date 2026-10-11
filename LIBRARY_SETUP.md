@@ -127,3 +127,10 @@ on conflict (user_id) do nothing;
 - The AI does **not** ingest or claim to know the entire PDF catalogue. It uses only metadata of approved hosted books plus a short original ReadMalawi story, and readers may share short lawful passages. Full-text book search, retrieval and content-rights enforcement remain future work. The local PC bulk PDF CSV importer has not been touched.
 - Explicit approved outbound exception: the founder's biography links to the original June 2019 `The Nation`/DD Phiri article archive. No outside book-catalogue or ChatGPT destination has been reinstated.
 - **Testing before declaring generative AI live:** Add the secret, verify GET reports `ai_enabled:true`, sign in from the hosted page, submit a short book question, check daily limits, verify function logs, and review abuse/billing. Without a key the advanced AI remains visibly inactive, not falsely described as working.
+
+## Book Club moderation: ten original stories (11 October 2026)
+
+- The website and Supabase discussion trigger now accept all ten original ReadMalawi story IDs (bench, seedjar, rainclub, cleanstream, librarybag, marketpuzzle, rainnotebook, wordbasket, secretcode, missingpencil), alongside **already approved, rights-verified** member books.
+- Production Supabase migration `20261011124059_enable_book_club_discussions_for_ten_original_stories` was **applied and verified** on 11 October 2026. Its reference SQL is in `supabase/migrations/20261011124059_enable_book_club_discussions_for_ten_original_stories.sql`. **Do not manually rerun this migration on the live project.**
+- Fourteen read-only acceptance cases passed, including the ten approved original IDs and rejection of unknown IDs. The existing sign-in, pending review, per-book reply, link-spam, and rate-limit checks remain in the trigger.
+- **End-to-end testing remains required:** signed-in reader posts a real comment and confirms `sent for review`; librarian verifies `pending` then approves it; a signed-out reader must see only the approved comment. Do not claim this posting/approval flow has passed until actually tested.
