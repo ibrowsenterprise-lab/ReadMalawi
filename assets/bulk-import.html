@@ -18,7 +18,7 @@ label{display:block;font-weight:700}input[type=file]{width:100%;padding:15px;bor
 <p style="text-transform:uppercase;color:#91661a;font-size:.75rem;font-weight:850;letter-spacing:.12em">ReadMalawi · Catalogue Builder</p>
 <h1>Catalogue hundreds of PDFs in one batch</h1>
 <p class="lead">Select your PDF files or a folder on your computer. This tool reads existing PDF metadata and first-page text, drafts titles, authors, ISBNs, subjects and languages, then creates a spreadsheet. No typing each book.</p>
-<div class="notice"><strong>Private local scan:</strong> the PDF contents remain on your computer during this step. Only when you decide to share the catalogue with ReadMalawi will its metadata be submitted. This tool automatically extracts a draft catalogue on your own computer. Download the CSV when it finishes; the actual PDF files are not uploaded by this tool. Copyright or publication permission is never inferred from ownership of a file.</div>
+<div class="notice"><strong>Step 1 — optional private scan:</strong> analyse PDF metadata on your own computer and download the CSV without uploading any files. <strong>Step 2 — optional private batch upload:</strong> after explicit confirmation, the selected PDFs and draft metadata are sent to ReadMalawi's private storage for librarian review. Scanning alone never uploads a file. Ownership of a PDF is not proof of publication rights.</div>
 <section class="panel">
 <label for="files">Select your PDF books (multiple selection)</label><input type="file" id="files" accept=".pdf,application/pdf" multiple>
 <label for="folder">Or select a whole folder of books (desktop Chrome / Edge)</label><input type="file" id="folder" accept=".pdf" webkitdirectory multiple>
@@ -31,5 +31,24 @@ label{display:block;font-weight:700}input[type=file]{width:100%;padding:15px;bor
 <p class="fine">Preview displays the first 60 results to keep the page fast. The CSV includes all processed books and any edits made to the displayed rows.</p>
 <div class="table"><table><thead><tr><th>Title</th><th>Author</th><th>Category</th><th>Language</th><th>ISBN</th><th>Quality</th></tr></thead><tbody id="rows"></tbody></table></div>
 </section>
-<footer>ReadMalawi · The generated catalogue contains metadata only. No PDF files are uploaded or made public, and no payments are collected.</footer>
-</main><script type="module" src="bulk-import.js"></script></body></html>
+<section class="panel" id="private-upload" aria-labelledby="bulk-upload-title">
+<h2 id="bulk-upload-title">Step 2 · Private bulk upload</h2>
+<p class="lead">Already selected your PDF folder above? This uses that same selection. You may analyse the files first for better titles, or upload without scanning (filenames will become draft titles). Every submission stays <strong>private and pending</strong> until a librarian checks publication rights.</p>
+<div class="notice"><strong>For authorised collections only.</strong> Bulk uploading does not grant ReadMalawi distribution rights. Do not select confidential company documents, pirated books, personal records, or materials you do not have permission to submit. The librarian must separately verify rights before any publication. File limit: 50 MB each. Do not close this tab while a batch is running.</div>
+<div class="status" id="bulk-auth-status" role="status">Checking librarian sign-in…</div>
+<div class="actions" style="margin-bottom:14px">
+<a class="btn secondary" href="../library.html#member-access">Sign in on ReadMalawi</a>
+<button class="btn secondary" type="button" id="bulk-refresh-auth">Refresh sign-in status</button>
+</div>
+<label for="bulk-agree" style="font-weight:500"><input type="checkbox" id="bulk-agree" style="margin-right:8px">I understand these files will be transferred to private ReadMalawi storage for librarian review, and I will not approve publication without verified permission.</label>
+<div class="actions" style="margin-top:15px">
+<button class="btn" type="button" id="bulk-upload-start" disabled>Upload selected PDFs privately</button>
+<button class="btn secondary" type="button" id="bulk-upload-stop" disabled>Pause after current file</button>
+<button class="btn secondary" type="button" id="bulk-upload-report" disabled>Download batch report CSV</button>
+</div>
+<progress id="bulk-upload-progress" class="progress" max="1" value="0" hidden style="margin-top:15px"></progress>
+<div class="status" id="bulk-upload-status" role="status" aria-live="polite">Sign in with an authorised librarian account, choose a folder, tick the confirmation, then begin. Files are uploaded sequentially to limit memory use. Re-select the same folder to resume after an interruption; content hashes prevent duplicate batch submissions.</div>
+<p class="fine">The browser must remain open during transfer. A PDF already in the private storage may be skipped or its missing catalogue entry recovered. This first bulk upload version handles PDFs; EPUB and audiobook bulk import will follow separate validation.</p>
+</section>
+<footer>ReadMalawi · Local scanning and private bulk upload are separate, voluntary actions. Upload does not mean public publication, and no payments are collected.</footer>
+</main><script type="module" src="bulk-import.js?v=20261011-private-bulk"></script><script type="module" src="bulk-private-upload.js?v=20261011-private-bulk"></script></body></html>
