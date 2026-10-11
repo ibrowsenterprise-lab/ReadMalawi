@@ -123,9 +123,19 @@ async function handleOne(item){
 }
 async function upload(){
  if(running||!authorised||!user||!client||!$("bulk-agree").checked)return;
- const queue=files().filter(item=>!completed.has(identities(item.file)));
+ const pending=files().filter(item=>!completed.has(identities(item.file)));
+ const queue=[];
+ let plannedBytes=0;
+ // Explicit per-click limit avoids accidental uploads of an entire multi-GB archive.
+ for(const item of pending){
+  if(queue.length>=25)break;
+  if(queue.length && plannedBytes+item.file.size>250*1024*1024)break;
+  queue.push(item);plannedBytes+=item.file.size;
+ }
  if(!queue.length){say("There are no unprocessed selected PDFs.");return}
- if(!confirm("Send "+queue.length+" selected PDF(s) to PRIVATE ReadMalawi storage for librarian review? No files will become public through this upload."))return;
+ if(!confirm("Send this batch of "+queue.length+" of "+pending.length+
+    " remaining PDF(s) ("+(plannedBytes/1048576).toFixed(1)+
+    " MB) to PRIVATE ReadMalawi storage for librarian review? No files will be published automatically."))return;
  running=true;pauseRequested=false;refreshButtons();
  const progress=$("bulk-upload-progress");progress.hidden=false;progress.max=queue.length;progress.value=0;
  let saved=0,duplicates=0,failed=0;
@@ -139,14 +149,18 @@ async function upload(){
   report.push({file_name:item.file.name,file_size_bytes:item.file.size,result:result.result,details:result.details,book_id:result.book_id||""});
   if(result.result==="pending"){saved++;completed.add(identities(item.file))}
   else if(result.result==="duplicate"){duplicates++;completed.add(identities(item.file))}
-  else failed++;
+  else {
+   failed++;
+   // Clearly invalid selections should not block the next 25-file chunk forever.
+   if(result.details==="Unsupported, empty or over 50 MB")completed.add(identities(item.file));
+  }
   progress.value=i+1;
   refreshButtons();
   await new Promise(resolve=>setTimeout(resolve,0));
  }
  running=false;refreshButtons();
  const unfinished=files().filter(item=>!completed.has(identities(item.file))).length;
- say((pauseRequested?"Paused safely. ":"Batch attempt finished. ")+
+ say((pauseRequested?"Paused safely. ":"Private batch finished. ")+
   saved+" newly pending, "+duplicates+" previously submitted, "+failed+" failed. "+
   unfinished+" selected file(s) can be retried. "+
   "Download the batch report. Never approve files without confirming distribution rights.");
