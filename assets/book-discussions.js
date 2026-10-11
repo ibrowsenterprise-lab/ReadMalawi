@@ -1,7 +1,8 @@
 const $=id=>document.getElementById(id);
 const cfg=window.READMALAWI_CONFIG||{},params=new URLSearchParams(location.search);
 const key=params.get("book")||"",title=(params.get("title")||"").trim().slice(0,240),author=(params.get("author")||"").trim().slice(0,180);
-const supported=/^(?:readmalawi:bench|member:[a-f0-9-]{36})$/.test(key) && title.length>=2;
+// Original story IDs must match the published library.js entries.
+const supported=/^(?:readmalawi:(?:bench|seedjar|rainclub|cleanstream|librarybag|marketpuzzle|rainnotebook|wordbasket|secretcode|missingpencil)|member:[a-f0-9-]{36})$/.test(key) && title.length>=2;
 let client=null,user=null,replyTo=null,offset=0,seen=[],loading=false;
 $("book-title").textContent=title||"Book discussion";
 $("book-author").textContent=author?"By "+author:"ReadMalawi Book Club";
