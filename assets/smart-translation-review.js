@@ -1,5 +1,6 @@
 /* ReadMalawi private browser-side translation QA, no draft uploads. */
 "use strict";
+import { getSupabaseModule } from "./supabase-loader.js";
 const $=id=>document.getElementById(id),cfg=window.READMALAWI_CONFIG||{};
 const W="http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 const unique=a=>[...new Set(a)];
@@ -10,17 +11,14 @@ const note=(id,message)=>{$(id).textContent=message};
 async function secure(){
   if(!cfg.supabaseUrl||!(cfg.supabasePublishableKey||cfg.supabaseAnonKey)){note("auth-status","Library configuration unavailable.");return;}
   try{
-    const mod=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
+    const mod=await getSupabaseModule();
     db=mod.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey||cfg.supabaseAnonKey);
     const auth=await db.auth.getUser(),user=auth.data?.user;
-    if(!user){note("auth-status","You are not signed in. Tap the green Sign in to ReadMalawi button below. After signing in, return here to unlock Step 2.");return}
+    if(!user){note("auth-status","Local Word checking is ready. Sign in only if you want access to the optional paid AI meaning check.");return}
     const {data,error}=await db.from("readmalawi_admins").select("user_id").eq("user_id",user.id).maybeSingle();
-    if(error||!data){note("auth-status","You are signed in, but this account has not been given librarian access. Contact the ReadMalawi administrator before using the Word review tool.");return}
+    if(error||!data){note("auth-status","Local checks are ready. This account is not authorised for optional paid AI or final sign-off.");return}
     authorised=true;note("auth-status","Librarian access confirmed: "+user.email+". Step 2 is now unlocked.");
-    $("word-files").disabled=false;
-    $("scan").disabled=false;
-    $("unlock-message").classList.add("hide");
-    await Promise.all([loadGlossary(),checkAI()]);
+    await checkAI();
   }catch(err){note("auth-status","Unable to verify librarian access: "+err.message)}
 }
 async function loadGlossary(){
@@ -171,7 +169,6 @@ function renderPairs(){
   }
 }
 async function scan(){
-  if(!authorised)return;
   const files=Array.from($("word-files").files||[]);
   if(!files.length){note("scan-status","Select the Word review file(s) first.");return}
   if(files.length>10){note("scan-status","Please select no more than ten Word files.");return}
@@ -212,7 +209,7 @@ function saveReport(){
 }
 async function checkAI(){
   const state=$("ai-status"),button=$("ai-check");button.disabled=true;aiEnabled=false;
-  if(!authorised)return;
+  if(!authorised){state.textContent="Optional paid AI checking requires an authorised librarian sign-in. Free Word checks are ready now.";return;}
   state.textContent="Checking AI availability…";
   try{
     const response=await fetch(cfg.supabaseUrl+"/functions/v1/readmalawi-translation-ai",{method:"GET",cache:"no-store"});
@@ -263,4 +260,5 @@ $("filter").addEventListener("change",renderPairs);
 $("pair-search").addEventListener("input",renderPairs);
 $("dictionary-search").addEventListener("input",renderGlossary);
 $("export").addEventListener("click",saveReport);
+loadGlossary();
 secure();
