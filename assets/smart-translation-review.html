@@ -56,15 +56,16 @@ input[type=search],select{min-height:44px;padding:9px 12px;border:1px solid #bdd
 <div class="warning"><strong>Drafts stay private.</strong> The Word files are opened and examined inside your browser. This tool does not upload them or publish translations. Automated checks are clues, not proof that a sentence is correct.</div>
 <section class="panel" aria-label="Authorisation">
 <h2>1. Sign in as a ReadMalawi librarian</h2>
-<p id="auth-status" role="status">Checking secure access…</p>
-<a href="../library.html#contribute">Sign in to ReadMalawi</a>
+<p id="auth-status" role="status">Checking whether you are signed in as a ReadMalawi librarian…</p>
+<a href="../library.html#member-access" style="display:inline-block;background:#13674e;color:white;padding:12px 18px;border-radius:11px;font-weight:750;text-decoration:none">Sign in to ReadMalawi →</a> <a href="#open-word" style="margin-left:10px">Find Word review section ↓</a>
 </section>
-<div id="workspace" class="hide">
-<section class="panel" aria-labelledby="scan-title">
+<div id="workspace">
+<section class="panel" id="open-word" aria-labelledby="scan-title" style="scroll-margin-top:18px">
 <h2 id="scan-title">2. Open your Word review pack</h2>
+<div class="warning" id="unlock-message" role="status" style="margin:12px 0"><strong>🔒 Sign in required.</strong> This section is visible, but the Word file button unlocks only after ReadMalawi confirms librarian access. <a href="../library.html#member-access">Sign in to ReadMalawi here</a>, then return to this page.</div>
 <p class="small muted">Choose one or both existing .docx review documents. English and Chichewa columns will be matched automatically. Nothing is uploaded.</p>
-<input id="word-files" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple aria-label="Select Chichewa Word draft documents">
-<div class="row" style="margin-top:12px"><button id="scan">Find possible problems</button><button id="export" class="secondary" disabled>Download review report</button></div>
+<input id="word-files" type="file" disabled accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple aria-label="Select Chichewa Word draft documents">
+<div class="row" style="margin-top:12px"><button id="scan" disabled>Find possible problems</button><button id="export" class="secondary" disabled>Download review report</button></div>
 <p class="small" id="scan-status" role="status">Ready to review.</p>
 <div class="grid hide" id="counts" aria-live="polite">
 <div class="number"><strong id="pair-count">0</strong><small>English–Chichewa pairs</small></div>
