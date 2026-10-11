@@ -1,3 +1,4 @@
+import { getSupabaseModule } from "./assets/supabase-loader.js";
 const $=s=>document.querySelector(s);
 const sampleBook={title:"The Book on the Bench",author:"ReadMalawi",description:"An original short practice story about sharing a book.",category:"Children",language:"English",kind:"book",source:"original",discussion_key:"readmalawi:bench",url:"assets/the-book-on-the-bench.html",rank:100};
 const originalStories=[
@@ -135,19 +136,38 @@ function loadCatalogue(){
  filterAndRender();
 }
 async function backend(){
- if(!cfg.supabaseUrl||!(cfg.supabasePublishableKey||cfg.supabaseAnonKey))return;
- try{
- const mod=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
- app.client=mod.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey||cfg.supabaseAnonKey);
- app.backend=true;
- $("#service-message").className="notice";
- $("#service-message").textContent="Community submissions are enabled. Submitted files remain private until administrator approval.";
- $("#login-btn").disabled=false;
- const session=await app.client.auth.getSession();
- updateUser(session.data?.session?.user||null);
- app.client.auth.onAuthStateChange((_evt,s)=>{updateUser(s?.user||null)});
- await Promise.all([loadApproved(),loadRequests()]);
- }catch(err){$("#service-message").textContent="Storage could not be connected. Uploads remain paused. "+err.message}
+  const state=$("#service-message"),signIn=$("#login-btn"),userStatus=$("#user-status");
+  if(!cfg.supabaseUrl||!(cfg.supabasePublishableKey||cfg.supabaseAnonKey)){
+    state.textContent="Sign-in settings are unavailable. Please contact the ReadMalawi librarian.";
+    userStatus.textContent="Secure sign-in is not ready.";
+    return;
+  }
+  state.textContent="Connecting secure email sign-in…";
+  try{
+    const mod=await getSupabaseModule();
+    app.client=mod.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey||cfg.supabaseAnonKey);
+    app.backend=true;
+    state.className="notice";
+    state.textContent="Secure sign-in is ready. Enter your email and tap Email sign-in.";
+    signIn.disabled=false;
+    userStatus.textContent="Checking if you are already signed in…";
+    app.client.auth.onAuthStateChange((_event,session)=>{updateUser(session?.user||null)});
+    // Do not leave the email button blocked if restoring an old session is slow.
+    try{
+      const session=await Promise.race([
+        app.client.auth.getSession(),
+        new Promise((_,reject)=>setTimeout(()=>reject(new Error("Session check timed out")),9000))
+      ]);
+      updateUser(session.data?.session?.user||null);
+    }catch(e){
+      userStatus.textContent="You can still enter your email and request a secure sign-in link.";
+    }
+    await Promise.allSettled([loadApproved(),loadRequests()]);
+  }catch(err){
+    state.className="notice";
+    state.textContent="Sign-in connection unavailable: "+err.message;
+    userStatus.textContent="Please refresh this page to try again. If it persists, try Chrome without browser-blocking extensions.";
+  }
 }
 function updateUser(user){
  app.user=user;
