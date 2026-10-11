@@ -1,5 +1,5 @@
 // ReadMalawi bulk PDF intake. Opt-in only; never publish from this page.
-import { getBulkUploadCandidates } from "./bulk-import.js";
+import { getBulkUploadCandidates } from "./bulk-import.js?v=20261011-private-bulk";
 import { getSupabaseModule } from "./supabase-loader.js";
 
 const $=id=>document.getElementById(id);
