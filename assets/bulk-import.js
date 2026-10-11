@@ -89,4 +89,14 @@ $("download").addEventListener("click",()=>{
  const csv="\uFEFF"+fields.join(",")+"\r\n"+draft.map(r=>fields.map(k=>cell(r[k])).join(",")).join("\r\n");
  const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));const a=document.createElement("a");a.href=url;a.download="readmalawi-books-draft-"+new Date().toISOString().slice(0,10)+".csv";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
 });
+
+function bulkFileIdentity(file){
+ return [file.webkitRelativePath||file.name,file.size,file.lastModified].join(":");
+}
+export function getBulkUploadCandidates(){
+ const list=selected();
+ const scanned=new Map(work.map((file,i)=>[bulkFileIdentity(file),draft[i]]));
+ return list.map(file=>({file,meta:scanned.get(bulkFileIdentity(file))||null}));
+}
+
 summary();
