@@ -21,7 +21,7 @@ input:focus-visible,button:focus-visible,textarea:focus-visible,a:focus-visible{
 .comment p{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0}.comment small{color:var(--muted)}
 .comment .reply{margin:12px 0 2px 17px;border-left:3px solid #91c2a9;background:#f4faf5;padding:12px;border-radius:0 9px 9px 0}
 .comment .row{gap:8px}.text-button{border:0;background:none;color:#16674c;font:inherit;cursor:pointer;text-decoration:underline;font-size:.88rem;padding:5px}
-#discussion-list:empty:after{content:"No approved comments yet. Be the first to share a thought!";color:var(--muted)}
+[hidden]{display:none!important} /* Preserve hidden state on flex rows. */
 .form-label{display:block;font-weight:750;margin:12px 0 7px}.small{font-size:.86rem}footer{text-align:center;color:var(--muted);padding:20px}
 @media(max-width:530px){.panel{padding:16px}.comment{padding:13px}.row.login{align-items:stretch}.login button{width:100%}}
 </style></head><body>
