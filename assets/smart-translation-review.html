@@ -85,11 +85,15 @@ input[type=search],select{min-height:44px;padding:9px 12px;border:1px solid #bdd
 <div class="dict" id="dictionary-results"></div>
 <p class="small muted">Reference suggestions only. Confirm each term's meaning, grammar and appropriate wording with a fluent speaker. ReadMalawi has not copied the copyrighted Oxford Chichewa Dictionary.</p>
 </section>
-<section class="panel">
-<h2>How AI will fit in</h2>
-<p>An optional secure AI check can later compare meaning, provide a back-translation and rank sentences by risk. It must run behind a private server key with usage limits, not in the public webpage. We will enable paid AI requests only after a budget and privacy decision.</p>
-<p class="small muted">Even then, AI cannot certify Chichewa fluency or final publication rights. Human sign-off is still required, but it can focus on the flagged passages and a sample of the rest.</p>
-<a href="translation-review.html">Open final approval records →</a>
+<section class="panel" id="ai-panel">
+<h2>4. Optional AI meaning review</h2>
+<p>When approved and funded, AI can check up to three flagged passages per request for possible changes in meaning, missing ideas and grammar issues. It also provides a suggested correction and an English back-translation.</p>
+<p id="ai-status" class="small muted" role="status">Checking whether private AI review is configured…</p>
+<div class="warning small"><strong>Privacy and cost:</strong> This button sends selected English and Chichewa text to an AI provider through ReadMalawi's protected server. It may incur API charges. Nothing is sent unless the librarian explicitly confirms. Never use private customer documents here. AI suggestions do not approve or publish translations.</div>
+<div class="row" style="margin-top:12px"><button id="ai-check" type="button" disabled>AI-check up to 3 flagged passages</button><button type="button" id="ai-refresh" class="secondary">Check AI availability</button></div>
+<div class="list" id="ai-results" aria-live="polite"></div>
+<p class="small muted">Maximum 12 AI review requests per librarian per UTC day, 40 across the site. Disabled until a separate private translation-AI API key is configured and funding is approved.</p>
+<a href="translation-review.html">Open final human approval records →</a>
 </section>
 </div>
 </main>
