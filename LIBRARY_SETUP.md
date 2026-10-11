@@ -134,3 +134,12 @@ on conflict (user_id) do nothing;
 - Production Supabase migration `20261011124059_enable_book_club_discussions_for_ten_original_stories` was **applied and verified** on 11 October 2026. Its reference SQL is in `supabase/migrations/20261011124059_enable_book_club_discussions_for_ten_original_stories.sql`. **Do not manually rerun this migration on the live project.**
 - Fourteen read-only acceptance cases passed, including the ten approved original IDs and rejection of unknown IDs. The existing sign-in, pending review, per-book reply, link-spam, and rate-limit checks remain in the trigger.
 - **End-to-end testing remains required:** signed-in reader posts a real comment and confirms `sent for review`; librarian verifies `pending` then approves it; a signed-out reader must see only the approved comment. Do not claim this posting/approval flow has passed until actually tested.
+
+
+## Private Chichewa Translation Review Desk (11 October 2026)
+- The librarian-only review page is `assets/translation-review.html`, available from `assets/moderate.html` after signing into a ReadMalawi administrator account.
+- The private Supabase table `public.readmalawi_translation_reviews` tracks the ten original stories. It began with **10 needing review, 0 approved**.
+- Database policies only allow authenticated ReadMalawi admins to read/update review records; the public/anonymous role receives no permissions. A database CHECK constraint prevents recording `approved` without a named reviewer, semantic check, language check, question check, corrected Word copy received, and review date.
+- English story pages stay available; **Chichewa draft text is NOT hosted or published by this page**. Drafts are kept in two editable Word review packs delivered privately to the founder, not in GitHub static website assets.
+- Site approval is a private sign-off record, **not publication**. Publishing any Chichewa text requires a separate editorial action after reviewing the final corrected Word copy.
+- The migration was already applied on production and is recorded for audit at `supabase/migrations/20261011154000_private_chichewa_translation_reviews.sql`. **Do not reapply it manually.**
