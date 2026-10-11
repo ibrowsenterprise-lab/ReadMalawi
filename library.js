@@ -1,6 +1,12 @@
 const $=s=>document.querySelector(s);
 const sampleBook={title:"The Book on the Bench",author:"ReadMalawi",description:"An original short practice story about sharing a book.",category:"Children",language:"English",kind:"book",source:"original",discussion_key:"readmalawi:bench",url:"assets/the-book-on-the-bench.html",rank:100};
-const app={kind:"all",local:[sampleBook],remote:[],client:null,user:null,requests:[],backend:false};
+const originalStories=[
+  sampleBook,
+  {title:"The Seed Jar",author:"ReadMalawi",description:"Memory plants seeds and learns why patience matters.",category:"Children",language:"English",kind:"book",source:"original",discussion_key:"readmalawi:seedjar",url:"assets/the-seed-jar.html",rank:99},
+  {title:"The Rainy Day Book Club",author:"ReadMalawi",description:"Four friends start a book club and make everyone feel welcome.",category:"Children",language:"English",kind:"book",source:"original",discussion_key:"readmalawi:rainclub",url:"assets/the-rainy-day-book-club.html",rank:98},
+  {title:"Thoko and the Clean Stream",author:"ReadMalawi",description:"Thoko finds a safe way to help keep her community clean.",category:"Education",language:"English",kind:"book",source:"original",discussion_key:"readmalawi:cleanstream",url:"assets/thoko-and-the-clean-stream.html",rank:97}
+];
+const app={kind:"all",local:originalStories.slice(),remote:[],client:null,user:null,requests:[],backend:false};
 const cfg=window.READMALAWI_CONFIG||{};
 const types={book:"E-book",audio:"Audiobook"};
 const show=(id,text,good)=>{const el=$(id);el.textContent=text;el.className="status "+(good?"ok":"err")};
@@ -166,7 +172,7 @@ async function loadApproved(){
  if(!app.client)return;
  const {data,error}=await app.client.from("library_books").select("id,title,author,description,media_type,category,language,file_path,access_mode").eq("status","approved").order("submitted_at",{ascending:false}).limit(100);
  if(error){$("#fetch-message").textContent="Approved member catalogue unavailable: "+error.message;return}
- app.local=[sampleBook,...(data||[]).map(b=>({...b,kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",discussion_key:"member:"+b.id,rank:2}))];filterAndRender();
+ app.local=[...originalStories,...(data||[]).map(b=>({...b,kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",discussion_key:"member:"+b.id,rank:2}))];filterAndRender();
 }
 let uploadRunning=false;
 const uploadExtensions={pdf:["ebook","application/pdf"],epub:["ebook","application/epub+zip"],mp3:["audiobook","audio/mpeg"],m4a:["audiobook","audio/mp4"]};
