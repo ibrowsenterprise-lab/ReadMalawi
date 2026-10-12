@@ -13,7 +13,46 @@ const originalStories=[
   {"title":"The Message That Asked for a Code","author":"ReadMalawi","description":"Sella learns about suspicious messages and account codes.","category":"Education","language":"English","kind":"book","source":"original","discussion_key":"readmalawi:secretcode","url":"assets/the-message-that-asked-for-a-code.html","rank":92},
   {"title":"The Missing Pencil","author":"ReadMalawi","description":"A misplaced pencil teaches a class not to jump to conclusions.","category":"Children","language":"English","kind":"book","source":"original","discussion_key":"readmalawi:missingpencil","url":"assets/the-missing-pencil.html","rank":91}
 ];
-const app={kind:"all",local:originalStories.slice(),remote:[],client:null,user:null,requests:[],backend:false};
+
+/*
+ * Curated original-provider links: these entries are NOT uploaded or copied to ReadMalawi.
+ * Catalogue metadata is editorial; it does not certify redistribution rights in Malawi.
+ * Keep source names and specific editions distinct from privately submitted PDFs.
+ */
+const officialSourceBooks=[
+ {title:"Getting Motivated to Change",author:"N. G. Bartholomew, D. F. Dansereau & D. D. Simpson",
+  description:"University training material; check its terms for any reuse.",provider:"Texas Christian University",
+  category:"Education",language:"English",url:"https://ibr.tcu.edu/manuals/description-getting-motivated-to-change/"},
+ {title:"PM² Project Management Methodology Guide",author:"European Commission",
+  description:"Official project-management guidance; edition-specific reuse terms apply.",provider:"European Commission",
+  category:"Education",language:"English",url:"https://pm2.europa.eu/pm2-methodologies/pm2-project-management_en"},
+ {title:"Project Management from Simple to Complex",author:"Russel Darnall & John Preston",
+  description:"Open Textbook Library edition (CC BY-NC-SA). Read licensing terms on its original page.",provider:"Open Textbook Library",
+  category:"Education",language:"English",url:"https://open.umn.edu/opentextbooks/textbooks/project-management-from-simple-to-complex"},
+ {title:"Project Management — 2nd Edition",author:"Adrienne Watt",
+  description:"BCcampus open textbook. Specific chapters and images may have additional terms.",provider:"BCcampus Open Education",
+  category:"Education",language:"English",url:"https://opentextbc.ca/projectmanagement/"},
+ {title:"The Critique of Pure Reason",author:"Immanuel Kant · J. M. D. Meiklejohn translation",
+  description:"Historical translated edition. Copyright status depends on jurisdiction.",provider:"Project Gutenberg",
+  category:"Other",language:"English",url:"https://www.gutenberg.org/ebooks/4280"},
+ {title:"The Light That Failed",author:"Rudyard Kipling",
+  description:"Read the Project Gutenberg historical edition directly.",provider:"Project Gutenberg",
+  category:"Fiction",language:"English",url:"https://www.gutenberg.org/ebooks/2876"},
+ {title:"Moby-Dick; or, The Whale",author:"Herman Melville",
+  description:"Historical American edition offered by Project Gutenberg.",provider:"Project Gutenberg",
+  category:"Fiction",language:"English",url:"https://www.gutenberg.org/ebooks/15"},
+ {title:"The Man Who Knew Too Much",author:"G. K. Chesterton",
+  description:"Original-source historical collection of stories.",provider:"Project Gutenberg",
+  category:"Fiction",language:"English",url:"https://www.gutenberg.org/ebooks/1720"},
+ {title:"The Art of War",author:"Sun Tzu · Lionel Giles translation",
+  description:"Historical Lionel Giles translation, not the commercial 2011 edition.",provider:"Project Gutenberg",
+  category:"History",language:"English",url:"https://www.gutenberg.org/ebooks/17405"},
+ {title:"The Almanack of Naval Ravikant",author:"Eric Jorgenson",
+  description:"The editor offers free reading on the official website; this is not permission to rehost a PDF.",provider:"Official editor website",
+  category:"Education",language:"English",url:"https://www.navalmanack.com/"}
+].map((book,index)=>({...book,kind:"book",source:"official",rank:80-index}));
+
+const app={kind:"all",local:originalStories.concat(officialSourceBooks),remote:[],client:null,user:null,requests:[],backend:false};
 const cfg=window.READMALAWI_CONFIG||{};
 const types={book:"E-book",audio:"Audiobook"};
 const show=(id,text,good)=>{const el=$(id);el.textContent=text;el.className="status "+(good?"ok":"err")};
@@ -46,8 +85,16 @@ const entry=data=>{
  const author=document.createElement("p");author.className="book-author";
  author.textContent=data.author&&data.author!=="Unknown"&&data.author!=="Unknown author"?data.author:"Author not listed";
  const meta=document.createElement("p");meta.className="book-label";
- meta.textContent=[data.language&&data.language!=="Unconfirmed"?data.language:null,data.category].filter(Boolean).join(" · ")||"Book";
+ meta.textContent=[data.language&&data.language!=="Unconfirmed"?data.language:null,data.category,
+  data.source==="official"?"Official source · "+data.provider:data.source==="original"?"ReadMalawi original":null]
+  .filter(Boolean).join(" · ")||"Book";
  details.append(heading,author,meta);
+ if(data.source==="official"){
+   const desc=document.createElement("p");
+   desc.className="small muted";desc.textContent=data.description||"Read on the original provider's website.";
+   desc.style.cssText="margin:4px 0 7px;line-height:1.45";
+   details.append(desc);
+ }
  const bookKey=data.discussion_key;
  if(bookKey){
    const talk=document.createElement("a");
@@ -59,10 +106,13 @@ const entry=data=>{
    details.append(talk);
  }
  const link=document.createElement("a");link.className="book-action";
- const isHosted=data.source==="member",isAudio=data.kind==="audio";
- link.textContent=isHosted?(isAudio?"Listen ›":"Read ›"):"Read ›";
- link.setAttribute("aria-label",(isAudio?"Listen on ReadMalawi: ":"Read on ReadMalawi: ")+(data.title||"Untitled book"));
- if(data.source==="original"){
+ const isHosted=data.source==="member",isAudio=data.kind==="audio",isOfficial=data.source==="official";
+ link.textContent=isOfficial?"Read on source site ↗":isHosted?(isAudio?"Listen ›":"Read ›"):"Read ›";
+ link.setAttribute("aria-label",(isOfficial?"Open original source for: ":isAudio?"Listen on ReadMalawi: ":"Read on ReadMalawi: ")+(data.title||"Untitled book"));
+ if(isOfficial){
+   link.href=secureURL(data.url)||"assets/official-reading.html";
+   link.target="_blank";link.rel="noopener noreferrer";
+ }else if(data.source==="original"){
    link.href=data.url;
  }else if(isHosted){
    link.href="#";
@@ -132,7 +182,7 @@ for(const id of ["search","category","language","sort"]){$("#"+id).addEventListe
 document.querySelectorAll("[data-kind]").forEach(btn=>btn.addEventListener("click",()=>{app.kind=btn.dataset.kind;document.querySelectorAll("[data-kind]").forEach(b=>b.setAttribute("aria-pressed",String(b===btn)));filterAndRender()}));
 const fetchJSON=async (url,timeout=9500)=>{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),timeout);try{const r=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json"}});if(!r.ok)throw Error(String(r.status));return await r.json()}finally{clearTimeout(timer)}};
 function loadCatalogue(){
- $("#fetch-message").textContent="Only books available to read here on ReadMalawi are listed. New submissions appear after librarian approval and permission checks.";
+ $("#fetch-message").textContent="ReadMalawi originals open here; official-source books open at their publisher or archive. Private submissions appear only after verified rights and librarian approval.";
  filterAndRender();
 }
 async function backend(){
@@ -236,7 +286,7 @@ async function loadApproved(){
  if(!app.client)return;
  const {data,error}=await app.client.from("library_books").select("id,title,author,description,media_type,category,language,file_path,access_mode").eq("status","approved").order("submitted_at",{ascending:false}).limit(100);
  if(error){$("#fetch-message").textContent="Approved member catalogue unavailable: "+error.message;return}
- app.local=[...originalStories,...(data||[]).map(b=>({...b,kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",discussion_key:"member:"+b.id,rank:2}))];filterAndRender();
+ app.local=[...originalStories,...officialSourceBooks,...(data||[]).map(b=>({...b,kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",discussion_key:"member:"+b.id,rank:2}))];filterAndRender();
 }
 let uploadRunning=false;
 const uploadExtensions={pdf:["ebook","application/pdf"],epub:["ebook","application/epub+zip"],mp3:["audiobook","audio/mpeg"],m4a:["audiobook","audio/mp4"]};
