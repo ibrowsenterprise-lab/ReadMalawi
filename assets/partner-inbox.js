@@ -1,6 +1,8 @@
 const $=id=>document.getElementById(id.startsWith("#")?id.slice(1):id);
 const cfg=window.READMALAWI_CONFIG||{};
 const statuses=["new","contacted","in_discussion","closed"];
+const isTestRecord=x=>(x.message||"").startsWith("[READMALAWI TEST]")||(x.admin_notes||"").includes("[READMALAWI TEST]");
+const siteIsTesting=cfg.sitePhase!=="production";
 let client=null,user=null,allEnquiries=[];
 const h=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e};
 const status=message=>$("#status").textContent=message;
@@ -14,7 +16,7 @@ async function init(){
  const permission=await client.from("readmalawi_admins").select("user_id").eq("user_id",user.id).maybeSingle();
  if(permission.error||!permission.data){status("Only authorised ReadMalawi librarians can access partnership enquiries.");return}
  status("Authorised librarian: "+user.email);
- $("#refresh").disabled=false;$("#interest-filter").disabled=false;$("#status-filter").disabled=false;await load();
+ $("#refresh").disabled=false;$("#interest-filter").disabled=false;$("#status-filter").disabled=false;$("#record-filter").disabled=false;await load();
  }catch(e){status("Unable to open protected inbox: "+e.message)}
 }
 async function load(){
@@ -27,7 +29,8 @@ async function load(){
 function render(){
  const byInterest=$("#interest-filter").value;
  const byStatus=$("#status-filter").value;
- const filtered=allEnquiries.filter(x=>(byInterest==="all"||(byInterest==="other"?!["education_services","ai_services","author_services","sponsor"].includes(x.interest):x.interest===byInterest))&&(byStatus==="all"||x.status===byStatus));
+ const byRecord=$("#record-filter").value;
+ const filtered=allEnquiries.filter(x=>(byInterest==="all"||(byInterest==="other"?!["education_services","ai_services","author_services","sponsor"].includes(x.interest):x.interest===byInterest))&&(byStatus==="all"||x.status===byStatus)&&(byRecord==="all"||(byRecord==="test"?isTestRecord(x):!isTestRecord(x))));
  $("#inbox").replaceChildren();
  $("#filter-summary").textContent=filtered.length+" of "+allEnquiries.length+" private enquiries shown";
  status("Private enquiries: "+allEnquiries.length+" loaded · newest first");
@@ -37,8 +40,11 @@ function render(){
 function card(x){
  const root=h("article","item");
  root.append(h("h2","",x.contact_name+" · "+x.interest.replaceAll("_"," ")));
+ if(siteIsTesting||isTestRecord(x))root.append(h("p","muted","TEST RECORD · Do not send real emails, quotes or invoices."));
  root.append(h("p","muted",[x.organisation,x.country,new Date(x.created_at).toLocaleDateString()].filter(Boolean).join(" · ")));
- const e=h("p");e.textContent="Email: ";const a=h("a","",x.contact_email);a.href="mailto:"+encodeURIComponent(x.contact_email)+"?subject="+encodeURIComponent("ReadMalawi partnership enquiry");e.append(a);root.append(e);
+ const e=h("p");e.textContent="Email: ";const a=h(siteIsTesting||isTestRecord(x)?"span":"a","",x.contact_email);
+ if(a.tagName==="A")a.href="mailto:"+encodeURIComponent(x.contact_email)+"?subject="+encodeURIComponent("ReadMalawi partnership enquiry");
+ e.append(a);root.append(e);
  root.append(h("p","message",x.message));
  const state=h("select");
  for(const value of statuses){const option=document.createElement("option");option.value=value;option.textContent=value.replaceAll("_"," ");state.append(option)}state.value=x.status;
@@ -56,4 +62,5 @@ function card(x){
 $("#refresh").addEventListener("click",load);
 $("#interest-filter").addEventListener("change",render);
 $("#status-filter").addEventListener("change",render);
+$("#record-filter").addEventListener("change",render);
 init();
