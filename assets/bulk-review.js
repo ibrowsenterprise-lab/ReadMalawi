@@ -94,6 +94,7 @@ async function initialize(){
   admin=user;
   $("bulk-review-auth").textContent="Authorised librarian · "+user.email+
     " · Publishing creates a private audit record of each approval.";
+  $("bulk-review-panel").hidden=false;
   $("bulk-review-controls").hidden=false;
   await load();
  }catch(e){$("bulk-review-auth").textContent="Could not verify librarian sign-in: "+e.message}
