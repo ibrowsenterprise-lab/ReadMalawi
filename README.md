@@ -51,3 +51,15 @@ Languages other than English must not be labelled as translated or published unt
 - Private uploads: files awaiting verification remain private. Uploaded-file publication requires rights evidence and administrator approval; never assume that a free source download gives redistribution permission.
 - Optional learning tools: Smart Study Sprint works locally in browsers, while AI Reading Coach requires secure backend activation. Education and language-service enquiries may be submitted, but no checkout, paid AI access, charitable collection, or price guarantees are currently enabled.
 - Current collection metadata audits and legacy bulk-upload experiments do **not** equal rights-clearance for 1,793 PDF reading candidates.
+
+## Learning-programme enquiry workflow (12 October 2026)
+
+ReadMalawi's sustainability model is **free reading + optional contracted educational services**, not a paywall on public-domain or openly linked books.
+
+- New structured service enquiry route: [Request a Learning Programme](assets/programme-enquiry.html). It covers school reading/study-skills pilots, responsible AI workshops, and author/publisher or human-reviewed translation services.
+- Visitors provide their intended audience, estimated group size, delivery preference, timeframe, general area, learning goals and contact information. No student identities, private records or payment information should be collected.
+- The form submits through the existing `public.readmalawi_partnership_enquiries` table with a predefined existing service interest and an explicit contact-consent flag. Existing database constraints, rate limiting and administrator-only read/update access continue to apply. No database migration was needed.
+- The [Learning & AI Lab](assets/learning-services.html), [Partnerships](assets/partners.html) and homepage provide direct links. Sponsorship and donation enquiries continue using the general partnership form.
+- The [Private Programme & Partnership Inbox](assets/partner-inbox.html) now filters by service track and follow-up status. Administrators may save notes and record follow-up states; there is no automated acceptance, quote, invoice or email sent.
+- Pricing is **not published or fixed**, and memberships, donations, premium AI access and checkout remain disabled. Commercial programmes require scope confirmation, an appropriate legal arrangement, any necessary participant safeguards, a written proposal and verified payment arrangements before delivery.
+- Acceptance testing is still required in a real reader/admin browser session: check the Render deployment of the newest GitHub commit, submit one explicitly authorised test enquiry, verify it is visible only to a logged-in librarian, update its follow-up status, then confirm it is not public.
