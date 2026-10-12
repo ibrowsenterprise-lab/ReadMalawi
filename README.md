@@ -63,3 +63,7 @@ ReadMalawi's sustainability model is **free reading + optional contracted educat
 - The [Private Programme & Partnership Inbox](assets/partner-inbox.html) now filters by service track and follow-up status. Administrators may save notes and record follow-up states; there is no automated acceptance, quote, invoice or email sent.
 - Pricing is **not published or fixed**, and memberships, donations, premium AI access and checkout remain disabled. Commercial programmes require scope confirmation, an appropriate legal arrangement, any necessary participant safeguards, a written proposal and verified payment arrangements before delivery.
 - Acceptance testing is still required in a real reader/admin browser session: check the Render deployment of the newest GitHub commit, submit one explicitly authorised test enquiry, verify it is visible only to a logged-in librarian, update its follow-up status, then confirm it is not public.
+
+## Current release status — TESTING ONLY
+
+The Render static site is a **publicly accessible development preview**, not an official commercial launch. `readmalawi-config.js` sets `sitePhase: "testing"`; the public reading/learning pages show a test notice and the programme and partner forms record `[READMALAWI TEST]` enquiries. Existing BUA Construction trial is recorded as a test. Customer notifications, bookings, payments and donations remain disabled. **Only the founder may authorise a final production launch.** See [PRELAUNCH_CHECKLIST.md](PRELAUNCH_CHECKLIST.md) for the acceptance tests and release gate.
