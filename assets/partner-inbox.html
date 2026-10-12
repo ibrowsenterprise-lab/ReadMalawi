@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Partnership Inbox | ReadMalawi</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Learning Programmes & Partnerships | ReadMalawi</title>
 <style>
 :root{--dark:#092e2b;--green:#12684e;--line:#d8e5dc;--muted:#536760}
 *{box-sizing:border-box}body{margin:0;background:#f7f9f4;color:#19332a;font:16px/1.5 system-ui,Arial,sans-serif}
@@ -11,14 +11,18 @@ small,.muted{color:var(--muted)}.inbox{display:grid;gap:14px;margin-top:20px}
 .item{padding:19px;background:white;border:1px solid var(--line);border-radius:15px}
 .item h2{font-size:1.07rem;margin:0 0 8px}.item p{margin:6px 0}.item .message{white-space:pre-wrap;overflow-wrap:anywhere;margin:14px 0;background:#f3f7f4;padding:12px;border-radius:9px}
 select,textarea{font:inherit;padding:10px;border:1px solid #b7cebd;border-radius:9px;background:white;color:#19332a}
-textarea{width:100%;min-height:70px;margin:10px 0}.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+textarea{width:100%;min-height:70px;margin:10px 0}.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.filters{display:flex;gap:13px;flex-wrap:wrap;margin-top:20px}.filters label{font-size:.85rem;font-weight:750;display:flex;flex-direction:column;gap:5px}.filters select{min-width:180px}
 </style></head><body>
 <header><a href="../library.html">← ReadMalawi library</a></header><main>
 <p style="color:#866021;font-weight:800;font-size:.74rem;text-transform:uppercase;letter-spacing:.12em">Private administrator area</p>
-<h1>International partnership inbox</h1>
-<p class="muted">Read requests from book donors, foundations, corporate sponsors and prospective impact partners. Contact information stays private. Every enquiry is a discussion, not a payment or funding agreement.</p>
+<h1>Programme & partnership enquiries</h1>
+<p class="muted">Review private requests from schools, AI training clients, authors, book donors, sponsors and other partners. Service requests are discussions only—never confirmed bookings or payment agreements.</p>
 <div class="note">Review any proposed funding arrangement before accepting money, making promises, or issuing receipts. Do not publish contact details or imply an unregistered charitable status.</div>
 <p id="status" role="status">Checking librarian access…</p>
 <button id="refresh" class="btn" disabled>Refresh enquiries</button>
+<div class="filters" aria-label="Filter private enquiries">
+<label>Enquiry type<select id="interest-filter" disabled><option value="all">All types</option><option value="education_services">School programmes</option><option value="ai_services">AI learning services</option><option value="author_services">Author / publisher services</option><option value="sponsor">Sponsorships</option><option value="other">Other partnerships</option></select></label>
+<label>Follow-up status<select id="status-filter" disabled><option value="all">All statuses</option><option value="new">New</option><option value="contacted">Contacted</option><option value="in_discussion">In discussion</option><option value="closed">Closed</option></select></label>
+</div><p id="filter-summary" class="muted" role="status"></p>
 <div id="inbox" class="inbox"></div>
 </main><script src="../readmalawi-config.js"></script><script type="module" src="partner-inbox.js"></script></body></html>
