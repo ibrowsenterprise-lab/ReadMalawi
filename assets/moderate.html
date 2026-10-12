@@ -18,6 +18,16 @@ label.field{font-size:.85rem;font-weight:700;display:flex;flex-direction:column;
 input,select{width:100%;padding:11px;border:1px solid #bdcec2;border-radius:8px;background:white;font:inherit;color:#18352a}
 .check{display:flex;gap:8px;align-items:flex-start;font-size:.9rem}.check input{width:auto;margin:5px 0}
 .status{font-weight:650;padding:8px 0;white-space:pre-wrap}.status.error{color:#a83a36}.status.good{color:#117249}
+[hidden]{display:none!important}
+.bulk-book-list{max-height:430px;overflow:auto;border:1px solid var(--line);border-radius:10px;margin:12px 0}
+.bulk-book-row{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border-bottom:1px solid var(--line);cursor:pointer}
+.bulk-book-row:last-child{border-bottom:0}
+.bulk-book-row:has(input:checked){background:#eaf6ef}
+.bulk-book-row input{width:auto;flex-shrink:0;margin-top:6px;accent-color:var(--green)}
+.bulk-book-info{min-width:0;overflow-wrap:anywhere}
+.bulk-book-info strong,.bulk-book-info small{display:block}
+.bulk-book-info small{margin-top:3px}
+textarea{width:100%;padding:11px;border:1px solid #bdcec2;border-radius:8px;font:inherit;color:#18352a;resize:vertical}
 .hide{display:none!important}@media(max-width:640px){.fields{grid-template-columns:1fr}.panel{padding:16px}}
 </style></head><body><header><a href="../library.html">← Back to ReadMalawi library</a></header><main>
 <p style="text-transform:uppercase;letter-spacing:.12em;color:#83631d;font-weight:800;font-size:.72rem">Private librarian workspace</p>
@@ -26,6 +36,45 @@ input,select{width:100%;padding:11px;border:1px solid #bdcec2;border-radius:8px;
 <div class="notice"><strong>Admins only.</strong> Book donations are not automatically public. Check authorship, licensing, special online-only requirements and suitability for children before publishing. In particular, all Malawian works require explicit moderator approval.</div>
 <section class="panel"><h2>Admin access</h2><p id="auth-status" role="status">Checking your ReadMalawi session…</p>
 <div class="row"><a href="../library.html#contribute" class="btn secondary" style="text-decoration:none">Sign in on library</a><button id="refresh" class="btn" disabled>Refresh reviews</button><a class="btn secondary" href="partner-inbox.html">Partnership enquiries ↗</a><a class="btn secondary" href="book-discussion-review.html">💬 Review book discussions</a><a class="btn secondary" href="translation-review.html">🌍 Chichewa story reviews</a><a class="btn secondary" href="smart-translation-review.html">⚡ Smart language check</a></div></section>
+<section class="panel" id="bulk-review-panel" hidden aria-labelledby="bulk-review-heading">
+<h2 id="bulk-review-heading">Bulk Approve &amp; Publish</h2>
+<p class="hint">Publish many books in one action when <strong>every selected work</strong> has been checked and ReadMalawi has documented permission to make it public. This is a librarian-only action. Publications become publicly readable immediately, while downloads remain disabled.</p>
+<div class="notice"><strong>Important:</strong> One permission basis and one supporting evidence reference must apply to ALL selected books in the batch. If books have different licences or owners, approve separate groups. Test documents and obvious vacancies/company/government notices cannot be published in bulk.</div>
+<p id="bulk-review-auth" class="status" role="status">Verifying librarian access for batch publishing…</p>
+<div id="bulk-review-controls" hidden>
+<div class="row" style="margin:10px 0">
+<button type="button" class="btn secondary" id="bulk-review-refresh">Refresh pending books</button>
+<button type="button" class="btn secondary" id="bulk-review-prev" disabled>← Previous 50</button>
+<button type="button" class="btn secondary" id="bulk-review-next" disabled>Next 50 →</button>
+</div>
+<p class="hint" id="bulk-review-page">Loading pending records…</p>
+<div class="row" style="margin-bottom:10px">
+<button type="button" class="btn secondary" id="bulk-review-select-all" disabled>Select all eligible on this page</button>
+<button type="button" class="btn secondary" id="bulk-review-clear" disabled>Clear selection</button>
+</div>
+<p class="hint" id="bulk-review-selection" role="status">No books selected yet.</p>
+<div id="bulk-review-list" class="bulk-book-list" aria-label="Select pending books for bulk approval"></div>
+<div class="fields" style="margin-top:18px">
+<label class="field" for="bulk-review-rights"><span>Verified rights basis for every selected book</span>
+<select id="bulk-review-rights">
+<option value="">Choose verified rights category…</option>
+<option value="original_creator">Original rights holder authorised publication</option>
+<option value="authorised">Publication permission granted by rights holder</option>
+<option value="open_licence">Open licence checked for permitted sharing</option>
+<option value="public_domain">Public-domain status individually confirmed</option>
+</select></label>
+<label class="field" for="bulk-review-evidence"><span>Licence URL or specific permission evidence applicable to all books</span>
+<textarea id="bulk-review-evidence" rows="3" maxlength="500" placeholder="For example, rights-holder letter/reference and date, or the publisher's applicable licence URL. Do not put private details here." required></textarea></label>
+</div>
+<label class="check" for="bulk-review-confirm"><input type="checkbox" id="bulk-review-confirm"/>
+<span>I have reviewed <strong>each selected book</strong>, checked its suitability and publication/distribution rights, and confirm the evidence above applies to every title.</span></label>
+<p class="hint" style="margin:12px 0">Final release requires typing <strong>PUBLISH [count]</strong>. A private audit record identifies the approving librarian and the rights evidence. To keep batches manageable, the tool publishes at most 50 per action.</p>
+<div class="row">
+<button type="button" class="btn" id="bulk-review-selected" disabled>Approve &amp; publish selected</button>
+<button type="button" class="btn secondary" id="bulk-review-all" disabled>Approve &amp; publish ALL eligible on this page</button>
+</div>
+<p id="bulk-review-status" class="status" role="status" aria-live="polite">Waiting for librarian authentication.</p>
+</div></section>
 <section class="panel hide" id="moderation"><h2>Contributions awaiting review</h2><p class="hint" id="summary"></p>
 <div id="book-list" class="list"></div></section>
 <section class="panel hide" id="published-section" aria-labelledby="published-heading">
@@ -34,4 +83,4 @@ input,select{width:100%;padding:11px;border:1px solid #bdcec2;border-radius:8px;
 <p class="hint" id="published-summary" role="status">Checking published books…</p>
 <div id="published-list" class="list"></div>
 </section>
-</main><script src="../readmalawi-config.js"></script><script type="module" src="moderate.js?v=20261011-published-books"></script></body></html>
+</main><script src="../readmalawi-config.js"></script><script type="module" src="moderate.js?v=20261011-published-books"></script><script type="module" src="bulk-review.js?v=20261012-bulk-approve"></script></body></html>
