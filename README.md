@@ -26,7 +26,7 @@ See [ROADMAP.md](ROADMAP.md) and [TRANSLATION_REVIEW.md](TRANSLATION_REVIEW.md).
 
 ## Community library (new)
 - [Open the searchable e-book and audiobook library](library.html). It has title/author search, category, language, e-book/audiobook filters, and automatically fetches legal-source CATALOGUE METADATA from Project Gutenberg and LibriVox.
-- Member PDFs/EPUBs, audiobooks, book requests and helpful responses are built as a secure Supabase integration, but **cannot yet accept uploads** until Supabase credentials, SQL policies and moderation/testing are configured.
+- Member PDFs/EPUBs and audiobook uploads are accepted into **private Supabase storage**, and librarians review rights before any public publication. The bulk uploader and duplicate detection passed small-batch tests. ReadMalawi does not automatically publish third-party PDFs.
 - See [LIBRARY_SETUP.md](LIBRARY_SETUP.md) and [the database schema](supabase/readmalawi_schema.sql) for deployment and security requirements.
 - Permission checks and administrator approval must precede public publication of any member file.
 - Proposed five-free-download / MK500 scheme and MK100 minimum donations are **not active**. No website payment processing or charitable collection has been enabled.
@@ -37,7 +37,7 @@ See [ROADMAP.md](ROADMAP.md) and [TRANSLATION_REVIEW.md](TRANSLATION_REVIEW.md).
 - Frontend deployment: https://readmalawi-library.onrender.com/
 - Public library page: https://readmalawi-library.onrender.com/library.html
 - Service: `readmalawi-library` (Render static site), tracked from `main` with automatic deployments.
-- This is a **frontend preview**: signed-in uploads, private audiobook storage, book requests, donations and paid download access are **not enabled** until the dedicated Supabase database, authentication, moderation and payment infrastructure have been configured and verified.
+- The frontend is live and connected to the separate ReadMalawi Supabase backend for private uploads and moderation; payment and donations are **not enabled**. Rights clearance and scaling/storage controls are still required.
 - **Do not upload commercial copyrighted works for public release without rights clearance.** Special online-only playback is not DRM.
 
 ## Original on-site stories (11 October 2026)
@@ -45,3 +45,9 @@ See [ROADMAP.md](ROADMAP.md) and [TRANSLATION_REVIEW.md](TRANSLATION_REVIEW.md).
 The pilot reading shelf now contains **10 free, original English stories**. Each has a dedicated ReadMalawi reading page, a short comprehension question and a Book Club discussion link. The latest six stories cover reading access, basic mathematics, careful science observations, language and human translation review, online safety, and checking facts before making accusations. Stories are original educational fiction, not historical records of ReadMalawi programmes.
 
 Languages other than English must not be labelled as translated or published until a fluent human reviewer approves the text. The digital library still does not charge readers or accept charitable payments.
+
+## Hybrid original-source reading catalogue (12 October 2026)
+- Free Reading: 10 on-site original English stories plus 10 curated external original-provider links available via the main library's searchable catalogue and the Official Reading Sources page. The provider links open externally and no third-party PDF is copied onto ReadMalawi.
+- Private uploads: files awaiting verification remain private. Uploaded-file publication requires rights evidence and administrator approval; never assume that a free source download gives redistribution permission.
+- Optional learning tools: Smart Study Sprint works locally in browsers, while AI Reading Coach requires secure backend activation. Education and language-service enquiries may be submitted, but no checkout, paid AI access, charitable collection, or price guarantees are currently enabled.
+- Current collection metadata audits and legacy bulk-upload experiments do **not** equal rights-clearance for 1,793 PDF reading candidates.
