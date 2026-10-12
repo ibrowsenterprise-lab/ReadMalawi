@@ -18,11 +18,13 @@ textarea{width:100%;min-height:70px;margin:10px 0}.actions{display:flex;flex-wra
 <h1>Programme & partnership enquiries</h1>
 <p class="muted">Review private requests from schools, AI training clients, authors, book donors, sponsors and other partners. Service requests are discussions only—never confirmed bookings or payment agreements.</p>
 <div class="note">Review any proposed funding arrangement before accepting money, making promises, or issuing receipts. Do not publish contact details or imply an unregistered charitable status.</div>
+<div class="note"><strong>TEST MODE:</strong> Requests entered before the founder authorises final launch are simulation records. Do not email contacts, prepare actual invoices, issue quotes, collect payment or mark these as delivered customer programmes. Test records will be preserved for review until launch cleanup is approved.</div>
 <p id="status" role="status">Checking librarian access…</p>
 <button id="refresh" class="btn" disabled>Refresh enquiries</button>
 <div class="filters" aria-label="Filter private enquiries">
 <label>Enquiry type<select id="interest-filter" disabled><option value="all">All types</option><option value="education_services">School programmes</option><option value="ai_services">AI learning services</option><option value="author_services">Author / publisher services</option><option value="sponsor">Sponsorships</option><option value="other">Other partnerships</option></select></label>
+<label>Record type<select id="record-filter" disabled><option value="all">All records</option><option value="test">Test records</option><option value="unmarked">Unmarked records</option></select></label>
 <label>Follow-up status<select id="status-filter" disabled><option value="all">All statuses</option><option value="new">New</option><option value="contacted">Contacted</option><option value="in_discussion">In discussion</option><option value="closed">Closed</option></select></label>
 </div><p id="filter-summary" class="muted" role="status"></p>
 <div id="inbox" class="inbox"></div>
-</main><script src="../readmalawi-config.js"></script><script type="module" src="partner-inbox.js"></script></body></html>
+</main><script src="../readmalawi-config.js"></script><script defer src="testing-notice.js"></script><script type="module" src="partner-inbox.js"></script></body></html>
