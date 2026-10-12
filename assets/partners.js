@@ -4,6 +4,11 @@ const cfg=window.READMALAWI_CONFIG||{};
 let client=null;
 function notify(msg,good=false){status.textContent=msg;status.className="status "+(good?"good":"error")}
 document.querySelectorAll("[data-interest]").forEach(a=>a.addEventListener("click",()=>{$("contact-interest").value=a.dataset.interest}));
+const interestFromUrl=new URLSearchParams(window.location.search).get("interest");
+if(interestFromUrl && [...$("contact-interest").options].some(o=>o.value===interestFromUrl)){
+ $("contact-interest").value=interestFromUrl;
+}
+
 async function init(){
  if(!cfg.supabaseUrl||!cfg.supabasePublishableKey){notify("Partnership enquiries are temporarily unavailable. Please try again later.");return}
  try{
