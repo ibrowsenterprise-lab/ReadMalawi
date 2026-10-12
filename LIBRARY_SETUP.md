@@ -166,3 +166,24 @@ on conflict (user_id) do nothing;
 - All batch-published titles use `online_only` access; physical or electronic redistribution outside this access still requires separate permissions. Readers gain public access immediately after successful approval, including to the private stored book via approved-file reader access, so do not test publishing with unverified works.
 - Applied migrations: `20261012_librarian_bulk_publish_with_audit.sql`, followed by `20261012_preserve_uploader_attestation_in_bulk_publish.sql`. Do not manually reapply these migrations on production.
 - Verification: signed-out role cannot call publication RPC, a non-admin authenticated session is denied, and empty selections are rejected; the existing 7 approved / 19 pending / 3 rejected counts were unchanged by the migration. **A real positive publication action remains untested** until the librarian supplies rights-cleared material and explicitly confirms publication.
+
+## ReadMalawi literacy and AI education business model (12 October 2026)
+
+This section supersedes older public download-paywall marketing plans (earlier membership records are retained for historical reference **disabled**, not deleted or activated).
+
+**Positioning:** free ReadMalawi original stories, vetted/approved hosted works, book discussions and original-source links are the discovery layer. Longer-term income is intended to come from lawful commissioned education workshops, responsible AI-literacy training, school pilots, sponsorships, publisher/author services and only later genuinely optional premium study capabilities. No prices have been agreed for these services, and no payment collection is enabled.
+
+**Website routes:**
+- `assets/learning-services.html`: Learning & AI Lab; immediately usable Smart Study Sprint, transparent Guided Reading Buddy vs separately configured AI Reading Coach, future translation with fluent human review, and organisational service categories. The study sprint is a **local, rule-based browser tool**, not a generative AI; its source text is not sent to ReadMalawi servers or stored in Supabase. Inputs limited to 3,000 characters and should be personally owned or permitted.
+- `index.html`: links to AI & Learning Lab and explains the real status of features.
+- `library.html#support`: now explains current free reading, responsible AI education and service enquiry paths. Previously displayed MK1,500/MK3,000/MK5,000/MK50,000/MK75,000 future book passes and bank/payment destinations were withdrawn from **public marketing**. The `public.readmalawi_membership_plans` database entries remain `enabled=false`, and no checkout is activated.
+- `assets/partners.html`: service leads use existing private partner enquiries, with added interests `education_services`, `ai_services`, `author_services`, alongside existing donation and sponsorship categories. The new values were added through an applied database migration `readmalawi_add_educational_and_ai_service_enquiry_tracks_20261012`.
+- `assets/partners.js`: only accepts predefined select options from the optional `?interest=` deep-link parameter. No prefilled payment details or implied booking.
+- Admin `assets/partner-inbox.html` continues to display and update all enquiry types. No email sending, marketing automation or payments are enabled.
+
+**AI boundaries:** Existing `readmalawi-reading-ai` Supabase Edge Function remains separately gated by private `READMALAWI_AI_KEY`, use limits and guardian sign-in; do not make a public promise it is live until status and actual safe completion tests pass. ChatGPT subscriptions are not API credits. Any AI features involving children, copyrighted texts, educational decisions, or Malawian-language translations need privacy limits, permission checks, teacher/human review and a budget. Never accept full third-party copyrighted ebooks into the public AI model context merely because they were downloaded freely.
+
+**Pilot service workflow:** receive an enquiry -> qualify school/organisation and its learning goals -> confirm content rights, consent, safeguards and age appropriateness -> provide a custom proposal with fee & responsibilities -> contract / verify payment via a future compliant workflow -> deliver -> report only measured outcomes. Do not imply that school or prison book distribution has taken place. ReadMalawi is not yet a registered NGO/charity. Choose an appropriate legal/commercial structure and payment provider before launch of paid services.
+
+**Website launch checks:** Render build must copy `assets/` and `library.html` (it does). Check mobile header, all service deep links, guided Reading Buddy, Smart Study Sprint 80-char threshold, local .txt export, partner interest dropdown and private inbox. If the AI backend is not configured, its paid model is **not** advertised as active.
+
