@@ -6,7 +6,22 @@ function summary(){$("selection").textContent=selected().length+" PDF files sele
 $("files").addEventListener("change",summary);$("folder").addEventListener("change",summary);
 $("cancel").addEventListener("click",()=>{cancelled=true;$("status").textContent="Stopping after the current PDF…"});
 const displayName=n=>n.replace(/\.pdf$/i,"").replace(/[_]+/g," ").replace(/\s*\([^)]*\)(?=\s|$)/g," ").replace(/\s+/g," ").trim();
-const sensible=s=>s&&s.trim().length>2&&!/^(microsoft word|adobe|untitled|document|scan|pdf|unknown|ebook|book|\d+)$/i.test(s.trim());
+// PDF document properties often contain filenames, layout-project IDs, or computer usernames.
+// Such strings are clues only; they must not be certified as good book metadata.
+const looksLikeProjectTitle=value=>{
+ const s=String(value||"").trim();
+ return !s||/^(?:microsoft\s+word|adobe\s+indesign|quarkxpress|untitled|document|scan|scanned|book\s*\d*|pdf\s*\d*)\b/i.test(s)
+  ||/\.(?:indd|idml|docx?|psd|qxp|tmp)\b/i.test(s)
+  ||/^(?:\d{2,}[_\-.]){2,}/.test(s)
+  ||/^(?:file|page|chapter)\s*[_-]?\s*\d+[\w_\-.]*$/i.test(s)
+  ||(/(?:_s\d+_ms_\d+|\d{2,}_\d{2,}_\d{4,})/i.test(s));
+};
+const looksLikeComputerAuthor=value=>{
+ const s=String(value||"").trim();
+ return !s||/^(?:unknown|designer|browst|nfiler|admin(?:istrator)?|user|owner|author|publisher|microsoft|adobe|acrobat|pdfcreator|indesign|office|layout|editor)\d*$/i.test(s)
+  ||/^[a-z]{1,2}$/i.test(s)||/^[-_.\d\s]+$/.test(s);
+};
+const sensible=s=>Boolean(s&&s.trim().length>2)&&!looksLikeProjectTitle(s);
 const categoryFrom=text=>{const t=text.toLowerCase();const words=[
 ["Technology",/computer|digital|programming|software|technology|artificial intelligence|data science/],
 ["Science",/science|biology|physics|chemistry|ecology|mathematics|geography/],
@@ -38,13 +53,24 @@ async function scan(file,mod){
  const titleMeta=clean(meta.Title),authorMeta=clean(meta.Author);
  const coverHead=cover.split(/[\n\r]+/).map(clean).find(s=>s.length>6&&s.length<100&&!/^isbn|www\.|http|by |copyright/i.test(s));
  const name=displayName(file.name);
- const title=sensible(titleMeta)?titleMeta:sensible(coverHead)&&coverHead.length<100?coverHead:name;
- const author=sensible(authorMeta)?authorMeta:by?clean(by[1]):"Unknown";
+ const titleTrustworthy=sensible(titleMeta);
+ const coverTrustworthy=sensible(coverHead)&&coverHead.length<100;
+ const title=titleTrustworthy?titleMeta:coverTrustworthy?coverHead:name;
+ const authorTrustworthy=Boolean(authorMeta&&!looksLikeComputerAuthor(authorMeta));
+ const byAuthor=by?clean(by[1]):"";
+ const byTrustworthy=Boolean(byAuthor&&!looksLikeComputerAuthor(byAuthor));
+ const author=authorTrustworthy?authorMeta:byTrustworthy?byAuthor:"Unknown";
  const isbn=(first.match(/\bISBN(?:-1[03])?\s*[:#]?\s*((?:97[89][\s-]?)?[\d\s-]{9,20}[\dXx])\b/i)||[])[1]||"";
  const subject=clean(meta.Subject||meta.Keywords||"");
  const lang=inferLang(meta.Language,first);
- const score=(sensible(titleMeta)?2:0)+(author!=="Unknown"?2:0)+(isbn?1:0)+(lang!=="Unconfirmed"?1:0);
- const quality=first.length<35?"Review - scanned/empty":score>=4?"Good":score>=2?"Check":"Review";
+ const filenameLooksTechnical=looksLikeProjectTitle(name);
+ const suspiciousProperties=looksLikeProjectTitle(titleMeta)||looksLikeComputerAuthor(authorMeta);
+ const score=(titleTrustworthy?2:0)+(authorTrustworthy||byTrustworthy?2:0)+(isbn?1:0)+(lang!=="Unconfirmed"?1:0);
+ const quality=first.length<35?"Review - scanned/empty":
+   (filenameLooksTechnical&&!titleTrustworthy&&!coverTrustworthy)?"Review - file name":
+   (suspiciousProperties&&(!titleTrustworthy||!authorTrustworthy&&!byTrustworthy))?"Review - metadata":
+   (titleTrustworthy&&(authorTrustworthy||byTrustworthy)&&(isbn||lang!=="Unconfirmed")&&score>=5)?"Good":
+   score>=2?"Check":"Review";
  return {file_name:file.name,title,author,category:categoryFrom([title,subject,first.slice(0,300)].join(" ")),language:lang,isbn:clean(isbn),subject,year:"",pages:doc.numPages,file_size_bytes:file.size,quality,rights:"Unverified",publication:"Private draft",source:"PDF metadata and first pages"};
  }finally{await doc?.destroy().catch(()=>{})}
 }
@@ -76,7 +102,10 @@ $("analyse").addEventListener("click",async()=>{
    $("progress").value=i+1;
    if(i%5===0)await new Promise(resolve=>setTimeout(resolve,0));
   }
-  $("status").textContent=draft.length+" entries processed, "+failed+" need file inspection. "+(cancelled?"Stopped early. ":"")+"Download the CSV to keep your catalogue. No PDF was uploaded to ReadMalawi.";
+  const needsReview=draft.filter(row=>row.quality.startsWith("Review")).length;
+  const needCheck=draft.filter(row=>row.quality==="Check").length;
+  $("status").textContent=draft.length+" PDFs processed. "+needsReview+" flagged for review ("+failed+" unreadable), "+needCheck+" need metadata checking. "+
+   (cancelled?"Stopped early. ":"")+"Download the CSV to preserve the draft. No PDF was uploaded to ReadMalawi.";
   showTable();
  }catch(err){$("status").textContent="Could not start PDF analysis: "+err.message+". Check internet access for the PDF reader library."}
  finally{active=false;$("analyse").disabled=false;$("cancel").disabled=true}
