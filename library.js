@@ -52,7 +52,7 @@ const officialSourceBooks=[
   category:"Education",language:"English",url:"https://www.navalmanack.com/"}
 ].map((book,index)=>({...book,kind:"book",source:"official",rank:80-index}));
 
-const app={kind:"all",local:originalStories.concat(officialSourceBooks),remote:[],client:null,user:null,requests:[],backend:false};
+const app={kind:"all",sourceFilter:"all",local:originalStories.concat(officialSourceBooks),remote:[],client:null,user:null,requests:[],backend:false};
 const cfg=window.READMALAWI_CONFIG||{};
 const types={book:"E-book",audio:"Audiobook"};
 const show=(id,text,good)=>{const el=$(id);el.textContent=text;el.className="status "+(good?"ok":"err")};
@@ -162,6 +162,7 @@ function filterAndRender(){
  const sort=$("#sort").value;
  const items=app.local.concat(app.remote).filter(book=>
    (app.kind==="all"||book.kind===app.kind)
+   &&(app.sourceFilter==="all"||book.source===app.sourceFilter)
    &&(cat==="all"||book.category===cat)
    &&(!lang||String(book.language||"").toLowerCase().includes(lang))
    &&(!term||[book.title,book.author,book.category,book.language,book.description].join(" ").toLowerCase().includes(term)));
@@ -179,6 +180,11 @@ const preselectedLanguage=searchParams.get("lang");
 if(preselectedLanguage)$("#language").value=preselectedLanguage.slice(0,65);
 if(preselectedCategory&&Array.from($("#category").options).some(opt=>opt.value===preselectedCategory))$("#category").value=preselectedCategory;
 for(const id of ["search","category","language","sort"]){$("#"+id).addEventListener(["search","language"].includes(id)?"input":"change",filterAndRender)}
+$("#source-filter").addEventListener("change",event=>{
+  const selected=event.target.value;
+  app.sourceFilter=["all","original","official","member"].includes(selected)?selected:"all";
+  filterAndRender();
+});
 document.querySelectorAll("[data-kind]").forEach(btn=>btn.addEventListener("click",()=>{app.kind=btn.dataset.kind;document.querySelectorAll("[data-kind]").forEach(b=>b.setAttribute("aria-pressed",String(b===btn)));filterAndRender()}));
 const fetchJSON=async (url,timeout=9500)=>{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),timeout);try{const r=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json"}});if(!r.ok)throw Error(String(r.status));return await r.json()}finally{clearTimeout(timer)}};
 function loadCatalogue(){
