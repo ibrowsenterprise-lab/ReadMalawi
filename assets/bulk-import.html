@@ -33,6 +33,14 @@ label{display:block;font-weight:700}input[type=file]{width:100%;padding:15px;bor
 </section>
 <section class="panel" id="private-upload" aria-labelledby="bulk-upload-title">
 <h2 id="bulk-upload-title">Step 2 · Private bulk upload</h2>
+<div class="notice" style="background:#eaf4ed;border-color:#a3c6b0;margin:13px 0">
+<strong>Filtered reading catalogue:</strong> load the curated CSV so vacancies, company documents,
+Malawi government-related articles and the eight held records are skipped. For more than 25 PDFs,
+this CSV is mandatory before any transfer. File matching uses the original filename and byte size.
+<label for="bulk-catalogue-file" style="margin-top:12px">Choose cleaned ReadMalawi CSV (.csv)</label>
+<input type="file" id="bulk-catalogue-file" accept=".csv,text/csv" style="margin:7px 0"/>
+<p id="bulk-catalogue-status" role="status" class="fine">No filtered CSV loaded yet.</p>
+</div>
 <p class="lead"><a href="#files">Choose your PDF files or folder above</a>, then return here. This uses that same selection. You may analyse the files first for better titles, or upload without scanning (filenames will become draft titles). Every submission stays <strong>private and pending</strong> until a librarian checks publication rights.</p>
 <div class="notice"><strong>For authorised collections only.</strong> Bulk uploading does not grant ReadMalawi distribution rights. Do not select confidential company documents, pirated books, personal records, or materials you do not have permission to submit. The librarian must separately verify rights before any publication. File limit: 50 MB each. Each click processes up to <strong>25 PDFs or 250 MB</strong>; click again to continue with the next batch. Do not close this tab while a batch is running.</div>
 <div class="status" id="bulk-auth-status" role="status">Checking librarian sign-in…</div>
@@ -51,4 +59,4 @@ label{display:block;font-weight:700}input[type=file]{width:100%;padding:15px;bor
 <p class="fine">The browser must remain open during transfer. A PDF already in the private storage may be skipped or its missing catalogue entry recovered. This first bulk upload version handles PDFs; EPUB and audiobook bulk import will follow separate validation.</p>
 </section>
 <footer>ReadMalawi · Local scanning and private bulk upload are separate, voluntary actions. Upload does not mean public publication, and no payments are collected.</footer>
-</main><script src="../readmalawi-config.js"></script><script type="module" src="bulk-private-upload.js?v=20261012-metadata-check"></script></body></html>
+</main><script src="../readmalawi-config.js"></script><script type="module" src="bulk-private-upload.js?v=20261012-reading-only"></script></body></html>
