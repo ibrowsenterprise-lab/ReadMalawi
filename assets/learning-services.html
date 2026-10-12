@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#092e2b">
+<meta name="description" content="ReadMalawi Learning Lab: free reading, private smart study tools, AI literacy and responsible institutional learning services in Malawi.">
+<title>Learning & AI Lab | ReadMalawi</title>
+<style>
+:root{--ink:#17352e;--dark:#092e2b;--green:#0d5f4c;--soft:#e8f2e9;--muted:#4d645b;--cream:#fbfaf5;--line:#d6e2d7;--sand:#f9edcf}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.57 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+a{color:inherit}a:focus-visible,button:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #c68d30;outline-offset:3px}
+header{background:var(--dark);color:white;border-bottom:1px solid #2b665b}
+nav,.wrap{max-width:1110px;margin:auto;padding-left:21px;padding-right:21px}
+nav{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;padding-top:12px;padding-bottom:12px}
+nav strong{font-size:1.32rem;letter-spacing:-.05em}nav strong span{color:#eac277}nav .links{display:flex;gap:17px;flex-wrap:wrap;font-size:.91rem}nav a{text-decoration:none}nav .links a:hover{text-decoration:underline}
+.hero{background:radial-gradient(ellipse at 90% 5%,#246e5e,transparent 43%),linear-gradient(125deg,#092e2b,#125448);color:white;padding:78px 0 73px}
+.eyebrow{text-transform:uppercase;letter-spacing:.15em;font-size:.74rem;font-weight:830;color:#b57c20}
+.hero .eyebrow{color:#f4d18b}h1{font-size:clamp(2.3rem,5.5vw,4rem);line-height:1.11;max-width:780px;letter-spacing:-.055em;margin:14px 0 23px}
+.hero p{font-size:1.12rem;max-width:700px;color:#d8efe5;margin-bottom:22px}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:23px}
+.btn{border-radius:11px;padding:12px 18px;font:inherit;font-weight:720;text-decoration:none;display:inline-block;border:1px solid transparent;cursor:pointer;text-align:center;background:var(--green);color:white}
+.btn.primary{background:#f0c572;color:#1b3026}.btn.secondary{background:#f5f8f3;color:#143e30;border:1px solid #bcd0c2}
+.btn:disabled{opacity:.48;cursor:wait}
+section{padding:63px 0}.section-head{max-width:765px;margin-bottom:29px}
+h2{font-size:clamp(1.65rem,3vw,2.3rem);line-height:1.19;letter-spacing:-.036em;margin:9px 0 12px}
+.section-head>p{color:var(--muted);font-size:1.06rem;margin:0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+.card{background:white;border:1px solid var(--line);border-radius:16px;padding:26px;box-shadow:0 5px 24px #092e2b09}
+.card h3{margin:8px 0 11px;font-size:1.22rem;letter-spacing:-.023em}.card p{color:var(--muted);margin:0 0 15px}
+.cap{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;font-weight:810;color:#2e6957}
+.tag{display:inline-block;border:1px solid #c8d9c9;background:#edf5ee;color:#264f3f;border-radius:50px;padding:4px 10px;font-size:.74rem;font-weight:780}
+.tag.future{background:#fff5dc;border-color:#e8cf99;color:#755522}
+.card a:not(.btn){font-weight:750;color:#086249;text-underline-offset:4px}
+.light{background:#eef4ec}
+.lab{display:grid;grid-template-columns:1.2fr .8fr;gap:23px;align-items:start}
+.box{padding:25px;background:white;border:1px solid var(--line);border-radius:17px}
+textarea,select{font:inherit;border-radius:9px;border:1px solid #b6c8b9;color:var(--ink);background:#fff;padding:12px;width:100%}
+textarea{min-height:166px;resize:vertical}
+label{display:block;font-weight:750;margin-bottom:8px}
+.form-note{font-size:.86rem;color:var(--muted);margin:9px 0 18px}
+.row{display:flex;align-items:center;gap:13px;flex-wrap:wrap}
+.note{border-left:4px solid #b78e46;background:#fff7e6;padding:15px 17px;border-radius:6px;color:#4f4737}
+.study-result{margin-top:23px;padding:24px;background:#f6fbf6;border:1px solid #bcd8c4;border-radius:16px}
+.study-result h3{margin:8px 0}
+.study-plan{padding:0;list-style:none;display:grid;gap:9px}
+.study-plan li{background:white;padding:12px 14px;border-radius:9px;border:1px solid var(--line)}
+.study-plan strong,.study-plan span{display:block}.study-plan span{font-size:.89rem;color:var(--muted);margin-top:4px}
+.terms{display:flex;flex-wrap:wrap;gap:7px}.term{font-size:.88rem;font-weight:650;border:1px solid #c8dacc;background:white;border-radius:50px;padding:7px 11px}
+.study-result blockquote{margin:9px 0 18px;padding:12px 16px;border-left:3px solid #4d8d74;background:#fff;font-size:.93rem}
+aside ul{padding-left:18px}aside li{padding-bottom:12px;color:var(--muted)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.step{background:white;border:1px solid var(--line);padding:22px;border-radius:14px}.step h3{margin:0 0 10px}.step p{color:var(--muted);font-size:.9rem}
+.final{background:#102f29;color:white;padding:58px 0}.final p{color:#d0e1d9;max-width:750px}
+footer{padding:22px 0;border-top:1px solid var(--line);font-size:.88rem;color:var(--muted)}
+@media(max-width:760px){.grid,.lab,.steps{grid-template-columns:1fr}.hero{padding:55px 0 53px}section{padding:46px 0}.card,.box{padding:19px}nav{gap:9px}}
+</style></head>
+<body>
+<header><nav aria-label="ReadMalawi navigation"><a href="../index.html" style="text-decoration:none"><strong>Read<span>Malawi</span></strong></a>
+<div class="links"><a href="../library.html">Library</a><a href="official-reading.html">Reading sources</a><a href="#study">Smart Study Sprint</a><a href="partners.html">Partner with us</a></div>
+</nav></header>
+<main>
+<div class="hero"><div class="wrap">
+<div class="eyebrow">ReadMalawi Learning &amp; AI Lab</div>
+<h1>Free reading. Stronger learning. Responsible AI.</h1>
+<p>Discover books, practise comprehension and explore learning programmes designed for Malawi. We combine accessible reading with practical technology—and people remain responsible for accuracy, teaching and language quality.</p>
+<div class="actions"><a class="btn primary" href="#study">Try free Smart Study Sprint</a><a class="btn secondary" href="reading-buddy.html">Open Reading Buddy</a></div>
+</div></div>
+<section id="services"><div class="wrap">
+<div class="section-head"><div class="eyebrow">What you can use and what comes next</div><h2>Learning opportunities beyond the bookshelf.</h2>
+<p>Our readers will always have free resources. Optional educational and AI services can help fund the community, subject to real demand, permissions and responsible operation.</p></div>
+<div class="grid">
+<article class="card"><span class="tag">Available now · Free</span><h3>Guided Reading Buddy</h3>
+<p>Find reading resources, explore the library and discover stories using a simple guided assistant. This is not yet a full generative AI tutor.</p>
+<a href="reading-buddy.html">Try Reading Buddy →</a></article>
+<article class="card"><span class="tag">Available now · Free</span><h3>Private Smart Study Sprint</h3>
+<p>Turn your own short notes into a timed study routine with keyword prompts and self-recall exercises. The tool works in your browser and does not send the text anywhere.</p>
+<a href="#study">Build a study sprint →</a></article>
+<article class="card"><span class="tag future">AI capability · Activation dependent</span><h3>Generative AI Reading Coach</h3>
+<p>Our secure AI backend is prepared. When configured and funded, it can help signed-in readers ask questions about short, permitted passages. It is not a substitute for teachers or verified sources.</p>
+<a href="reading-buddy.html">Check AI status in Reading Buddy →</a></article>
+<article class="card"><span class="tag future">Proposed services · Enquiries open</span><h3>Local-language AI + human review</h3>
+<p>Explore English–Chichewa and other local-language literacy resources, with AI-assisted drafting and qualified human review before public release.</p>
+<a href="partners.html?interest=ai_services#contact">Discuss a language-learning project →</a></article>
+</div></div></section>
+<section class="light" id="study"><div class="wrap">
+<div class="section-head"><div class="eyebrow">Try something useful today</div><h2>Smart Study Sprint</h2>
+<p>A practical reading companion. Paste a short passage from your own notes or other content you are allowed to use, and create a timed recall exercise. <strong>Rule-based and local—not a generative AI model.</strong></p></div>
+<div class="lab">
+<div class="box">
+<label for="study-notes">Your own notes or passage</label>
+<textarea id="study-notes" maxlength="3000" placeholder="Paste 80–3,000 characters from your notes or a passage you have permission to use. The text stays in this browser tab."></textarea>
+<p class="form-note">Please avoid personal information, confidential school records and unlicensed book chapters. The text is processed on your device and is not saved to ReadMalawi.</p>
+<label for="study-minutes">Choose your study time</label>
+<select id="study-minutes"><option value="5">5-minute focus</option><option value="10" selected>10-minute study sprint</option><option value="15">15-minute deeper practice</option></select>
+<div class="row" style="margin-top:20px"><button class="btn" type="button" id="study-build">Create my study guide</button><button class="btn secondary" id="study-clear" type="button">Clear notes</button></div>
+<p class="form-note" id="study-status" role="status" aria-live="polite">Ready. No sign-in or payment required.</p>
+<div class="study-result" id="study-result" hidden>
+<div class="cap">Your on-device study guide</div>
+<div id="study-summary"></div>
+<ol class="study-plan" id="study-plan"></ol>
+<h3>Keywords to recall</h3><div class="terms" id="study-terms"></div>
+<h3>A sentence to explain in your own words</h3><blockquote id="study-quote"></blockquote>
+<label for="study-own-summary">Write your own summary without looking back</label>
+<textarea id="study-own-summary" maxlength="800" style="min-height:100px" placeholder="In my own words, this passage is about…"></textarea>
+<p id="study-word-count" class="form-note">0 words entered · aim for 15–35 words.</p>
+<button id="study-export" class="btn secondary" type="button">Download my study guide (.txt)</button>
+</div>
+</div>
+<aside class="box"><div class="cap">How to use your guide</div>
+<h3>Think, don't just copy.</h3>
+<ul><li>Read the passage once to understand the subject.</li><li>Close the passage and try explaining the main idea aloud.</li><li>Use your keyword prompts to test what you remember.</li><li>Check your understanding against the source or with a teacher.</li></ul>
+<div class="note"><strong>What this tool does not do:</strong> It cannot tell whether your written summary is factually correct, provide a professional diagnosis or replace a teacher. More advanced AI feedback is a separate, not-yet-guaranteed service.</div>
+</aside>
+</div></div></section>
+<section id="organisations"><div class="wrap">
+<div class="section-head"><div class="eyebrow">For schools, businesses and authors</div><h2>Build a literacy or AI learning programme together.</h2>
+<p>ReadMalawi is exploring paid education-service pilots and sponsored programmes. We offer project discussions and proposals first; no packaged programme, customer results or price is being claimed as already established.</p></div>
+<div class="steps">
+<div class="step"><div class="cap">Schools and teachers</div><h3>Digital reading clubs</h3><p>Classroom reading activities, study-skills workshops and safe AI literacy. A proposed service delivered through agreed school pilots.</p><a class="btn secondary" href="partners.html?interest=education_services#contact">Request a school pilot</a></div>
+<div class="step"><div class="cap">Organisations and sponsors</div><h3>AI &amp; literacy programmes</h3><p>Staff AI-literacy workshops, responsible use training and sponsored reading challenges with defined objectives and measurable outcomes.</p><a class="btn secondary" href="partners.html?interest=ai_services#contact">Discuss an AI workshop</a></div>
+<div class="step"><div class="cap">Authors and publishers</div><h3>Rights-cleared digital books</h3><p>Explore licensed title showcases, accessibility, educational content preparation, promotion and carefully reviewed translations.</p><a class="btn secondary" href="partners.html?interest=author_services#contact">Discuss publisher support</a></div>
+</div></div></section>
+<section class="final"><div class="wrap">
+<div class="eyebrow" style="color:#f0c572">Our sustainability approach</div><h2>Books bring readers. Learning services help sustain access.</h2>
+<p>Free original stories, public-source links and community reading stay open. Potential revenue comes from contracted workshops, institutional services, sponsorships and future optional learning features—not charging readers simply to follow publicly available book links.</p>
+<p><strong>Commercial status:</strong> Pilot enquiries only. No service has a fixed public price or online checkout. Book-download memberships and money collection remain disabled until further approval and proper payment verification.</p>
+<div class="actions"><a class="btn primary" href="partners.html#contact">Start a partnership enquiry</a><a class="btn secondary" href="../library.html">Browse free books</a></div>
+</div></section>
+</main>
+<footer><div class="wrap">ReadMalawi · Knowledge for all · Digital-first community initiative, not currently a registered charity. <a href="../index.html">Home</a> · <a href="../library.html">Library</a> · <a href="partners.html">Partnerships</a></div></footer>
+<script defer src="learning-services.js?v=20261012-ai-learning1"></script>
+</body></html>
