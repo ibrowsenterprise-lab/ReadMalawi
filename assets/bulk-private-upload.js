@@ -1,15 +1,43 @@
 // ReadMalawi bulk PDF intake. Opt-in only; never publish from this page.
 import { getBulkUploadCandidates } from "./bulk-import.js?v=20261012-metadata-check";
 import { getSupabaseModule } from "./supabase-loader.js";
+import { makeCatalogueAllowlist, matchCatalogueFiles } from "./bulk-catalogue-filter.js?v=20261012-reading-only";
 
 const $=id=>document.getElementById(id);
 const cfg=window.READMALAWI_CONFIG||{};
 let client=null,authorised=false,user=null,running=false,pauseRequested=false;
 const completed=new Set(),report=[];
+let curatedCatalogue=null,curatedName="";
 const identities=file=>[file.webkitRelativePath||file.name,file.size,file.lastModified].join(":");
 function say(message){$("bulk-upload-status").textContent=message}
 function setAuth(message){$("bulk-auth-status").textContent=message}
-function files(){return getBulkUploadCandidates()}
+// A selection larger than one test batch REQUIRES the explicitly curated reading CSV.
+// The rejected PDF files remain on the PC and are never uploaded by this workflow.
+function selection(){
+ const raw=getBulkUploadCandidates();
+ if(curatedCatalogue){
+  const match=matchCatalogueFiles(raw,curatedCatalogue);
+  return {items:match.accepted,excluded:match.excluded.length,total:raw.length,needsCsv:false};
+ }
+ const needsCsv=raw.length>25;
+ return {items:needsCsv?[]:raw,excluded:0,total:raw.length,needsCsv};
+}
+function files(){return selection().items}
+function statusCatalogue(){
+ const found=selection();
+ const el=$("bulk-catalogue-status");
+ if(curatedCatalogue){
+  el.textContent="Filtered catalogue loaded: "+curatedName+" · "+curatedCatalogue.records+
+   " CSV records · "+found.items.length+" matching selected PDFs · "+found.excluded+
+   " excluded/unmatched PDFs. Only matching PDFs can enter private upload.";
+ }else if(found.needsCsv){
+  el.textContent="UPLOAD BLOCKED: "+found.total+
+   " PDFs selected. Load the cleaned reading-only CSV below to automatically skip removed and held documents.";
+ }else{
+  el.textContent="No filtered CSV loaded. A small test of up to 25 PDFs is permitted. For a larger folder, a filtered CSV is mandatory.";
+ }
+}
+
 function validFile(file){return /\.pdf$/i.test(file.name)&&file.size>0&&file.size<=50*1024*1024}
 function refreshButtons(){
  const selectable=files().some(x=>!completed.has(identities(x.file)));
@@ -19,13 +47,17 @@ function refreshButtons(){
  $("bulk-refresh-auth").disabled=running;
 }
 function selectedSummary(){
+ statusCatalogue();
  refreshButtons();
  if(!running){
-  const all=files(),remaining=all.filter(x=>!completed.has(identities(x.file)));
+  const found=selection();
+  const all=found.items,remaining=all.filter(x=>!completed.has(identities(x.file)));
   const mb=all.reduce((n,x)=>n+x.file.size,0)/(1024*1024);
-  say(all.length?all.length+" PDFs selected ("+mb.toFixed(1)+" MB). "+remaining.length+
-    " await a batch attempt. Upload requires an authorised librarian and explicit confirmation.":
-    "Select multiple PDFs or a folder above. Scanning is optional; no upload happens until you press the private upload button.");
+  say(found.needsCsv?"No bulk transfer possible without the filtered reading-only CSV.":
+    all.length?all.length+" eligible PDFs ("+mb.toFixed(1)+" MB). "+remaining.length+
+     " still awaiting batch transfer. "+(curatedCatalogue?found.excluded+" excluded/unmatched PDF(s) will be skipped. ":"")+
+     "Publication rights remain unverified.":
+    "Select a PDF folder above. With a filtered CSV, only matching PDFs are eligible.");
  }
 }
 async function auth(){
@@ -167,9 +199,28 @@ async function upload(){
 }
 $("files").addEventListener("change",selectedSummary);
 $("folder").addEventListener("change",selectedSummary);
+$("bulk-catalogue-file").addEventListener("change",async()=>{
+ if(running)return;
+ curatedCatalogue=null;curatedName="";
+ const file=$("bulk-catalogue-file").files?.[0];
+ if(!file){selectedSummary();return}
+ try{
+  if(file.size>5*1024*1024)throw Error("Please use a catalogue CSV smaller than 5 MB.");
+  const list=makeCatalogueAllowlist(await file.text());
+  curatedCatalogue=list;curatedName=file.name;
+  $("bulk-agree").checked=false; // Ask for fresh explicit consent to the filtered batch.
+ }catch(e){
+  $("bulk-catalogue-file").value="";
+  $("bulk-catalogue-status").textContent="Catalogue not accepted: "+(e?.message||"Invalid CSV");
+  refreshButtons();
+  return;
+ }
+ selectedSummary();
+});
 $("bulk-agree").addEventListener("change",refreshButtons);
 $("bulk-refresh-auth").addEventListener("click",auth);
 $("bulk-upload-start").addEventListener("click",upload);
 $("bulk-upload-stop").addEventListener("click",()=>{pauseRequested=true;say("Pausing after the current file is processed…")});
 $("bulk-upload-report").addEventListener("click",exportReport);
+selectedSummary();
 auth();
