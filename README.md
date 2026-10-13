@@ -92,3 +92,11 @@ ReadMalawi now has a [private Physical Book Collection Desk](assets/collection-d
 A protected Supabase table retains count, general area, a short internal planning note, actor UID and one of four TEST statuses. PostgreSQL RLS and column grants block anonymous users and unauthorised signed-in users. It is impossible to mark a book **collected** or **distributed** in the TEST schema. The desk's local CSV omits contacts, internal notes and account UUIDs, and all counts are labelled **potential books offered**, not verified donations. No database records were created as part of setup.
 
 Do not lift test-only schema restrictions, send messages, claim completed physical distributions or activate finances before a separate founder-approved launch and safeguarding process.
+
+## Proposed physical collection and handover workflow (TEST, 13 October 2026)
+
+The librarian-only [Physical Book Collection Desk](assets/collection-desk.html) now includes a compact collection/handover guide and a **Prepare TEST collection plan** action per offer. It draws on the already-recorded offered count and general area, allows editing in the browser and downloads a local `.txt` planning draft with prominent, non-editable TEST markings. It never schedules pickups, contacts donors, issues receipts or records physical books as collected/distributed.
+
+The complete procedures are in [Physical Book Collection & Handover Playbook](PHYSICAL_BOOK_COLLECTION_PLAYBOOK_DRAFT.md). The donor site still requests **only two details** and shares a WhatsApp draft; a future authorised physical drive must have volunteer ownership, transport/storage, donor privacy, safe sorting and school/prison institution permissions. The protected register remains an internal test ledger with **zero real donations**.
+
+For downloadable TEST CSV summaries, leading spreadsheet-formula characters in location data are escaped before export to reduce CSV formula-injection risk.
