@@ -212,6 +212,15 @@ async function init(){
   const perm=await api.from("readmalawi_admins").select("user_id").eq("user_id",person.id).maybeSingle();
   if(perm.error||!perm.data){say("desk-status","Access restricted to authorised ReadMalawi librarians.",true);return}
   authorised=true;$("desk").hidden=false;
+  $("sample-plan").addEventListener("click",()=>{
+   const label=$("sample-preview-label");
+   const isOpening=label.hidden;
+   label.hidden=!isOpening;
+   $("sample-plan").textContent=isOpening?"Hide DEMO collection plan":"Preview DEMO collection plan · 1 tap";
+   if(isOpening){
+    $("sample-preview").value=makeTestCollectionPlan({book_count:15,general_area:"Lilongwe",stage:"offered_test"});
+   }
+  });
   $("offer-form").addEventListener("submit",submit);
   $("refresh-offers").addEventListener("click",reload);
   $("stage-filter").addEventListener("change",display);
