@@ -1,4 +1,5 @@
 import {attachPilotPlanner} from "./pilot-planner.js";
+import {attachPilotCosting} from "./pilot-costing.js";
 const $=id=>document.getElementById(id.startsWith("#")?id.slice(1):id);
 const cfg=window.READMALAWI_CONFIG||{};
 const statuses=["new","contacted","in_discussion","closed"];
@@ -99,6 +100,7 @@ function card(x){
  });
  root.append(notes,bar,msg);
  attachPilotPlanner(root,x);
+ attachPilotCosting(root,x);
  return root;
 }
 $("#refresh").addEventListener("click",load);
