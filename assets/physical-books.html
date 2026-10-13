@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Offer physical books to the ReadMalawi community in two easy steps: number of books and general collection area.">
+<meta name="theme-color" content="#0c4338">
+<title>Offer Physical Books | ReadMalawi</title>
+<style>
+:root{--deep:#0c4338;--green:#116349;--ink:#1e3b30;--muted:#566c61;--cream:#f8f8f3;--gold:#e9c57d;--line:#d2e1d8}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);background:var(--cream);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+a{color:inherit}button,input{font:inherit}button{cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #d69c32;outline-offset:3px}
+.container{width:min(100% - 36px,1020px);margin-inline:auto}
+header{background:#0a342d;color:white}
+.top{min-height:75px;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;padding:13px 0}
+.brand{font-size:1.5rem;text-decoration:none;font-weight:850;letter-spacing:-.04em}
+.brand span{color:var(--gold)}
+.top nav{display:flex;flex-wrap:wrap;gap:15px}
+.top nav a{font-size:.93rem;color:#eef4ef;text-decoration:none}
+.top nav a:hover{text-decoration:underline}
+.phase{background:#fff0c4;color:#66501f;padding:12px 17px;text-align:center;font-size:.88rem;font-weight:750;border-bottom:1px solid #e8d4a4}
+.hero{background:linear-gradient(120deg,#0a4338,#16594a);color:#fff;padding:67px 0 82px}
+.eyebrow{color:var(--gold);font-size:.72rem;font-weight:850;letter-spacing:.16em;text-transform:uppercase}
+.hero h1{font-size:clamp(2.35rem,7vw,4.4rem);line-height:1.08;letter-spacing:-.055em;max-width:750px;margin:13px 0 20px}
+.hero p{font-size:clamp(1rem,2.6vw,1.22rem);max-width:680px;color:#e0eee6}
+.main{padding:0 0 75px}
+.card{background:white;border:1px solid var(--line);border-radius:22px;box-shadow:0 14px 40px #092e2b12}
+.offer{max-width:820px;margin:-51px auto 30px;position:relative;padding:clamp(23px,5vw,44px)}
+.offer h2{font-size:clamp(1.65rem,4vw,2.25rem);line-height:1.2;letter-spacing:-.035em;margin:0 0 12px}
+.offer p{color:var(--muted)}
+.form{margin:26px 0 0}
+.fields{display:grid;grid-template-columns:1fr 1.5fr;gap:18px}
+.field{display:flex;flex-direction:column;gap:8px;font-weight:760}
+.field input{min-width:0;width:100%;border:1px solid #b5ccbe;border-radius:12px;background:#fff;color:var(--ink);padding:15px;min-height:56px;font-weight:500}
+.field small{color:#60766b;font-weight:450;font-size:.78rem}
+.btn{display:block;border:0;border-radius:12px;background:var(--green);color:#fff;text-align:center;padding:15px 20px;min-height:57px;text-decoration:none;font-weight:820}
+.btn:hover{background:#0a4838}
+.btn.secondary{background:#edf5ee;color:#1b5842;border:1px solid #c0d8c6}
+.form .btn{width:100%;margin:24px 0 0;font-size:1.04rem}
+.feedback{min-height:22px;color:#156449;font-weight:760;margin:15px 0 0;overflow-wrap:anywhere}
+.context{background:#f2f6f1;border:1px solid #d4e2d6;border-radius:13px;padding:15px 17px;margin-top:17px;font-size:.91rem;color:#4b6355}
+.context strong{color:#234c3c}
+.secondary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;max-width:820px;margin:auto}
+.secondary-grid .card{padding:28px}
+.secondary-grid h2{font-size:1.3rem;line-height:1.35;letter-spacing:-.02em;margin:0 0 10px}
+.secondary-grid p{font-size:.92rem;color:var(--muted);margin:0 0 18px}
+.hint{font-size:.82rem;color:var(--muted);margin-top:14px}
+footer{background:#0a342d;color:#dae6df;padding:28px 0;text-align:center;font-size:.85rem}
+footer a{margin:0 7px}
+@media(max-width:640px){.hero{padding:47px 0 81px}.fields,.secondary-grid{grid-template-columns:1fr}.offer{margin-top:-45px}.secondary-grid .card{padding:21px}.top{align-items:flex-start}}
+</style>
+</head>
+<body>
+<header><div class="container top"><a class="brand" href="../index.html">Read<span>Malawi</span></a><nav aria-label="Main navigation"><a href="../library.html">Explore books</a><a href="../index.html">Home</a><a href="partners.html">Partnerships</a></nav></div></header>
+<div class="phase" role="note">DEVELOPMENT / TESTING · Physical collections and school/prison distribution have not yet started.</div>
+<section class="hero"><div class="container">
+<div class="eyebrow">Tiyeni tiwelenge · Community book giving</div>
+<h1>Have books to give? We'll help you get started.</h1>
+<p>No lists of titles. No authors. No lengthy forms. Just tell us approximately how many physical books you have and your general location.</p>
+</div></section>
+<main class="container main">
+<section class="card offer" aria-labelledby="offer-heading">
+<h2 id="offer-heading">Offer your physical books</h2>
+<p>Two quick details, then share your offer directly with the ReadMalawi community on WhatsApp. A coordinator can discuss whether collection is possible.</p>
+<form id="rm-physical-book-offer" class="form">
+<div class="fields">
+<label class="field">How many books?
+<input type="number" inputmode="numeric" name="book_count" min="1" max="50000" step="1" placeholder="e.g. 15" required>
+<small>Just an approximate number is fine.</small>
+</label>
+<label class="field">Which town or area are they in?
+<input type="text" name="general_area" maxlength="95" minlength="2" placeholder="e.g. Area 25, Lilongwe" autocomplete="off" required>
+<small>Your general area is enough. No home address.</small>
+</label>
+</div>
+<button type="submit" class="btn">Offer books on WhatsApp ↗</button>
+<p id="rm-physical-book-feedback" class="feedback" role="status" aria-live="polite"></p>
+</form>
+<div class="context"><strong>How it works:</strong> The button opens a prewritten WhatsApp message. Choose the ReadMalawi group or a coordinator's chat and tap Send. We don't store these two details on the website. Collection is arranged separately through WhatsApp if our team and volunteers are available.</div>
+</section>
+<div class="secondary-grid">
+<section class="card"><h2>What will happen to the books?</h2>
+<p>We hope to build a community collection programme that can eventually support schools and prisons. Suitable recipients, collection routes, consent and any prison permissions must be agreed before distribution.</p>
+<p class="hint">An offer is not yet a completed collection or a guaranteed pickup. No fees or financial donations are requested.</p>
+</section>
+<section class="card"><h2>Prefer to read and share digitally?</h2>
+<p>Our existing WhatsApp reading forum lets members ask for books, exchange recommendations and point each other towards lawful reading sources.</p>
+<a class="btn secondary" href="../library.html#whatsapp-forum">Ask in our reading forum ↗</a>
+<a class="btn secondary" href="#" data-rm-forum-invite hidden style="margin-top:10px"></a>
+<p class="hint">Please respect authors' and publishers' rights. Only share books that may legally be shared.</p>
+</section>
+</div>
+</main>
+<footer><div class="container">ReadMalawi · Tiyeni tiwelenge · Independent community initiative, not yet a registered NGO.<br><a href="../library.html">Library</a> · <a href="../index.html">Home</a></div></footer>
+<script src="../readmalawi-config.js"></script>
+<script defer src="testing-notice.js"></script>
+<script defer src="whatsapp-community.js?v=20261013-physical-books1"></script>
+</body>
+</html>
