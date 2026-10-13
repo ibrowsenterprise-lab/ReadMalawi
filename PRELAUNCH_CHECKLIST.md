@@ -159,6 +159,7 @@ Stored request notes are restricted from the public API, including browser-based
 - [x] Website continues to say school/prison book distribution and physical collection are future goals, subject to consent, collection logistics and relevant institutional approval; not historical achievements.
 - [x] No payments, donation receipts, automatic pickup, automatic WhatsApp message or rights-infringing file distribution enabled. Testing phase retained.
 - [x] Logic validated without generating dummy records; WhatsApp action is based on WhatsApp's official prefilled-message, choose-contact format.
-- [ ] **Pending input:** founder must supply the REAL WhatsApp group invite URL. It has not been found in the project and is not guessed; a direct group JOIN link cannot be activated until supplied.
+- [x] Founder supplied the **Lets Read Malawi📖** WhatsApp group invitation on 13 October 2026; the clean canonical link is installed in the public website configuration and JOIN buttons are active on homepage, library and physical book giving page.
+- [ ] Verify group-join opening from a device/account that is not already a member; prepare for public invite moderation and rotate the link if unwanted joiners occur.
 - [ ] **Mobile smoke test** of two-field WhatsApp composition and per-card ask action when convenient, without posting actual test messages or creating real donor obligations.
 - [ ] Before actual physical collection/distribution, confirm coordinators, transport arrangements, recipient permissions, book quality/age appropriateness, handover records and operating legal status.
