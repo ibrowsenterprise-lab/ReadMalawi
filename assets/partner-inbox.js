@@ -3,7 +3,23 @@ const cfg=window.READMALAWI_CONFIG||{};
 const statuses=["new","contacted","in_discussion","closed"];
 const isTestRecord=x=>(x.message||"").startsWith("[READMALAWI TEST]")||(x.admin_notes||"").includes("[READMALAWI TEST]");
 const siteIsTesting=cfg.sitePhase!=="production";
-let client=null,user=null,allEnquiries=[];
+let client=null,user=null,allEnquiries=[],toastTimeout=null;
+const TEST_LABEL="[READMALAWI TEST]";
+function safeguardedNotes(value,record){
+ const entered=String(value||"").trim().slice(0,4000);
+ if(!siteIsTesting&&!isTestRecord(record))return entered;
+ if(entered.includes(TEST_LABEL))return entered;
+ return (TEST_LABEL+" Prelaunch test — no client contact, invoice or payment.\n"+entered).slice(0,4000);
+}
+function toast(text,error=false){
+ const element=document.getElementById("save-toast");
+ if(!element)return;
+ element.textContent=text;
+ element.className=error?"save-toast error":"save-toast";
+ element.hidden=false;
+ if(toastTimeout!==null)clearTimeout(toastTimeout);
+ toastTimeout=setTimeout(()=>{element.hidden=true;toastTimeout=null},6500);
+}
 const h=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e};
 const status=message=>$("#status").textContent=message;
 async function init(){
@@ -49,15 +65,38 @@ function card(x){
  const state=h("select");
  for(const value of statuses){const option=document.createElement("option");option.value=value;option.textContent=value.replaceAll("_"," ");state.append(option)}state.value=x.status;
  const notes=h("textarea");notes.placeholder="Private follow-up notes";notes.value=x.admin_notes||"";
- const save=h("button","btn","Save follow-up");const msg=h("small");
- const bar=h("div","actions");bar.append(state,save,msg);
+ const save=h("button","btn","Save follow-up");
+ save.type="button";
+ const msg=h("p","save-feedback","");
+ msg.setAttribute("role","status");
+ msg.setAttribute("aria-live","polite");
+ const bar=h("div","actions");bar.append(state,save);
+ const changed=()=>{msg.className="save-feedback pending";msg.textContent="Unsaved changes";};
+ notes.addEventListener("input",changed);
+ state.addEventListener("change",changed);
  save.addEventListener("click",async()=>{
-  save.disabled=true;msg.textContent="Saving…";
-  const {error}=await client.from("readmalawi_partnership_enquiries").update({status:state.value,admin_notes:notes.value.slice(0,4000)}).eq("id",x.id);
-  msg.textContent=error?"Error: "+error.message:"Saved";save.disabled=false;
-  if(!error){x.status=state.value;x.admin_notes=notes.value.slice(0,4000);$("#filter-summary").textContent="Follow-up saved. Use Refresh enquiries to update the filtered view.";}
+  save.disabled=true;msg.className="save-feedback pending";msg.textContent="Saving changes…";
+  const updatedNotes=safeguardedNotes(notes.value,x);
+  try{
+   const {data,error}=await client.from("readmalawi_partnership_enquiries")
+    .update({status:state.value,admin_notes:updatedNotes})
+    .eq("id",x.id)
+    .select("id,status,admin_notes").maybeSingle();
+   if(error)throw error;
+   if(!data)throw new Error("No record was updated. Verify librarian access and retry.");
+   x.status=data.status;
+   x.admin_notes=data.admin_notes;
+   notes.value=data.admin_notes;
+   msg.className="save-feedback success";
+   msg.textContent="✓ Saved successfully — status and private notes verified.";
+   toast("Saved successfully. Test record updated.");
+  }catch(err){
+   msg.className="save-feedback error";
+   msg.textContent="Save failed: "+(err?.message||"Please try again.");
+   toast("Save failed. Check the message beside Save follow-up.",true);
+  }finally{save.disabled=false}
  });
- root.append(notes,bar);return root;
+ root.append(notes,bar,msg);return root;
 }
 $("#refresh").addEventListener("click",load);
 $("#interest-filter").addEventListener("change",render);
