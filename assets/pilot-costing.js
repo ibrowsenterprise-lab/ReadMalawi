@@ -283,4 +283,13 @@ export function attachPilotCosting(root,enquiry){
  });
  close.addEventListener("click",()=>{panel.hidden=true;toggle.setAttribute("aria-expanded","false");toggle.textContent="Prepare TEST internal costing";toggle.focus()});
  section.append(toggle,panel);root.append(section);
+ // Local-only accessor: shared with the INTERNAL draft builder, not sent to Supabase.
+ return {
+   getCostingSnapshot:()=>({
+     result:computePilotCost(readLines(),overheadInput.value,contingencyInput.value),
+     assumptions:notes.value.trim(),
+     isDemo:notes.value.includes("FICTIONAL DEMO DATA ONLY"),
+     source:"internal-browser-draft"
+   })
+ };
 }
