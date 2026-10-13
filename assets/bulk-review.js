@@ -2,6 +2,7 @@
 import { getSupabaseModule } from "./supabase-loader.js";
 const $=id=>document.getElementById(id);
 const cfg=window.READMALAWI_CONFIG||{};
+const prelaunch=cfg.sitePhase!=="production";
 const PAGE_SIZE=50;
 let client=null,admin=null,rows=[],page=0,total=0,busy=false;
 let selected=new Set();
@@ -30,8 +31,8 @@ function updateButtons(){
   " can be selected here · "+Math.max(0,rows.length-e.length)+" test/excluded record(s) require individual review.";
  $("bulk-review-select-all").disabled=busy||!admin||e.length===0;
  $("bulk-review-clear").disabled=busy||selected.size===0;
- $("bulk-review-selected").disabled=busy||n===0;
- $("bulk-review-all").disabled=busy||e.length===0;
+ $("bulk-review-selected").disabled=prelaunch||busy||n===0;
+ $("bulk-review-all").disabled=prelaunch||busy||e.length===0;
  $("bulk-review-prev").disabled=busy||page===0;
  $("bulk-review-next").disabled=busy||(page+1)*PAGE_SIZE>=total;
  for(const id of ["bulk-review-rights","bulk-review-evidence","bulk-review-confirm"]){
@@ -92,6 +93,12 @@ async function initialize(){
   if(access.error)throw access.error;
   if(!access.data){$("bulk-review-auth").textContent="Bulk publication is available only to authorised librarians.";return}
   admin=user;
+  if(prelaunch){
+    $("bulk-review-panel").hidden=false;
+    $("bulk-review-controls").hidden=true;
+    $("bulk-review-auth").textContent="Prelaunch testing: bulk publishing is suspended. You may review submitted works privately using the Book Review Desk; no PDFs will be released.";
+    return;
+  }
   $("bulk-review-auth").textContent="Authorised librarian · "+user.email+
     " · Publishing creates a private audit record of each approval.";
   $("bulk-review-panel").hidden=false;
@@ -100,6 +107,7 @@ async function initialize(){
  }catch(e){$("bulk-review-auth").textContent="Could not verify librarian sign-in: "+e.message}
 }
 async function publish(allOnPage){
+ if(prelaunch){status("Bulk publication is disabled throughout ReadMalawi testing.",true);return}
  if(!admin||busy)return;
  const selectedRows=(allOnPage?eligible():eligible().filter(row=>selected.has(row.id)));
  const rights=$("bulk-review-rights").value,evidence=$("bulk-review-evidence").value.trim();
