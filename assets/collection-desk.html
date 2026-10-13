@@ -93,6 +93,12 @@ textarea{min-height:80px}
 .readiness-warning{padding:15px;border:1px solid #e1d19c;border-radius:10px;background:#fff6df;color:#6d5528;font-size:.86rem;line-height:1.55;margin-top:17px}
 @media(max-width:550px){.readiness-checklist{padding:12px}.readiness-line{font-size:.9rem;gap:10px}.operations-readiness>.actions .btn{width:100%}}
 
+
+.coordinator-pack{background:#fcfefc;border-color:#bcd9c7}
+.coordinator-pack .coordinator-preview-label{margin-top:16px}
+.coordinator-pack .plan-editor{min-height:335px;font-size:13px;line-height:1.55}
+@media(max-width:550px){.coordinator-pack .actions>.btn{width:100%}.coordinator-pack .plan-editor{min-height:290px;font-size:12px}}
+
 </style>
 </head>
 <body>
@@ -156,6 +162,18 @@ textarea{min-height:80px}
 <p id="operations-feedback" class="feedback" aria-live="polite"></p>
 <p class="readiness-warning">Even if every checkbox is ticked, ReadMalawi has NOT authorised pickups, collection, recipient handover, fundraising or payments. Formal external permissions and founder approval are required separately.</p>
 </section>
+<section class="panel coordinator-pack" id="coordinator-pack" aria-labelledby="coordinator-heading">
+<div class="eyebrow">One tap · Internal preparation</div>
+<h2 id="coordinator-heading">Coordinators, transport and institution discussion drafts</h2>
+<p class="muted">Uses the <strong>Schools / Prisons / Both</strong> choice in the Collection Readiness section above. Generates a proposed team-role list, transport and storage checklist, and a school or prison discussion-letter template. No staff, vehicles, institutions, dates or costs are invented.</p>
+<div class="actions"><button id="coordinator-generate" type="button" class="btn secondary">Prepare TEST coordination & permission pack</button></div>
+<label class="field coordinator-preview-label" for="coordinator-preview">Editable private TEST planning pack
+<textarea class="plan-editor" id="coordinator-preview" rows="15" maxlength="25000" placeholder="Tap Prepare TEST coordination & permission pack to generate a draft. No emails or messages are sent."></textarea>
+</label>
+<div class="actions"><button id="coordinator-download" type="button" class="btn" disabled>Download internal TEST pack (.txt)</button></div>
+<p id="coordinator-feedback" class="feedback" aria-live="polite"></p>
+<p class="readiness-warning"><strong>Planning only:</strong> this is not a permission letter to send now. Founder authorisation, appointed coordinators and independent school/prison permission must precede any real collection or delivery.</p>
+</section>
 <section class="panel" aria-labelledby="stats-heading">
 <h2 id="stats-heading">TEST coordination snapshot</h2>
 <div class="stats">
@@ -213,6 +231,6 @@ textarea{min-height:80px}
 </main>
 <script src="../readmalawi-config.js"></script>
 <script defer src="testing-notice.js"></script>
-<script type="module" src="collection-desk.js?v=20261013-operations-readiness"></script>
+<script type="module" src="collection-desk.js?v=20261013-permissions-pack"></script>
 </body>
 </html>
