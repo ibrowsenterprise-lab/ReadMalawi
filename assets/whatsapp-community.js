@@ -6,7 +6,8 @@
  "use strict";
  const cfg=window.READMALAWI_CONFIG||{};
  const rawInvite=String(cfg.whatsappForumInviteUrl||"").trim();
- const validInvite=/^https:\/\/chat\.whatsapp\.com\/[a-zA-Z0-9]{10,40}\/?$/.test(rawInvite)?rawInvite:null;
+ const inviteMatch=rawInvite.match(/^https:\/\/chat\.whatsapp\.com\/([A-Za-z0-9]{10,40})\/?(?:\?[^#\s]*)?$/);
+ const validInvite=inviteMatch?"https://chat.whatsapp.com/"+inviteMatch[1]:null;
  function shareUrl(text){
   return "https://wa.me/?text="+encodeURIComponent(String(text||"").slice(0,1250));
  }
@@ -30,10 +31,10 @@
  function offerText(count,location){
   const amount=Number(count);
   const where=String(location||"").replace(/[\r\n\t]/g," ").trim().slice(0,95);
-  return "Hello ReadMalawi. I would like to offer approximately "+amount+
+  return (cfg.sitePhase!=="production"?"[READMALAWI PRELAUNCH TEST] ":"")+"Hello ReadMalawi. I would like to offer approximately "+amount+
     " physical book"+(amount===1?"":"s")+
     ". My general town/area is "+where+
-    ". Please reply to me here on WhatsApp so we can discuss whether collection can be arranged. No pickup or school/prison distribution has been confirmed yet.";
+    ". This is a prelaunch test offer; please do not schedule collection yet. We can discuss future arrangements after the collection programme is approved. No pickup or school/prison distribution has been confirmed.";
  }
  function activateForumInvites(){
   const nodes=document.querySelectorAll("[data-rm-forum-invite]");
