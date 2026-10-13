@@ -150,6 +150,64 @@ export function formattedInternalProposalHtml(body){
  '</main><footer>ReadMalawi · Tiyeni tiwelenge · Private internal test copy. Not authorised for distribution.</footer></body></html>'
  ].join("");
 }
+// Uneditable export guard: preserve the prelaunch status even if an administrator edits
+// the proposal body in the textarea. Founder approval is never inferred from text.
+export function guardedTestProposalExport(text){
+ const input=String(text||"");
+ const header=[
+  "READMALAWI — MANDATORY PRELAUNCH TEST MARKER",
+  "UNAPPROVED INTERNAL DRAFT. NOT FOR CLIENT DISTRIBUTION, SIGNATURE, INVOICING OR PAYMENT.",
+  "FOUNDER APPROVAL: NOT GRANTED. OFFICIAL LAUNCH: NOT AUTHORISED.",
+  "DO NOT TREAT ANY CLAIM WITHIN THE EDITABLE CONTENT AS AN AUTHORISATION.",
+  ""
+ ].join("\n");
+ return header+"\n"+input+"\n\nEND OF INTERNAL TEST DRAFT — NO EXTERNAL DISTRIBUTION AUTHORISED.\n";
+}
+export function makeFounderReviewPacket(enquiry,snapshot,reviewFlags,draftText){
+ const evaluation=evaluateDraftReadiness(snapshot,reviewFlags);
+ const result=snapshot?.result;
+ const status=evaluation.ready?"READY FOR FOUNDER TO INSPECT (TEST ONLY)":"BLOCKED: NEEDS INTERNAL REVISIONS";
+ const issues=evaluation.blockers.length?evaluation.blockers:["Internal checks satisfied; explicit founder identity verification and review still required."];
+ return [
+  "READMALAWI | FOUNDER REVIEW COVER SHEET",
+  "PRIVATE PRELAUNCH TEST RECORD — NOT A PROPOSAL OR APPROVAL",
+  "",
+  "Founder approval: NOT GRANTED",
+  "External release permission: BLOCKED",
+  "Official programme delivery: NOT AUTHORISED",
+  "Enquiry reference: "+String(enquiry?.id||"").slice(0,65),
+  "Programme category: "+(TRACKS[enquiry?.interest]||"Unknown"),
+  "Readiness state: "+status,
+  "",
+  "INTERNAL REVIEW CHECKLIST",
+  ...[
+   "Programme goals and scope",
+   "Complete, independently verified cost evidence",
+   "Safeguarding, copyright, privacy and accessibility",
+   "Legal, tax and facilitator readiness"
+  ].map((label,i)=>String(reviewFlags?.[i]?"[x]":"[ ]")+" "+label),
+  "",
+  "OPEN REVIEW BLOCKERS",
+  ...issues.map(x=>"- "+x),
+  "",
+  "FINANCIAL READINESS (INTERNAL ONLY)",
+  result?.valid&&result?.hasPriced?"Internal cost estimate: "+money(result.grandTotal):"No completed internal cost estimate.",
+  snapshot?.isDemo?"FICTIONAL DEMO COSTING — CANNOT BE APPROVED":"Source costs must still be checked by an independent human reviewer.",
+  result?.allReviewed?"All costing categories have been accounted for.":"Some costing categories are incomplete.",
+  "",
+  "DRAFT HANDOFF",
+  "Proposal text characters prepared locally: "+String(draftText||"").length,
+  "This cover sheet deliberately excludes client names, email addresses and free-text scope.",
+  "A human reviewer must separately inspect the actual proposal, source evidence and permissions.",
+  "",
+  "FOUNDER DECISION: NOT AVAILABLE INSIDE THE WEBSITE DURING TESTING",
+  "The site has no verified founder-only approval role or secure release endpoint.",
+  "Any genuine decision must wait for separately designed and audited founder authorisation.",
+  "No customer contact, quotation, signing, invoicing, publication, or payment is triggered.",
+  "READMALAWI — TIYENI TIWELENGE — TEST ONLY"
+ ].join("\n")+"\n";
+}
+
 function downloadBlob(filename,contents,mimetype){
  const url=URL.createObjectURL(new Blob([contents],{type:mimetype}));
  const a=document.createElement("a");a.href=url;a.download=filename;
@@ -192,8 +250,9 @@ export function attachInternalProposalBuilder(root,enquiry,source={}){
  const actions=el("div","actions");
  const txt=el("button","btn secondary","Save internal draft (.txt)");txt.type="button";txt.disabled=true;
  const html=el("button","btn secondary","Download formatted draft (.html)");html.type="button";html.disabled=true;
+ const founder=el("button","btn secondary","Download founder REVIEW PACKET (TEST)");founder.type="button";founder.disabled=true;
  const close=el("button","btn secondary","Close proposal");close.type="button";
- actions.append(mark,txt,html,close);
+ actions.append(mark,txt,html,founder,close);
  const warning=el("p","cost-warning","INTERNAL TEST ONLY: even after review, the founder has NOT approved this proposal for customer distribution. No client-facing pricing or contract can be issued here.");
  body.append(title,explainer,firstActions,docLabel,review,actions,info,warning);
  panel.append(toggle,body);root.append(panel);
@@ -215,8 +274,9 @@ export function attachInternalProposalBuilder(root,enquiry,source={}){
  }
  function statusUpdate(){
   const current=readiness();
+  if(reviewMarked&&!current.ready)clearReviewStatus();
   mark.disabled=!editor.value.trim()||!current.ready;
-  txt.disabled=html.disabled=!editor.value.trim();
+  txt.disabled=html.disabled=founder.disabled=!editor.value.trim();
   if(!reviewMarked)info.textContent=current.ready
    ?"All local readiness checks met. You may flag this TEST draft for founder review; final approval is still not granted."
    :current.blockers.slice(0,3).join(" ")+" All actions remain internal TEST only.";
@@ -251,7 +311,7 @@ export function attachInternalProposalBuilder(root,enquiry,source={}){
  });
  txt.addEventListener("click",()=>{
   const content=editor.value.trim();if(!content)return;
-  const filename="ReadMalawi_TEST_Internal_Proposal.txt",data=content+"\n";
+  const filename="ReadMalawi_TEST_Internal_Proposal.txt",data=guardedTestProposalExport(content);
   const start=()=>downloadBlob(filename,data,"text/plain;charset=utf-8");
   start();
   showDownloadPanel({filename,content:data,onDownload:start,trigger:txt});
@@ -260,8 +320,18 @@ export function attachInternalProposalBuilder(root,enquiry,source={}){
  html.addEventListener("click",()=>{
   const content=editor.value.trim();if(!content)return;
   const filename="ReadMalawi_TEST_Internal_Proposal.html";
-  downloadBlob(filename,formattedInternalProposalHtml(content),"text/html;charset=utf-8");
+  downloadBlob(filename,formattedInternalProposalHtml(guardedTestProposalExport(content)),"text/html;charset=utf-8");
   info.textContent="Formatted HTML draft requested from your browser. This is not a Word .docx file or a client-facing proposal.";
+ });
+ founder.addEventListener("click",()=>{
+  statusUpdate();
+  const content=editor.value.trim();if(!content)return;
+  const filename="ReadMalawi_TEST_Founder_Review_Packet.txt";
+  const packet=makeFounderReviewPacket(enquiry,currentSnapshot(),boxes.map(b=>b.checked),content);
+  const download=()=>downloadBlob(filename,packet,"text/plain;charset=utf-8");
+  download();
+  showDownloadPanel({filename,content:packet,onDownload:download,trigger:founder});
+  info.textContent="TEST founder review packet prepared locally. It is NOT an approval or customer release.";
  });
  close.addEventListener("click",()=>{
   body.hidden=true;toggle.setAttribute("aria-expanded","false");
