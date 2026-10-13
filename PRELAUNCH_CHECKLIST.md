@@ -93,3 +93,16 @@ The founder requested a prominent popup after exporting a costing document. The 
 ## Readable mobile new-tab viewer — 13 October 2026
 
 After the founder demonstrated that Android's native `text/plain` browser tab rendered the costing in tiny, hard-to-read type, the internal **Open in new tab** action was changed to create a local, responsive HTML preview from the same in-memory text. It uses a mobile viewport, clear heading and readable wrapped monospace text. The private text is HTML-escaped and the preview uses a restrictive Content Security Policy with no external scripts or requests. The original file download remains a plain `.txt`, without any change to pricing, RLS, cost calculations, production readiness or the public library. The Android-specific result needs visual retesting.
+
+## Reusable DEMO costing — 13 October 2026
+
+The founder requested an end to repeatedly entering dummy estimates for routine UI checks. We introduced **Load DEMO estimate · 1 tap** in the authenticated pilot-costing panel:
+
+- Loads eight fixed, clearly fictional costing lines and sets overhead to 10% and contingency to 20%.
+- Expected test arithmetic: direct MWK 692,000; overhead MWK 69,200; contingency MWK 152,240; total MWK 913,440.
+- Explicitly labels estimates and assumptions as fictional, not supplier rates, invoices or proposed customer prices.
+- Requires confirmation before replacing existing input and never writes amounts to the ReadMalawi database.
+- Does not disable manual costing for legitimate future scoping.
+- [ ] Verify the one-tap DEMO button's mobile display at the next meaningful feature milestone; do not repeatedly require the founder to generate dummy budgets for every small UI refinement.
+
+**Testing practice:** Reuse automated code/calculation checks and existing passed mobile evidence whenever possible. Only request fresh founder screenshots for a previously untested critical path or a newly reported defect. No production launch, customer invoicing, payment collection or client contact without explicit founder approval.
