@@ -1,4 +1,4 @@
-import {showDownloadPanel} from "./download-panel.js";
+import {showDownloadPanel} from "./download-panel.js?v=20261013-readable-preview";
 // ReadMalawi Learning & AI Lab: PRIVATE, browser-only, prelaunch cost modelling.
 // This tool receives enquiries only in the authenticated librarian inbox.
 // It does not store costing, contact anyone, calculate a client price, or request payment.
