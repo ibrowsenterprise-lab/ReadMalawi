@@ -46,19 +46,46 @@
 .book-row:focus-within{outline:3px solid #e6aa35;outline-offset:1px}
 .book-row .book-action:focus-visible{outline:none}
 @media(max-width:720px){.cards{grid-template-columns:1fr;gap:7px}.card.book-row{grid-template-columns:38px minmax(0,1fr) 62px;min-height:74px;padding:9px 11px;gap:9px}.book-row .book-pict{width:36px;height:47px;font-size:1.05rem}}
+
+/* ReadMalawi community reading and minimalist physical giving */
+.rm-forum-panel{border-radius:17px;border:1px solid #bed8c7;padding:clamp(19px,4vw,28px);margin:22px 0 25px;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(210px,.8fr);gap:22px;background:linear-gradient(135deg,#edf7ed,#fdfcf6)}
+.rm-eyebrow{font-size:.74rem;letter-spacing:.11em;text-transform:uppercase;color:#1a664c;font-weight:800}
+.rm-forum-panel h3{font-size:clamp(1.15rem,2.7vw,1.52rem);letter-spacing:-.03em;line-height:1.3;margin:8px 0 10px}
+.rm-forum-panel p{font-size:.9rem;line-height:1.55;color:#3c5f4e;margin:0 0 10px}
+.rm-forum-panel p.rm-smallprint{font-size:.8rem;color:#5f6d5e;margin-top:9px}
+.rm-forum-actions{display:flex;flex-direction:column;gap:10px;justify-content:center}
+.rm-forum-actions a.btn{padding:11px 13px;text-align:center;text-decoration:none}
+.rm-forum-actions [hidden]{display:none!important}
+.readmalawi-whatsapp-book-link{display:inline-block;margin-top:6px;font-size:.84rem;font-weight:750;color:#11684a;text-decoration:underline;text-underline-offset:3px}
+.readmalawi-whatsapp-book-link:hover{color:#084330}
+@media(max-width:680px){.rm-forum-panel{grid-template-columns:1fr}.rm-forum-actions a.btn{width:100%}}
+
 </style>
 </head>
 <body>
 <a href="#library" class="skip">Skip to library</a>
-<header><div class="wrap"><a class="brand" href="index.html">Read<span>Malawi</span></a><nav aria-label="Main navigation"><a href="index.html">Home</a><a href="#library">📚 Books</a><a href="#book-club">💬 Book Club</a><a href="assets/reading-buddy.html">Ask Buddy</a><a href="#contribute">Share a Book</a><a href="#requests">Ask for a Book</a><a href="assets/learning-services.html">Learning &amp; AI</a><a href="#support">Our model</a></nav></div></header>
+<header><div class="wrap"><a class="brand" href="index.html">Read<span>Malawi</span></a><nav aria-label="Main navigation"><a href="index.html">Home</a><a href="#library">📚 Books</a><a href="#book-club">💬 Book Club</a><a href="assets/reading-buddy.html">Ask Buddy</a><a href="#contribute">Share a Book</a><a href="#requests">Ask for a Book</a><a href="#whatsapp-forum">WhatsApp Forum</a><a href="assets/physical-books.html">Give physical books</a><a href="assets/learning-services.html">Learning &amp; AI</a><a href="#support">Our model</a></nav></div></header>
 <main>
 <section class="hero"><div class="wrap">
 <div class="eyebrow">Tiyeni tiwelenge · ReadMalawi</div><h1>Small books. Big ideas. Every language.</h1>
 <p>Read approved community books online for free. Browse children’s stories, listen to audiobooks and discover books in Malawian and world languages. Donate a book in a few taps.</p>
-<div class="chips"><a class="chip" style="text-decoration:none" href="#start-reading">🌟 Start a story</a><a class="chip" style="text-decoration:none;background:#f4d58f;color:#203a2f;border-color:#f4d58f" href="?category=Children#library">🧒 Kids' books</a><a class="chip" href="#library" style="text-decoration:none">📚 Find books</a><a class="chip" href="#book-club" style="text-decoration:none">💬 Book Club</a><a class="chip" href="#contribute" style="text-decoration:none">📤 Share a book</a><a class="chip" href="assets/learning-services.html#study" style="text-decoration:none">Smart study tools</a></div>
+<div class="chips"><a class="chip" style="text-decoration:none" href="#start-reading">🌟 Start a story</a><a class="chip" style="text-decoration:none;background:#f4d58f;color:#203a2f;border-color:#f4d58f" href="?category=Children#library">🧒 Kids' books</a><a class="chip" href="#library" style="text-decoration:none">📚 Find books</a><a class="chip" href="#book-club" style="text-decoration:none">💬 Book Club</a><a class="chip" href="#contribute" style="text-decoration:none">📤 Share a book</a><a class="chip" href="#whatsapp-forum" style="text-decoration:none">💬 WhatsApp reading forum</a><a class="chip" href="assets/physical-books.html" style="text-decoration:none">📚 Give physical books</a><a class="chip" href="assets/learning-services.html#study" style="text-decoration:none">Smart study tools</a></div>
 </div></section>
 <section class="section" id="library"><div class="wrap">
 <div class="eyebrow">Explore the catalogue</div><h2>Your digital reading shelf</h2><p class="intro">Read books and listen to stories here on ReadMalawi. We list only our original stories and books approved for publication.</p>
+<section id="whatsapp-forum" class="rm-forum-panel" aria-labelledby="rm-forum-headline">
+  <div>
+    <span class="rm-eyebrow">Our existing reading community</span>
+    <h3 id="rm-forum-headline">Found a book you like? Ask our WhatsApp forum.</h3>
+    <p>Every catalogue book has an <strong>Ask in our WhatsApp forum</strong> link. It prepares a short book request; just select the ReadMalawi group in WhatsApp and tap Send. Other readers may suggest a lawful copy, publisher link or library where you can borrow it.</p>
+    <p class="rm-smallprint">We share reading recommendations and books we have permission to share. Please don't upload or request unauthorised copyrighted copies.</p>
+  </div>
+  <div class="rm-forum-actions">
+    <a href="#" data-rm-forum-share class="btn">Ask the forum on WhatsApp ↗</a>
+    <a href="#" data-rm-forum-invite class="btn secondary" hidden>Join our WhatsApp forum ↗</a>
+    <a href="assets/physical-books.html" class="btn secondary">I have physical books to give →</a>
+  </div>
+</section>
 <section id="start-reading" aria-labelledby="readmalawi-stories-heading" style="margin:23px 0 25px;scroll-margin-top:22px">
   <h3 id="readmalawi-stories-heading" style="font-size:1.4rem;margin:0 0 5px">🌟 Start with a short story</h3>
   <p class="intro" style="margin-bottom:14px">Ten original stories made for ReadMalawi, free to read here. Choose one and try its question.</p>
@@ -190,6 +217,7 @@ We are developing additional educational services for schools, readers, authors 
 <footer class="footer"><div class="wrap"><strong>ReadMalawi</strong> · Books • Technology • Knowledge for All<br><span class="small">Independent reading community. Book uploads are private until reviewed; memberships and payments are not active.</span><br><a href="assets/learning-services.html">Learning &amp; AI</a> · <a href="assets/official-reading.html">Official reading sources</a> · <a href="index.html#story">Our Story</a> · <a href="assets/partners.html">Partners</a> · <a href="index.html">Home</a></div></footer>
 <script src="readmalawi-config.js"></script>
 <script defer src="assets/testing-notice.js"></script>
-<script type="module" src="library.js?v=20261013-book-request-privacy"></script>
+<script defer src="assets/whatsapp-community.js?v=20261013-book-forum1"></script>
+<script type="module" src="library.js?v=20261013-book-forum1"></script>
 <script defer src="assets/readmalawi-chat-widget.js"></script>
 </body></html>
