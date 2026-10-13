@@ -193,3 +193,13 @@ Stored request notes are restricted from the public API, including browser-based
 - [ ] Obtain explicit founder operational approval, verified coordinator assignments, child/prison safeguarding permissions and a separate real handover ledger before any physical collections begin.
 
 - [x] One-tap **DEMO collection plan preview** added to the authenticated librarian desk, using only local fixed fictional sample data. Allows inspection with zero database rows and no repeated dummy offer entries.
+
+## Private collection-desk usability hardening — 13 October 2026
+
+- [x] Reviewed the existing founder-created **15-book Mzuzu TEST offer**; no additional dummy offers were created.
+- [x] Follow-up status saves now show a clear confirmation including the saved TEST stage. If a changed stage removes the item from the active filter, the list displays an inline success message with instructions to select **All TEST offers**.
+- [x] Saves use the row's last `updated_at` value for optimistic conflict detection. If another tab updated the offer first, staff see a refresh instruction rather than silently overwriting it.
+- [x] The internal CSV and per-offer TEST worksheet downloads both open ReadMalawi's established mobile confirmation/preview panel with file name, Preview, Open in new tab, Download again and Close.
+- [x] Code checks covered responsive popup styles, CSV formula escaping, no account IDs/internal notes in summaries, saved-offer worksheet content, and all TEST-only boundaries.
+- [ ] **Still unverified in an authenticated phone session:** changing the existing offer's follow-up stage and actually opening the new CSV/plan downloads. No need to re-enter an offer for these checks.
+- [ ] Confirm any real pickup workflow and recipient permission system only after the founder explicitly approves official launch. No collected/distributed workflow has been activated.
