@@ -31,10 +31,13 @@
  function offerText(count,location){
   const amount=Number(count);
   const where=String(location||"").replace(/[\r\n\t]/g," ").trim().slice(0,95);
-  return (cfg.sitePhase!=="production"?"[READMALAWI PRELAUNCH TEST] ":"")+"Hello ReadMalawi. I would like to offer approximately "+amount+
+  const prefix=cfg.sitePhase!=="production"?"[READMALAWI PRELAUNCH TEST] ":"";
+  const status=cfg.sitePhase!=="production"
+    ?" This is a prelaunch test offer. Please do not arrange collection. Physical collections and school/prison deliveries are not authorised yet."
+    :" Please reply here to discuss whether collection might be possible; nothing is booked or guaranteed.";
+  return prefix+"Hello ReadMalawi. I would like to offer approximately "+amount+
     " physical book"+(amount===1?"":"s")+
-    ". My general town/area is "+where+
-    ". This is a prelaunch test offer; please do not schedule collection yet. We can discuss future arrangements after the collection programme is approved. No pickup or school/prison distribution has been confirmed.";
+    ". My general town/area is "+where+"."+status;
  }
  function activateForumInvites(){
   const nodes=document.querySelectorAll("[data-rm-forum-invite]");
@@ -73,6 +76,11 @@
    }
    if(area.length<2||area.length>95){
     message.textContent="Please enter a general town or area (2–95 characters). A street address isn't needed.";
+    location.focus();
+    return;
+   }
+   if(/(?:\+?\d[\d ()-]{7,}\d)|(?:\b(?:street|road)\s+(?:address|number|no\.?|#|\d+))|(?:\b(?:house|plot|flat|apartment)\s*(?:number|no\.?|#)?\s*\d+)|(?:\bp\.?\s*o\.?\s*box\b)|(?:\b(?:street\s+address|residential\s+address)\b)/i.test(area)){
+    message.textContent="Please enter only your town or general area—not a house, plot, street address or phone number.";
     location.focus();
     return;
    }
