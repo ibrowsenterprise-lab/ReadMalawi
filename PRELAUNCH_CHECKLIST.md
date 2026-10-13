@@ -218,3 +218,17 @@ Stored request notes are restricted from the public API, including browser-based
 - [ ] Founder to approve verified coordinator identities, legal operation, vehicle/transport and safeguards, and obtain actual school/prison consent before any real collection is scheduled.
 
 **Current phase:** development/testing only. No record of physical book donations received or delivered has been created.
+
+## Coordinator, transport and institutional approach pack — 13 October 2026
+
+- [x] Added a **Coordinator, Transport & Permission Pack** under the authenticated [Physical Book Collection Desk](assets/collection-desk.html).
+- [x] Reuses the existing Readiness selector (**Schools / Prisons / Both**), so administrators do not have to fill in an additional form or repeat the same destination information.
+- [x] Browser-only generator creates a practical role assignment worksheet (programme lead, donor liaison, transport coordinator, sorting custodian, safeguarding/institution liaison), transport and fuel planning questions, safe storage and physical-count checks.
+- [x] Includes **UNSENT INTERNAL** discussion-letter templates for the appropriate school management and/or prison authority, expressly asking for guidance and permission procedures rather than asserting school/prison access or prior distributions.
+- [x] Does **not** assign names, invent costs, promise pickup dates, email any institution, contact WhatsApp members, generate payment requests or alter the existing TEST offer.
+- [x] Editable `.txt` export uses the familiar ReadMalawi mobile download/preview dialog and prepends an uneditable-in-export **NO FOUNDER, COLLECTION OR INSTITUTIONAL PERMISSION GRANTED** warning.
+- [x] On recipient selection change, the previously prepared local pack is invalidated; regenerating after edits requires confirmation.
+- [ ] Mobile-visual acceptance of this newest panel and download, without creating or modifying another dummy record.
+- [ ] **Actual appointments and permissions still pending:** identify appropriate volunteer coordinators, verify transport availability/costs, confirm legal operating status, obtain real institution permission through authorised channels and seek explicit founder launch approval.
+
+The operational packet is a prelaunch draft, not a sent letter, an appointment, a prison/school permit, a delivery order or evidence of physical distributions.
