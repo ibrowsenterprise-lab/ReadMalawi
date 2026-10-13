@@ -119,3 +119,22 @@ The founder requested an end to repeatedly entering dummy estimates for routine 
 - [ ] Independently confirm no unauthorised users can access the librarian inbox before official launch.
 
 **No client-facing proposals, automatic notifications, payments, contracts, invoices, bookings or official launch are authorised.** The site remains in development/testing mode.
+
+## Security hardening and founder-review boundary — 13 October 2026
+
+- [x] Verified PostgreSQL RLS is enabled on all 14 public application tables; private member-book Storage bucket remains non-public.
+- [x] Repaired missing `readmalawi_partnership_enquiries` API privileges with **column-scoped** INSERT for visitors and SELECT/UPDATE for signed-in librarians subject to RLS; visitors cannot SELECT private enquiries or UPDATE records. Signed-in librarians cannot UPDATE the original contact email.
+- [x] Readmalawi has 1 private test enquiry. Existing record preserved, no customer communications generated.
+- [x] Disabled the authenticated bulk publication RPC, and installed a database trigger that denies all newly approved/rights-verified member books during testing, even via direct librarian UPDATE.
+- [x] A controlled pending-book publication attempt was denied and rolled back. The catalogue remained **26 pending, 3 rejected, 0 approved**.
+- [x] Individual and bulk publishing controls clearly display PAUSED during prelaunch, without exposing approval actions that would fail.
+- [x] Proposal downloads now enforce prelaunch warnings independently of editable proposal body. A local **Download founder REVIEW PACKET (TEST)** identifies blockers and says real founder approval is **NOT GRANTED**. No signature, real approval, customer email or backend release occurs.
+- [x] Supabase security advisor's callable authenticated SECURITY DEFINER bulk-publishing warning was cleared after revoking authenticated execution.
+- [ ] **PENDING**: Supabase Auth leaked-password protection is disabled (advisor WARN). Review/enable in Supabase Auth settings, subject to account availability.
+- [ ] **PENDING**: Actual logged-out and unrelated logged-in account browser tests for enquiry and library access (SQL ACL/RLS inspection alone is not a penetration test).
+- [ ] **PENDING**: Restrict public book-request exposure of requester UUID and free-text notes before accepting real community requests; there are currently zero request rows.
+- [ ] **PENDING**: Pin browser Supabase SDK to a vetted version; retest before switching working mobile clients.
+- [ ] **PENDING**: Establish and verify a real founder-only identity, durable review/audit process and server-side release controls before any genuine approval functionality.
+- [ ] **PENDING**: Independently review children's safeguarding, privacy/retention, third-party book rights, institutional contracting and pricing before final launch.
+
+Full evidence and release blockers are in [SECURITY_AUDIT_2026-10-13.md](SECURITY_AUDIT_2026-10-13.md). **No final production launch is authorised.**
