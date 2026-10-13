@@ -1,5 +1,6 @@
 import {attachPilotPlanner} from "./pilot-planner.js";
 import {attachPilotCosting} from "./pilot-costing.js?v=20261013-demo-estimate";
+import {attachInternalProposalBuilder} from "./proposal-builder.js";
 const $=id=>document.getElementById(id.startsWith("#")?id.slice(1):id);
 const cfg=window.READMALAWI_CONFIG||{};
 const statuses=["new","contacted","in_discussion","closed"];
@@ -99,8 +100,12 @@ function card(x){
   }finally{save.disabled=false}
  });
  root.append(notes,bar,msg);
- attachPilotPlanner(root,x);
- attachPilotCosting(root,x);
+ const scopeTool=attachPilotPlanner(root,x);
+ const costingTool=attachPilotCosting(root,x);
+ attachInternalProposalBuilder(root,x,{
+  getDraft:()=>scopeTool?.getDraft?.()||"",
+  getCostingSnapshot:()=>costingTool?.getCostingSnapshot?.()||{}
+ });
  return root;
 }
 $("#refresh").addEventListener("click",load);
