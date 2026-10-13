@@ -48,6 +48,7 @@ textarea{min-height:80px}
 @media(max-width:640px){.inputs{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.actions>.btn{width:100%}}
 .plan-workspace{border:1px solid #c6dcca;border-radius:11px;padding:16px;margin:12px 0 8px;background:#f2f8f3}
 .plan-workspace[hidden]{display:none!important}
+#sample-preview-label[hidden]{display:none!important}#sample-preview-label{margin-top:13px}
 .plan-editor{font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;min-height:340px;white-space:pre-wrap;overflow-wrap:anywhere;background:white}
 .record>.btn.secondary{margin-top:14px}
 .playbook{background:#fbfcf8;border:1px solid #d4e2d8}
@@ -91,6 +92,14 @@ textarea{min-height:80px}
 <div class="metric"><strong id="total-plans">0</strong><span>Possible collection plans — TEST</span></div>
 </div>
 </section>
+<section class="panel" aria-labelledby="demo-plan-title">
+<h2 id="demo-plan-title">Sample collection plan — no dummy entry needed</h2>
+<p class="muted">Preview a fictional 15-book offer from Lilongwe. This is computed entirely in your browser; no database record or donor contact is created.</p>
+<div class="actions"><button id="sample-plan" class="btn secondary" type="button">Preview DEMO collection plan · 1 tap</button></div>
+<label class="field" id="sample-preview-label" hidden>Fictional TEST planning example
+<textarea id="sample-preview" class="plan-editor" rows="12" readonly></textarea>
+</label>
+</section>
 <section class="panel" aria-labelledby="new-heading">
 <h2 id="new-heading">Record a TEST offer from WhatsApp</h2>
 <p class="muted">Only two inputs. Do not enter a donor's contact details, address, book titles or authors. Nothing is posted to WhatsApp.</p>
@@ -131,6 +140,6 @@ textarea{min-height:80px}
 </main>
 <script src="../readmalawi-config.js"></script>
 <script defer src="testing-notice.js"></script>
-<script type="module" src="collection-desk.js?v=20261013-plan-and-csv-safety"></script>
+<script type="module" src="collection-desk.js?v=20261013-one-tap-sample"></script>
 </body>
 </html>
