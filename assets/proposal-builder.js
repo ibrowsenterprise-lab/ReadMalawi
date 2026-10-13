@@ -205,6 +205,14 @@ export function attachInternalProposalBuilder(root,enquiry,source={}){
  function readiness(){
   return evaluateDraftReadiness(currentSnapshot(),boxes.map(x=>x.checked));
  }
+ function clearReviewStatus(){
+  if(!reviewMarked)return;
+  reviewMarked=false;
+  editor.value=editor.value.replace(
+    "Document stage: REVIEWED FOR FOUNDER CONSIDERATION (TEST ONLY)",
+    "Document stage: INTERNAL DRAFT — REVIEW PENDING"
+  );
+ }
  function statusUpdate(){
   const current=readiness();
   mark.disabled=!editor.value.trim()||!current.ready;
@@ -228,8 +236,8 @@ export function attachInternalProposalBuilder(root,enquiry,source={}){
   statusUpdate();
   info.textContent="Draft generated locally. Review and edit it before exporting. No messages or costs were submitted.";
  });
- boxes.forEach(b=>b.addEventListener("change",()=>{reviewMarked=false;statusUpdate()}));
- editor.addEventListener("input",()=>{reviewMarked=false;statusUpdate()});
+ boxes.forEach(b=>b.addEventListener("change",()=>{clearReviewStatus();statusUpdate()}));
+ editor.addEventListener("input",()=>{clearReviewStatus();statusUpdate()});
  mark.addEventListener("click",()=>{
   const ready=readiness();
   if(!ready.ready)return;
