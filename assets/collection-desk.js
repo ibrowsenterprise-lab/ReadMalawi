@@ -1,4 +1,5 @@
 import {getSupabaseModule} from "./supabase-loader.js";
+import {showDownloadPanel} from "./download-panel.js?v=20261013-readable-preview";
 // Authenticated ReadMalawi librarian TEST coordination. Never a proof of donated books.
 const cfg=window.READMALAWI_CONFIG||{}, $=id=>document.getElementById(id);
 const labels={offered_test:"Offer noted · TEST",followup_test:"For follow-up · TEST",potential_pickup_test:"Potential collection planning · TEST",closed_test:"Closed without collection · TEST"};
@@ -116,15 +117,32 @@ function display(){
   stage.addEventListener("change",mark);note.addEventListener("input",mark);
   button.addEventListener("click",async()=>{
    if(!authorised)return;
-   button.disabled=true;sayFor(feedback,"Saving…");
+   const nextStage=stage.value;
+   const nextNote=note.value.trim();
+   const previousTimestamp=record.updated_at;
+   button.disabled=true;sayFor(feedback,"Saving TEST follow-up…");
    try{
-    const {data,error}=await api.from("readmalawi_physical_book_offers").update({
-      stage:stage.value,internal_note:note.value.trim(),updated_at:new Date().toISOString()
-    }).eq("id",record.id).select("id,stage,internal_note,updated_at").maybeSingle();
+    // Reject conflicting browser tabs instead of silently overwriting newer notes.
+    let query=api.from("readmalawi_physical_book_offers")
+      .update({stage:nextStage,internal_note:nextNote,updated_at:new Date().toISOString()})
+      .eq("id",record.id);
+    if(previousTimestamp)query=query.eq("updated_at",previousTimestamp);
+    const {data,error}=await query.select("id,stage,internal_note,updated_at").maybeSingle();
     if(error)throw error;
-    if(!data)throw new Error("No matching authorised record was updated.");
-    Object.assign(record,data);sayFor(feedback,"✓ TEST follow-up saved and verified.");metrics();
-   }catch(e){sayFor(feedback,"Save failed: "+e.message,true)}finally{button.disabled=false}
+    if(!data)throw new Error("No matching row was saved. It may have changed in another tab; tap Refresh offers.");
+    Object.assign(record,data);
+    sayFor(feedback,"✓ TEST follow-up saved and verified. Stage: "+(labels[record.stage]||"TEST")+".");
+    metrics();
+    // Keep the selected filter consistent after changing a stage.
+    const selectedFilter=$("stage-filter").value;
+    if(selectedFilter!=="all"&&record.stage!==selectedFilter){
+      display();
+      say("desk-status","TEST follow-up saved. The updated offer is now outside the selected filter; choose All TEST offers to view it.");
+    }else{
+      say("desk-status","✓ TEST follow-up saved. No pickup or donation was recorded.");
+    }
+   }catch(e){sayFor(feedback,"Save failed: "+e.message,true)}
+   finally{button.disabled=false}
   });
   const planButton=node("button","btn secondary","Prepare TEST collection plan");
   planButton.type="button";
@@ -154,8 +172,11 @@ function display(){
    const guarded="READMALAWI TEST ONLY — NO COLLECTION OR DISTRIBUTION AUTHORISED\n"+
     "Do not use as a receipt, delivery note or pickup order.\n\n"+content+
     "\n\nEND OF READMALAWI PRIVATE TEST DOCUMENT.\n";
-   downloadLocalText("ReadMalawi_TEST_Physical_Book_Plan.txt",guarded);
-   sayFor(planStatus,"Download requested. No WhatsApp message or database update occurred.");
+   const filename="ReadMalawi_TEST_Physical_Book_Plan.txt";
+   const request=()=>downloadLocalText(filename,guarded);
+   request();
+   showDownloadPanel({filename,content:guarded,onDownload:request,trigger:downloadPlan});
+   sayFor(planStatus,"Download requested. Use the file preview panel to inspect it. No WhatsApp message or database update occurred.");
   });
   closePlan.addEventListener("click",()=>{planArea.hidden=true;planButton.textContent="Prepare TEST collection plan";planButton.focus()});
   planActions.append(downloadPlan,closePlan);
@@ -194,12 +215,18 @@ async function submit(event){
  finally{$("save-offer").disabled=false}
 }
 function download(){
+ if(!authorised)return;
  const csv=exportRows(offers);
- const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
- const a=document.createElement("a");a.href=url;a.download="ReadMalawi_TEST_Physical_Offers.csv";
- document.body.append(a);a.click();a.remove();
- setTimeout(()=>URL.revokeObjectURL(url),15000);
- say("desk-status","TEST summary download requested; no personal contacts or internal notes included.");
+ const filename="ReadMalawi_TEST_Physical_Offers.csv";
+ const request=()=>{
+   const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
+   const a=document.createElement("a");a.href=url;a.download=filename;
+   document.body.append(a);a.click();a.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),15000);
+ };
+ request();
+ showDownloadPanel({filename,content:csv,onDownload:request,trigger:$("export-offers")});
+ say("desk-status","TEST summary download requested. Review in the popup; account IDs and internal notes are excluded.");
 }
 async function init(){
  if(cfg.sitePhase!=="testing"){say("desk-status","TEST coordination register unavailable outside development mode.",true);return}
