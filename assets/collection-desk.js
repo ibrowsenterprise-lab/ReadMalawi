@@ -2,7 +2,7 @@ import {getSupabaseModule} from "./supabase-loader.js";
 import {showDownloadPanel} from "./download-panel.js?v=20261013-readable-preview";
 import {initOperationsReadiness} from "./operations-readiness.js?v=20261013-operations1";
 import {initCoordinatorPack} from "./coordination-permissions.js?v=20261013-permissions1";
-import {parseWhatsAppBookOffer} from "./whatsapp-offer-parser.js?v=20261013-import1";
+import {parseWhatsAppBookOffer,isPrivatePickupDetail} from "./whatsapp-offer-parser.js?v=20261013-safe-areas";
 // Authenticated ReadMalawi librarian TEST coordination. Never a proof of donated books.
 const cfg=window.READMALAWI_CONFIG||{}, $=id=>document.getElementById(id);
 const labels={offered_test:"Offer noted · TEST",followup_test:"For follow-up · TEST",potential_pickup_test:"Potential collection planning · TEST",closed_test:"Closed without collection · TEST"};
@@ -13,7 +13,7 @@ export function validateOffer(raw,location){
  const v=String(raw??"").trim(),n=Number(v),area=String(location||"").replace(/\s+/g," ").trim();
  if(!/^[0-9]+$/.test(v)||!Number.isSafeInteger(n)||n<1||n>50000)return {valid:false,error:"Enter a whole number from 1 to 50,000."};
  if(area.length<2||area.length>95)return {valid:false,error:"Enter a general town/area (2–95 characters), without a street address."};
- if(/(?:\+?\d[\d \-()]{7,}\d)|(?:\bstreet\s+(?:address|number)\b)|(?:\bhouse\s*(?:number|no\.?|#)\b)|(?:\bplot\s*(?:number|no\.?|#)\b)|(?:\bP\.?\s*O\.?\s*box\b)/i.test(area)){
+ if(isPrivatePickupDetail(area)){
   return {valid:false,error:"Use a general town/area only. Do not store contact numbers or detailed addresses."};
  }
  return {valid:true,book_count:n,general_area:area};
