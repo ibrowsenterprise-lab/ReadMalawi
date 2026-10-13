@@ -57,3 +57,15 @@
 4. Deploy reviewed production configuration; no client email notifications, paid checkout or invoicing is enabled merely by changing \`sitePhase\`. Those require a separate expressly approved deployment, verified backend controls and end-to-end tests.
 5. Verify Render's reported live SHA matches the approved GitHub SHA, then conduct final mobile and laptop smoke tests.
 6. Announce launch only after founder confirmation; record the official date and first verified programme results.
+
+## Verified test evidence — 13 October 2026
+
+- [x] Android librarian inbox opened with existing test enquiry visible; submitted fields and TEST warning displayed.
+- [x] Librarian tapped Save follow-up; Supabase retained the changed private note and enquiry status `new`.
+- [x] After UI fix deployed as commit `1a0bf18e`, the founder confirmed the prominent mobile save confirmation **PASSED**.
+- [x] The BUA Construction trial enquiry remains flagged as TEST, with original private notes preserved.
+- [ ] **NEW**: mobile test the internal `Prepare TEST pilot brief` function, edit a draft, and download its local .txt file without emailing anyone or changing enquiry status.
+- [ ] Test access denial with a separate non-librarian account; an authenticated librarian session alone cannot prove signed-out denial.
+- [ ] Test remaining library, AI, translation, accessibility and rights checks before final launch.
+
+The internal scope-builder is not a quoting engine or an AI model. It uses local fixed templates from existing private enquiry details, saves nothing automatically and cannot send emails, invoices, payments or booked sessions.
