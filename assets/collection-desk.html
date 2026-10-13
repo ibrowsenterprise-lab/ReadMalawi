@@ -75,6 +75,24 @@ textarea{min-height:80px}
 .rm-download-status{font-size:.88rem;color:#205f48;font-weight:700;min-height:20px}
 @media(max-width:550px){.rm-download-overlay{padding:11px;align-items:center}.rm-download-dialog{padding:17px 14px;border-radius:14px;max-height:85dvh}.rm-download-actions{grid-template-columns:1fr}.rm-download-btn{width:100%}}
 
+
+/* Simple local-only collection readiness checks for librarian use */
+.operations-readiness{border-color:#b6d3c0;background:#fcfefc}
+.operations-readiness>.field{margin:19px 0 13px}
+.operations-readiness strong{color:#1e543e}
+.readiness-checklist{border:1px solid #ccded1;border-radius:11px;padding:17px;margin:17px 0;background:#f7fbf7}
+.readiness-checklist legend{font-weight:850;color:#1d5842;padding:0 8px}
+.readiness-line{display:flex;align-items:flex-start;gap:12px;line-height:1.5;padding:10px 0;border-bottom:1px solid #e3ece4;font-size:.91rem;color:#294d3c}
+.readiness-line:last-of-type{border-bottom:0}
+.readiness-line[hidden]{display:none!important}
+.readiness-line input[type="checkbox"]{width:19px;height:19px;min-width:19px;min-height:19px;flex:none;padding:0;margin:3px 0 0;accent-color:#146349}
+.readiness-line span{flex:1}
+.readiness-progress{font-weight:850;color:#125b40;background:#edf7ed;padding:10px 13px;border-radius:10px;margin:14px 0}
+.readiness-preview-label{margin-top:19px}
+.readiness-preview-label textarea{background:#f7faf6}
+.readiness-warning{padding:15px;border:1px solid #e1d19c;border-radius:10px;background:#fff6df;color:#6d5528;font-size:.86rem;line-height:1.55;margin-top:17px}
+@media(max-width:550px){.readiness-checklist{padding:12px}.readiness-line{font-size:.9rem;gap:10px}.operations-readiness>.actions .btn{width:100%}}
+
 </style>
 </head>
 <body>
@@ -101,6 +119,43 @@ textarea{min-height:80px}
 <p><a href="https://github.com/ibrowsenterprise-lab/ReadMalawi/blob/main/PHYSICAL_BOOK_COLLECTION_PLAYBOOK_DRAFT.md" target="_blank" rel="noopener noreferrer">Read the complete draft collection playbook ↗</a></p>
 </details>
 
+<section class="panel operations-readiness" id="operations-readiness" aria-labelledby="operations-heading">
+<div class="eyebrow">For coordinators · Private testing</div>
+<h2 id="operations-heading">Collection readiness — what is still missing?</h2>
+<p class="muted">A quick, optional planning checklist for future school and prison donations. Choose a destination and tap the items the team has considered. <strong>Ticked items are not independently verified permissions or approval.</strong> This worksheet stays in your browser and does not change your saved TEST offer.</p>
+<label class="field" for="operations-recipient">Future recipient programme
+<select id="operations-recipient">
+<option value="planning" selected>Not selected — just planning</option>
+<option value="school">Schools</option>
+<option value="prison">Prisons</option>
+<option value="both">Schools and prisons</option>
+</select>
+</label>
+<fieldset class="readiness-checklist">
+<legend>Planning requirements</legend>
+<label class="readiness-line"><input type="checkbox" data-readiness-gate value="governance"><span>Founder launch decision, accountable lead and legal operating requirements reviewed</span></label>
+<label class="readiness-line"><input type="checkbox" data-readiness-gate value="volunteers"><span>Coordinators, volunteers, responsibilities and safety briefing planned</span></label>
+<label class="readiness-line"><input type="checkbox" data-readiness-gate value="logistics"><span>Vehicle, fuel, route, safe storage and transport availability assessed</span></label>
+<label class="readiness-line"><input type="checkbox" data-readiness-gate value="privacy"><span>Donor consent, private contact details and safeguarding processes reviewed</span></label>
+<label class="readiness-line"><input type="checkbox" data-readiness-gate value="inventory"><span>Physical count, book condition/suitability and receipt process planned</span></label>
+<label class="readiness-line"><input type="checkbox" data-readiness-gate value="finance"><span>Budget, liability, incident reporting and zero-deposit donor policy reviewed</span></label>
+<label class="readiness-line"><input type="checkbox" data-readiness-gate value="school"><span>School leadership, learning needs and necessary permissions considered</span></label>
+<label class="readiness-line"><input type="checkbox" data-readiness-gate value="prison"><span>Prison authority, entry/content restrictions and handover permissions considered</span></label>
+<label class="readiness-line"><input type="checkbox" data-readiness-gate value="verification"><span>Verified receipt, institution handover and truthful impact reporting planned</span></label>
+</fieldset>
+<p class="readiness-progress" id="operations-progress" role="status">0 items ticked</p>
+<p class="muted" id="operations-summary">Choose a recipient type to check the required permissions.</p>
+<div class="actions">
+<button class="btn secondary" id="operations-generate" type="button">Prepare TEST readiness report</button>
+<button class="btn secondary" id="operations-reset" type="button">Reset local checklist</button>
+</div>
+<label class="field readiness-preview-label" for="operations-report">Internal TEST report (read-only)
+<textarea id="operations-report" class="plan-editor" rows="12" readonly placeholder="Tap Prepare TEST readiness report to see open planning items."></textarea>
+</label>
+<div class="actions"><button class="btn" id="operations-download" type="button" disabled>Download TEST readiness (.txt)</button></div>
+<p id="operations-feedback" class="feedback" aria-live="polite"></p>
+<p class="readiness-warning">Even if every checkbox is ticked, ReadMalawi has NOT authorised pickups, collection, recipient handover, fundraising or payments. Formal external permissions and founder approval are required separately.</p>
+</section>
 <section class="panel" aria-labelledby="stats-heading">
 <h2 id="stats-heading">TEST coordination snapshot</h2>
 <div class="stats">
@@ -158,6 +213,6 @@ textarea{min-height:80px}
 </main>
 <script src="../readmalawi-config.js"></script>
 <script defer src="testing-notice.js"></script>
-<script type="module" src="collection-desk.js?v=20261013-download-verify"></script>
+<script type="module" src="collection-desk.js?v=20261013-operations-readiness"></script>
 </body>
 </html>
