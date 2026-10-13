@@ -126,3 +126,9 @@ No real coordinator is assigned, no route or cost is verified, no letters are di
 The private [Physical Book Collection Desk](assets/collection-desk.html) offers an optional **Paste WhatsApp offer** helper. A librarian can paste the donor's short book-offer message, then tap **Extract book count & area** to fill the existing two-field TEST offer form. The parser recognises ReadMalawi's own website-generated WhatsApp message. It runs locally, clears the original chat text immediately and rejects unclear quantities or detailed addresses. No sender identity, phone number, full transcript or donor private details are saved in ReadMalawi's database.
 
 The user still must verify the extracted count/area and press **Save TEST offer**; a likely duplicate prompts for explicit confirmation. This does not read WhatsApp messages automatically or contact anyone, and does not change the public two-input donation page. Testing mode, zero verified physical donations and the existing 15-book Mzuzu TEST entry are preserved.
+
+## WhatsApp offer intake safety refinement (13 October 2026)
+
+The two-input donor page and private librarian WhatsApp paste helper now apply stronger checks against detailed addresses, and the private parser recognises concise English and basic Chichewa book-offer phrases as well as the existing formatted ReadMalawi WhatsApp message. Unclear book counts or overly specific locations are held for manual entry, never saved automatically. Browser cache versions were refreshed on the homepage, library, donation page and private desk. Testing remains active; no pickups, receipts, or physical distribution are authorised.
+
+**Operational next decision (not a code feature):** identify an authorised collection coordinator and proposed first pilot area, and establish verified collection resources and institution permissions before any real donation activity begins. Do not guess these from IBROWS staff or other projects.
