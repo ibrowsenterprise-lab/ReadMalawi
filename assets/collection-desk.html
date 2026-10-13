@@ -99,6 +99,16 @@ textarea{min-height:80px}
 .coordinator-pack .plan-editor{min-height:335px;font-size:13px;line-height:1.55}
 @media(max-width:550px){.coordinator-pack .actions>.btn{width:100%}.coordinator-pack .plan-editor{min-height:290px;font-size:12px}}
 
+
+/* Optional WhatsApp paste helper stays unobtrusive and never enlarges the public donor form */
+.paste-helper{margin:15px 0 20px;padding:16px;border:1px solid #bdd8c5;border-radius:12px;background:#f3faf4}
+.paste-helper summary{cursor:pointer;font-weight:830;color:#175b42}
+.paste-helper[open] summary{margin-bottom:13px}
+.paste-helper>.muted{font-size:.86rem}
+.paste-helper textarea{min-height:110px}
+.paste-helper .actions .btn{flex:1 1 180px}
+@media(max-width:550px){.paste-helper{padding:12px}.paste-helper .actions .btn{width:100%;flex-basis:auto}}
+
 </style>
 </head>
 <body>
@@ -193,8 +203,17 @@ textarea{min-height:80px}
 </section>
 <section class="panel" aria-labelledby="new-heading">
 <h2 id="new-heading">Record a TEST offer from WhatsApp</h2>
-<p class="muted">Only two inputs. Do not enter a donor's contact details, address, book titles or authors. Nothing is posted to WhatsApp.</p>
+<p class="muted">Record only the approximate number of books and a general area. Type them below, or use the optional WhatsApp paste helper. Donor identity, phone, address, book titles and authors are never required. Nothing is posted to WhatsApp.</p>
 <form id="offer-form">
+<details class="paste-helper">
+<summary>Paste WhatsApp offer instead of retyping ↗</summary>
+<p class="muted">Optional, for ReadMalawi librarians. Paste only a book-offer message from WhatsApp—not contact profiles, phone numbers or an entire chat. Extraction runs locally in this browser and the message is cleared after checking.</p>
+<label class="field" for="whatsapp-raw-offer">WhatsApp offer text
+<textarea id="whatsapp-raw-offer" rows="4" maxlength="2500" autocomplete="off" placeholder="Example: I would like to offer approximately 15 physical books. My general town/area is Mzuzu."></textarea>
+</label>
+<div class="actions"><button id="parse-whatsapp-offer" type="button" class="btn secondary">Extract book count & area</button><button id="clear-whatsapp-offer" type="button" class="btn secondary">Clear pasted text</button></div>
+<p id="whatsapp-import-feedback" class="feedback" role="status" aria-live="polite"></p>
+</details>
 <div class="inputs">
 <label class="field">Number of books
 <input type="number" id="books" inputmode="numeric" min="1" max="50000" step="1" placeholder="e.g. 15" required>
@@ -231,6 +250,6 @@ textarea{min-height:80px}
 </main>
 <script src="../readmalawi-config.js"></script>
 <script defer src="testing-notice.js"></script>
-<script type="module" src="collection-desk.js?v=20261013-permissions-pack"></script>
+<script type="module" src="collection-desk.js?v=20261013-whatsapp-import1"></script>
 </body>
 </html>
