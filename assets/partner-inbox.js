@@ -1,6 +1,6 @@
 import {attachPilotPlanner} from "./pilot-planner.js?v=20261013-proposal1";
 import {attachPilotCosting} from "./pilot-costing.js?v=20261013-proposal1";
-import {attachInternalProposalBuilder} from "./proposal-builder.js?v=20261013-proposal1";
+import {attachInternalProposalBuilder} from "./proposal-builder.js?v=20261013-review-security2";
 const $=id=>document.getElementById(id.startsWith("#")?id.slice(1):id);
 const cfg=window.READMALAWI_CONFIG||{};
 const statuses=["new","contacted","in_discussion","closed"];
