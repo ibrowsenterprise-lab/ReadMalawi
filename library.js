@@ -110,6 +110,17 @@ const entry=data=>{
  if(window.ReadMalawiWhatsApp?.createRequestLink){
    const ask=window.ReadMalawiWhatsApp.createRequestLink(data.title,data.author);
    details.append(ask);
+   // Readers who have not joined the group yet may follow the founder's official invite.
+   const groupUrl=window.ReadMalawiWhatsApp.forumInviteUrl;
+   if(groupUrl){
+     const join=document.createElement("a");
+     join.className="readmalawi-whatsapp-join-link";
+     join.textContent="Not a member? Join the group ↗";
+     join.href=groupUrl;
+     join.target="_blank";
+     join.rel="noopener noreferrer";
+     details.append(join);
+   }
  }
  const link=document.createElement("a");link.className="book-action";
  const isHosted=data.source==="member",isAudio=data.kind==="audio",isOfficial=data.source==="official";
