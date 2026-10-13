@@ -12,6 +12,24 @@ small,.muted{color:var(--muted)}.inbox{display:grid;gap:14px;margin-top:20px}
 .item h2{font-size:1.07rem;margin:0 0 8px}.item p{margin:6px 0}.item .message{white-space:pre-wrap;overflow-wrap:anywhere;margin:14px 0;background:#f3f7f4;padding:12px;border-radius:9px}
 select,textarea{font:inherit;padding:10px;border:1px solid #b7cebd;border-radius:9px;background:white;color:#19332a}
 textarea{width:100%;min-height:70px;margin:10px 0}.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+/* Browser-only download confirmation panel */
+.rm-download-overlay{position:fixed;inset:0;z-index:500;display:flex;justify-content:center;align-items:center;background:rgba(8,30,25,.73);padding:16px;overflow-y:auto}
+.rm-download-dialog{width:min(100%,610px);max-height:min(88dvh,850px);overflow-y:auto;overscroll-behavior:contain;background:#fff;color:#163b2e;border:2px solid #b2d3bd;border-radius:17px;padding:23px;box-shadow:0 18px 60px rgba(0,0,0,.32);font:16px/1.55 system-ui,-apple-system,Arial,sans-serif}
+.rm-download-dialog h2{margin:7px 0 10px;font-size:clamp(1.45rem,5vw,2rem);color:#124e3b}
+.rm-download-dialog p{overflow-wrap:anywhere}
+.rm-download-kicker{font-size:.73rem!important;font-weight:850;letter-spacing:.12em;color:#8c5c17!important;margin:0!important}
+.rm-download-file{border:1px solid #c0d7c9;background:#eef7f0;border-radius:10px;padding:12px;color:#125638;font-weight:800;word-break:break-word}
+.rm-download-note{font-size:.88rem!important;color:#53665d!important}
+.rm-download-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:18px 0 12px}
+.rm-download-btn{min-height:46px;font:inherit;font-size:.92rem;font-weight:760;background:#edf4f0;border:1px solid #bad4c5;border-radius:9px;color:#174d3a;padding:10px 12px;cursor:pointer}
+.rm-download-btn.primary{background:#136248;color:#fff;border-color:#136248}
+.rm-download-btn:focus-visible{outline:3px solid #d49d35;outline-offset:2px}
+.rm-download-preview{max-height:300px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid #c6d8cd;background:#f8fbf8;border-radius:10px;padding:13px;font-size:12px;line-height:1.55;color:#223e31}
+.rm-download-preview[hidden]{display:none!important}
+.rm-download-status{font-size:.88rem;color:#205f48;font-weight:700;min-height:20px}
+@media(max-width:550px){.rm-download-overlay{padding:11px;align-items:center}.rm-download-dialog{padding:17px 14px;border-radius:14px;max-height:85dvh}.rm-download-actions{grid-template-columns:1fr}.rm-download-btn{width:100%}}
+
 .pilot-costing{border-top:1px solid var(--line);margin-top:16px;padding-top:16px}
 .pilot-costing-panel{border:1px solid #d2e2d8;border-radius:12px;background:#f4f8f5;padding:18px;margin-top:14px}
 .pilot-costing-panel[hidden]{display:none!important}
@@ -57,4 +75,4 @@ textarea{width:100%;min-height:70px;margin:10px 0}.actions{display:flex;flex-wra
 </div><p id="filter-summary" class="muted" role="status"></p>
 <div id="inbox" class="inbox"></div>
 <div id="save-toast" class="save-toast" role="status" aria-live="polite" hidden></div>
-</main><script src="../readmalawi-config.js"></script><script defer src="testing-notice.js"></script><script type="module" src="partner-inbox.js?v=20261013-costing-test1"></script></body></html>
+</main><script src="../readmalawi-config.js"></script><script defer src="testing-notice.js"></script><script type="module" src="partner-inbox.js?v=20261013-download-popup2"></script></body></html>
