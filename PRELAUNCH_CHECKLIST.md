@@ -232,3 +232,17 @@ Stored request notes are restricted from the public API, including browser-based
 - [ ] **Actual appointments and permissions still pending:** identify appropriate volunteer coordinators, verify transport availability/costs, confirm legal operating status, obtain real institution permission through authorised channels and seek explicit founder launch approval.
 
 The operational packet is a prelaunch draft, not a sent letter, an appointment, a prison/school permit, a delivery order or evidence of physical distributions.
+
+## WhatsApp offer import — 13 October 2026
+
+- [x] Added an optional **Paste WhatsApp offer** disclosure inside the authenticated Collection Desk; it is **not** a new public donor form.
+- [x] Extracts only the approximate physical book quantity and general town/area from the official ReadMalawi WhatsApp share format or a few short alternative messages.
+- [x] Parsing runs entirely in the browser; the original copied message is **immediately cleared** after extraction. Sender identity, phone number, full WhatsApp transcript and chat content are never submitted to the database.
+- [x] The two existing TEST offer fields are filled for librarian review, but **no automatic record is created**. The librarian must still tap **Save TEST offer**.
+- [x] Existing loaded offer quantity and area are checked for matches. An apparent duplicate raises an explicit confirmation before saving; existing 15-book Mzuzu TEST offer is left untouched.
+- [x] Location/address validation rejects probable phone numbers and detailed address strings; unclear or conflicting quantities are rejected with a short instruction to use manual entry.
+- [x] Tested official form format, alternative brief WhatsApp messages, conflicts and private-address rejection in code.
+- [ ] Conduct a real authenticated Android acceptance test of the import helper (no saved dummy record is required: extraction alone is sufficient).
+- [ ] Verify with a few genuine permission-based donor messages after real launch; do not copy private chat histories or automate reading WhatsApp group content.
+
+**Operational rule:** The public donation page continues to ask ONLY for an approximate book count and a general town/area. No collection, school/prison handover, financial transaction or launch approval is triggered by WhatsApp parsing.
