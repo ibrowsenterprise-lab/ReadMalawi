@@ -2,6 +2,7 @@ import {getSupabaseModule} from "./supabase-loader.js";
 import {showDownloadPanel} from "./download-panel.js?v=20261013-readable-preview";
 import {initOperationsReadiness} from "./operations-readiness.js?v=20261013-operations1";
 import {initCoordinatorPack} from "./coordination-permissions.js?v=20261013-permissions1";
+import {parseWhatsAppBookOffer} from "./whatsapp-offer-parser.js?v=20261013-import1";
 // Authenticated ReadMalawi librarian TEST coordination. Never a proof of donated books.
 const cfg=window.READMALAWI_CONFIG||{}, $=id=>document.getElementById(id);
 const labels={offered_test:"Offer noted · TEST",followup_test:"For follow-up · TEST",potential_pickup_test:"Potential collection planning · TEST",closed_test:"Closed without collection · TEST"};
@@ -12,6 +13,9 @@ export function validateOffer(raw,location){
  const v=String(raw??"").trim(),n=Number(v),area=String(location||"").replace(/\s+/g," ").trim();
  if(!/^[0-9]+$/.test(v)||!Number.isSafeInteger(n)||n<1||n>50000)return {valid:false,error:"Enter a whole number from 1 to 50,000."};
  if(area.length<2||area.length>95)return {valid:false,error:"Enter a general town/area (2–95 characters), without a street address."};
+ if(/(?:\+?\d[\d \-()]{7,}\d)|(?:\bstreet\s+(?:address|number)\b)|(?:\bhouse\s*(?:number|no\.?|#)\b)|(?:\bplot\s*(?:number|no\.?|#)\b)|(?:\bP\.?\s*O\.?\s*box\b)/i.test(area)){
+  return {valid:false,error:"Use a general town/area only. Do not store contact numbers or detailed addresses."};
+ }
  return {valid:true,book_count:n,general_area:area};
 }
 export function summarize(rows){
@@ -202,10 +206,56 @@ async function reload(){
  }catch(e){say("desk-status","Could not load TEST register: "+e.message,true)}
  finally{$("refresh-offers").disabled=false}
 }
+// Extract only two non-sensitive fields from a copied WhatsApp donation offer.
+// No chat content is stored, emailed, logged or sent to the database.
+function initWhatsAppPasteHelper(){
+ const source=$("whatsapp-raw-offer");
+ const extract=$("parse-whatsapp-offer");
+ const clear=$("clear-whatsapp-offer");
+ const bookCount=$("books"),area=$("area");
+ if(!source||!extract||!clear||!bookCount||!area)return;
+ extract.addEventListener("click",()=>{
+  if(!authorised)return;
+  const result=parseWhatsAppBookOffer(source.value);
+  // Always discard potentially identifying chat text immediately after parsing.
+  source.value="";
+  if(!result.valid){
+   say("whatsapp-import-feedback",result.message,true);
+   return;
+  }
+  const validation=validateOffer(result.book_count,result.general_area);
+  if(!validation.valid){
+   say("whatsapp-import-feedback",validation.error,true);
+   return;
+  }
+  bookCount.value=validation.book_count;
+  area.value=validation.general_area;
+  const possibleDuplicate=offers.some(entry=>
+   Number(entry.book_count)===validation.book_count&&
+   String(entry.general_area||"").trim().toLocaleLowerCase()===validation.general_area.toLocaleLowerCase()
+  );
+  say("whatsapp-import-feedback",possibleDuplicate
+   ?"✓ Fields extracted, but this quantity and area MATCH an existing TEST offer. Check the saved register before creating another record. No duplicate was saved."
+   :"✓ Book count and area extracted into the form. Review both fields and tap Save TEST offer only if it is a new offer. Nothing was saved automatically.");
+ });
+ clear.addEventListener("click",()=>{
+  source.value="";
+  say("whatsapp-import-feedback","Pasted message cleared. No change to saved offers.");
+ });
+}
+
 async function submit(event){
  event.preventDefault();if(!authorised)return;
  const result=validateOffer($("books").value,$("area").value);
  if(!result.valid){say("entry-feedback",result.error,true);return}
+ const duplicate=offers.some(entry=>
+  Number(entry.book_count)===result.book_count&&
+  String(entry.general_area||"").trim().toLocaleLowerCase()===result.general_area.toLocaleLowerCase()
+ );
+ if(duplicate&&!window.confirm("An offer with this book count and general area already exists in the loaded TEST register. Is this definitely a different donor's offer? Cancel to avoid a duplicate.")){
+  say("entry-feedback","Not saved. Check the existing TEST offer before adding an identical one.",true);
+  return;
+ }
  $("save-offer").disabled=true;say("entry-feedback","Saving TEST offer…");
  try{
   const {data,error}=await api.from("readmalawi_physical_book_offers")
@@ -253,6 +303,7 @@ async function init(){
     $("sample-preview").value=makeTestCollectionPlan({book_count:15,general_area:"Lilongwe",stage:"offered_test"});
    }
   });
+  initWhatsAppPasteHelper(); // After librarian authentication; no automatic insert.
   $("offer-form").addEventListener("submit",submit);
   $("refresh-offers").addEventListener("click",reload);
   $("stage-filter").addEventListener("change",display);
