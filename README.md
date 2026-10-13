@@ -100,3 +100,5 @@ The librarian-only [Physical Book Collection Desk](assets/collection-desk.html) 
 The complete procedures are in [Physical Book Collection & Handover Playbook](PHYSICAL_BOOK_COLLECTION_PLAYBOOK_DRAFT.md). The donor site still requests **only two details** and shares a WhatsApp draft; a future authorised physical drive must have volunteer ownership, transport/storage, donor privacy, safe sorting and school/prison institution permissions. The protected register remains an internal test ledger with **zero real donations**.
 
 For downloadable TEST CSV summaries, leading spreadsheet-formula characters in location data are escaped before export to reduce CSV formula-injection risk.
+
+**Zero-entry demonstration:** The librarian desk also contains **Preview DEMO collection plan · 1 tap**. This uses a fixed fictional offer (15 books, Lilongwe) entirely in the browser to demonstrate the planning workflow while the Supabase register stays empty; no user needs to enter a dummy offer.
