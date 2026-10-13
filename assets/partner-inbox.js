@@ -1,3 +1,4 @@
+import {attachPilotPlanner} from "./pilot-planner.js";
 const $=id=>document.getElementById(id.startsWith("#")?id.slice(1):id);
 const cfg=window.READMALAWI_CONFIG||{};
 const statuses=["new","contacted","in_discussion","closed"];
@@ -96,7 +97,9 @@ function card(x){
    toast("Save failed. Check the message beside Save follow-up.",true);
   }finally{save.disabled=false}
  });
- root.append(notes,bar,msg);return root;
+ root.append(notes,bar,msg);
+ attachPilotPlanner(root,x);
+ return root;
 }
 $("#refresh").addEventListener("click",load);
 $("#interest-filter").addEventListener("change",render);
