@@ -1,3 +1,4 @@
+import {showDownloadPanel} from "./download-panel.js";
 // ReadMalawi Learning & AI Lab: PRIVATE, browser-only, prelaunch cost modelling.
 // This tool receives enquiries only in the authenticated librarian inbox.
 // It does not store costing, contact anyone, calculate a client price, or request payment.
@@ -226,9 +227,13 @@ export function attachPilotCosting(root,enquiry){
  save.addEventListener("click",()=>{
   recalc();
   if(!latest.valid||!latest.hasPriced)return;
-  fileDownload("ReadMalawi_TEST_Internal_Costing.txt",costReport(enquiry,latest,notes.value),"text/plain;charset=utf-8");
-  state.textContent="Costing draft downloaded to this device only. No client quote, payment or database update occurred.";
+  const filename="ReadMalawi_TEST_Internal_Costing.txt";
+  const content=costReport(enquiry,latest,notes.value);
+  const download=()=>fileDownload(filename,content,"text/plain;charset=utf-8");
+  download();
+  state.textContent="Download requested. Use the pop-up to preview the file or download again. No customer contact or database update occurred.";
   state.className="cost-feedback success";
+  showDownloadPanel({filename,content,onDownload:download,trigger:save});
  });
  clear.addEventListener("click",()=>{
   if(!window.confirm("Clear all test costing figures and assumptions from this browser view? Nothing has been saved online."))return;
