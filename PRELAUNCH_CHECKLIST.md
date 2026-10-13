@@ -203,3 +203,18 @@ Stored request notes are restricted from the public API, including browser-based
 - [x] Code checks covered responsive popup styles, CSV formula escaping, no account IDs/internal notes in summaries, saved-offer worksheet content, and all TEST-only boundaries.
 - [ ] **Still unverified in an authenticated phone session:** changing the existing offer's follow-up stage and actually opening the new CSV/plan downloads. No need to re-enter an offer for these checks.
 - [ ] Confirm any real pickup workflow and recipient permission system only after the founder explicitly approves official launch. No collected/distributed workflow has been activated.
+
+## Collection operations readiness — 13 October 2026
+
+- [x] Private **Collection Readiness** panel added to the authenticated [Physical Book Collection Desk](assets/collection-desk.html). It appears only after the existing signed-in librarian authorisation check.
+- [x] The programme selector covers future **schools**, **prisons**, or **both**; relevant school-leadership or prison-authority permission questions appear according to the selection.
+- [x] Nine short planning checks cover founder/governance and accountable coordinators, volunteers, transport/storage, safeguarding and privacy, sorting/receipts, financial/incident responsibilities, receiving-institution permission and independently verified handover reporting.
+- [x] Readiness is **browser-only** and does **not** create a database record, assign volunteers, ask for donor identity, contact schools/prisons or grant founder release permission.
+- [x] A one-tap **Prepare TEST readiness report** displays completed/outstanding requirements; users can save a labelled private `.txt` worksheet using the existing mobile download/preview dialog.
+- [x] Report generator always records `FOUNDER AUTHORISATION: NOT GRANTED`, `DISTRIBUTION: NOT APPROVED`, even when every checkbox is marked. Checkbox completion is unverified planning information, not proof of institution approval.
+- [x] Changing any checkbox or recipient type invalidates the previously generated report until it is regenerated; Reset requires confirmation when local boxes are ticked.
+- [x] This step leaves the original **15-book Mzuzu TEST offer** and the public **two-field WhatsApp donor flow** unchanged; no dummy record or real pickup is created.
+- [ ] Independent phone acceptance of checklist and local export can be performed in the same session as later saved-follow-up / CSV checks, with no additional dummy submissions.
+- [ ] Founder to approve verified coordinator identities, legal operation, vehicle/transport and safeguards, and obtain actual school/prison consent before any real collection is scheduled.
+
+**Current phase:** development/testing only. No record of physical book donations received or delivered has been created.
