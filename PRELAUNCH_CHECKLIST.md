@@ -246,3 +246,14 @@ The operational packet is a prelaunch draft, not a sent letter, an appointment, 
 - [ ] Verify with a few genuine permission-based donor messages after real launch; do not copy private chat histories or automate reading WhatsApp group content.
 
 **Operational rule:** The public donation page continues to ask ONLY for an approximate book count and a general town/area. No collection, school/prison handover, financial transaction or launch approval is triggered by WhatsApp parsing.
+
+## Final WhatsApp intake safety pass — 13 October 2026
+
+- [x] Expanded local WhatsApp import to recognise concise English offers (e.g., `15 books in Mzuzu`), ReadMalawi's official prefilled offer format, and simple Chichewa book-count wording (e.g., `mabuku 20 ku Lilongwe Area 25`).
+- [x] Ambiguous/conflicting quantities, phone-like strings, and likely private house/plot addresses are not auto-imported. The librarian can type a safe general town/area manually instead.
+- [x] Public two-field physical-book offer and librarian manual-entry fields now reject likely detailed residential addresses and contact numbers while retaining general-area wording such as `Area 25, Lilongwe`.
+- [x] Corrected the WhatsApp message phase wording so a future production release would not incorrectly label every message as a prelaunch test; the **current testing phase still explicitly forbids arranging collection**.
+- [x] Updated browser script versions on homepage, library, physical-offer page and private collection desk to avoid loading stale donor-protection code.
+- [x] No additional donation records or real physical collections were created; verified original Mzuzu TEST record remains the only saved offer.
+- [ ] Independently verify new mobile copy/paste extraction and full public form behaviour when convenient; code-level checks do not substitute for mobile acceptance.
+- [ ] **Founder decision required** before actual operations: identify the first responsible collection coordinator and geographic pilot boundary, then separately verify transport, storage, consent and school/prison permissions. Do not activate a live physical collection based on TEST offers.
