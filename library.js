@@ -351,11 +351,11 @@ $("#request-form").addEventListener("submit",async e=>{
  finally{$("#request-submit").disabled=!app.user}
 });
 async function loadRequests(){
- if(!app.client)return;const {data,error}=await app.client.from("book_requests").select("id,title,author,notes,status,created_at").order("created_at",{ascending:false}).limit(30);
+ if(!app.client)return;const {data,error}=await app.client.from("book_requests").select("id,title,author,language,status,created_at").order("created_at",{ascending:false}).limit(30);
  if(error){$("#requests-list").textContent="Requests unavailable.";return}
  const parent=$("#requests-list");parent.replaceChildren();
  if(!data?.length){const p=document.createElement("p");p.className="muted";p.textContent="No public requests yet. Be the first to suggest a title.";parent.appendChild(p);return}
- for(const r of data){const block=document.createElement("article");block.className="request";const h=document.createElement("h3");h.textContent=r.title;block.appendChild(h);const p=document.createElement("p");p.textContent=[r.author?"Author: "+r.author:"",r.notes||"", "Status: "+r.status].filter(Boolean).join(" · ");block.appendChild(p);if(r.status==="open"){const b=document.createElement("button");b.type="button";b.className="btn secondary";b.textContent="I can help";b.addEventListener("click",()=>offer(r.id));block.appendChild(b)}parent.appendChild(block)}
+ for(const r of data){const block=document.createElement("article");block.className="request";const h=document.createElement("h3");h.textContent=r.title;block.appendChild(h);const p=document.createElement("p");p.textContent=[r.author?"Author: "+r.author:"",r.language?"Language: "+r.language:"", "Status: "+r.status].filter(Boolean).join(" · ");block.appendChild(p);if(r.status==="open"){const b=document.createElement("button");b.type="button";b.className="btn secondary";b.textContent="I can help";b.addEventListener("click",()=>offer(r.id));block.appendChild(b)}parent.appendChild(block)}
 }
 async function offer(id){
  if(!app.client||!app.user){alert("Please sign in first. Your private details will not be posted publicly.");return}
