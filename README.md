@@ -102,3 +102,9 @@ The complete procedures are in [Physical Book Collection & Handover Playbook](PH
 For downloadable TEST CSV summaries, leading spreadsheet-formula characters in location data are escaped before export to reduce CSV formula-injection risk.
 
 **Zero-entry demonstration:** The librarian desk also contains **Preview DEMO collection plan · 1 tap**. This uses a fixed fictional offer (15 books, Lilongwe) entirely in the browser to demonstrate the planning workflow while the Supabase register stays empty; no user needs to enter a dummy offer.
+
+## Collection Desk saved-follow-up and mobile exports (13 October 2026)
+
+The private [Physical Book Collection Desk](assets/collection-desk.html) now provides clearer post-save confirmation, conflict detection when another browser tab edits a record, and inline feedback if an offer changes out of the selected filter. Both the TEST CSV summary and an existing TEST offer's editable local collection plan use the familiar ReadMalawi download panel with filename, preview, new-tab opening and repeat download. All these actions remain *test-only*; exporting a document does not send any WhatsApp messages, create pickups, or certify any donations.
+
+The founder's separate **15-book Mzuzu TEST record** remains available. No further dummy offers are required. A real authenticated browser follow-up save and the Android file-opening behaviour are still not independently verified.
