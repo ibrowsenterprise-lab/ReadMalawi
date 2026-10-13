@@ -171,9 +171,10 @@ Stored request notes are restricted from the public API, including browser-based
 - [x] All new records require a signed-in librarian, approximate **number of books** and **general area** only. Contacts remain in WhatsApp; no identity/name, phone, home address, author or book-title field is requested on the donor website.
 - [x] The administrator may mark `Offer noted`, `For follow-up`, `Potential collection planning` or `Closed without collection`, always with a visible TEST suffix. **No Collected or Distributed stage exists.**
 - [x] The admin page displays potential offers and potential book counts, NOT book donations received, and exports a local TEST CSV without internal notes, account IDs or contact details.
-- [x] Created no dummy database records. Verification after migration found **zero** TEST offers.
+- [x] Migration itself created no dummy database records; at migration verification there were **zero** TEST offers. On 13 October 2026 the founder later saved **one** 15-book Mzuzu TEST offer, now confirmed in the database.
 - [x] The public donation flow is unchanged: two inputs → WhatsApp composition; it still stores no donor data in the website database.
-- [ ] **Future authenticated end-to-end testing** by a librarian: log one clearly fictional TEST lead, refresh, update its stage and download the summary. Do not require the founder to repeatedly enter dummy data.
+- [x] **Android authenticated insert-and-read test passed 13 Oct 2026:** The founder saved one TEST record, 15 books, general area Mzuzu, at stage `offered_test`; the collection register displayed 1 of 1 offers. A direct Supabase query independently confirmed exactly 1 TEST row (15 offered books), with no follow-up, collection or distribution. No more dummy records are needed for insert/read validation.
+- [ ] **Not yet tested:** Updating the TEST offer's stage, downloading the CSV, and preparing a plan from an actual saved offer. These are independent features; do not require a repeated submission merely to test them.
 - [ ] Before a genuine collection programme: authorise coordinators/vehicles, obtain pickup consent through WhatsApp, agree safeguarding/privacy rules, confirm school/prison permissions, define book-condition checks, and implement a separately approved real-receipt and handover ledger.
 - [ ] Approve retention, access audit and cleanup rules for test offers before production launch.
 
@@ -187,7 +188,8 @@ Stored request notes are restricted from the public API, including browser-based
 - [x] Export embeds an independent mandatory `TEST ONLY — NO COLLECTION OR DISTRIBUTION AUTHORISED` notice, even if someone edits the worksheet text.
 - [x] Sanitised CSV export against spreadsheet formula injection from untrusted location fields. The CSV still excludes personal contacts and internal planning notes.
 - [x] No database writes, donation receipts or fabricated collections/distributions were created by these additions.
-- [ ] Independent authenticated browser check of the new per-offer planner when needed. Avoid entering dummy records simply to repeat already passed logic tests.
+- [x] Android screenshot confirmed the one-tap in-browser DEMO collection worksheet renders correctly and includes its fixed 15-book Lilongwe example. This demo is distinct from the persisted 15-book Mzuzu TEST record.
+- [ ] Actual saved-offer planner visibility and download remains unverified; avoid repeating the already-passed insertion and demo checks.
 - [ ] Obtain explicit founder operational approval, verified coordinator assignments, child/prison safeguarding permissions and a separate real handover ledger before any physical collections begin.
 
 - [x] One-tap **DEMO collection plan preview** added to the authenticated librarian desk, using only local fixed fictional sample data. Allows inspection with zero database rows and no repeated dummy offer entries.
