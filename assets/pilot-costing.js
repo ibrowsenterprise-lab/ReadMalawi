@@ -13,6 +13,22 @@ const COST_ITEMS=Object.freeze([
  {name:"Travel and local logistics",unit:"trip"},
  {name:"Human review, translation and safeguarding",unit:"hour"}
 ]);
+// Fixed, fictional demo values for repeated UI checks. Never treat as market rates.
+export const DEMO_TEST_COSTING=Object.freeze({
+ lines:Object.freeze([
+  Object.freeze({quantity:"1",rate:"30000"}),
+  Object.freeze({quantity:"1",rate:"20000"}),
+  Object.freeze({quantity:"2",rate:"3000"}),
+  Object.freeze({quantity:"12",rate:"12000"}),
+  Object.freeze({quantity:"1",rate:"22000"}),
+  Object.freeze({quantity:"1",rate:"250000"}),
+  Object.freeze({quantity:"2",rate:"60000"}),
+  Object.freeze({quantity:"2",rate:"50000"})
+ ]),
+ overhead:"10",contingency:"20",
+ assumptions:"FICTIONAL DEMO DATA ONLY. Amounts are for testing calculations and the mobile interface, not actual supplier rates, approved staffing costs or any client quotation."
+});
+
 const fmt=new Intl.NumberFormat("en-MW",{minimumFractionDigits:2,maximumFractionDigits:2});
 function validatedNumber(value,max=1e9){
  const s=String(value??"").trim();
@@ -174,6 +190,12 @@ export function attachPilotCosting(root,enquiry){
  const notes=document.createElement("textarea");notes.rows=4;notes.maxLength=2500;
  notes.placeholder="Record cost sources, facilitator availability and unverified assumptions. Do not include customer names, email addresses or phone numbers.";
  notesLabel.append(notes);
+ const quickTools=make("div","demo-cost-toolbar");
+ const demoButton=make("button","btn secondary","Load DEMO estimate · 1 tap");
+ demoButton.type="button";
+ const demoHint=make("p","cost-warning","Instant fictional test values only. No actual prices, client details or payments are used.");
+ const appIsTesting=(window.READMALAWI_CONFIG||{}).sitePhase!=="production";
+ if(appIsTesting)quickTools.append(demoButton,demoHint);
  const actions=make("div","actions");
  const save=make("button","btn secondary","Download TEST costing (.txt)");
  save.type="button";save.disabled=true;
@@ -181,7 +203,7 @@ export function attachPilotCosting(root,enquiry){
  const close=make("button","btn secondary","Close costing");close.type="button";
  actions.append(save,clear,close);
  const caution=make("p","cost-warning","Costing does not include verified taxes, margin, insurance, contracts or final programme delivery approval. The final cost is not a price offered to a customer.");
- panel.append(title,lead,categories,addOns,costSummary,state,notesLabel,caution,actions);
+ panel.append(title,lead,quickTools,categories,addOns,costSummary,state,notesLabel,caution,actions);
  const readLines=()=>controls.map(c=>({name:c.name,quantity:c.quantity.value,rate:c.rate.value,notApplicable:c.na.checked}));
  let latest=computePilotCost(readLines());
  function recalc(){
@@ -218,6 +240,25 @@ export function attachPilotCosting(root,enquiry){
   }
   state.className="cost-feedback";
  }
+ demoButton.addEventListener("click",()=>{
+  if(!appIsTesting)return;
+  // Do not erase an administrator's real draft without explicit confirmation.
+  const alreadyEntered=controls.some(c=>c.quantity.value.trim()!==""||c.rate.value.trim()!==""||c.na.checked)
+   ||notes.value.trim()!==""||overheadInput.value!=="0"||contingencyInput.value!=="0";
+  if(alreadyEntered&&!window.confirm("Replace all current internal figures and assumptions with fictional TEST values? This only changes this open browser form."))return;
+  controls.forEach((c,i)=>{
+   const values=DEMO_TEST_COSTING.lines[i];
+   c.na.checked=false;c.quantity.disabled=false;c.rate.disabled=false;
+   c.quantity.value=values.quantity;c.rate.value=values.rate;
+  });
+  overheadInput.value=DEMO_TEST_COSTING.overhead;
+  contingencyInput.value=DEMO_TEST_COSTING.contingency;
+  notes.value=DEMO_TEST_COSTING.assumptions;
+  recalc();
+  state.textContent="✓ DEMO estimate loaded. These are fictional testing figures only; no actual customer quote, payment or database update.";
+  state.className="cost-feedback success";
+  costSummary.scrollIntoView({block:"nearest",behavior:"smooth"});
+ });
  toggle.addEventListener("click",()=>{
   const open=panel.hidden;
   panel.hidden=!open;toggle.setAttribute("aria-expanded",String(open));
