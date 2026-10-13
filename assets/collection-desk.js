@@ -137,6 +137,7 @@ function display(){
     const selectedFilter=$("stage-filter").value;
     if(selectedFilter!=="all"&&record.stage!==selectedFilter){
       display();
+      $("offer-list").prepend(node("p","feedback success","✓ TEST follow-up saved. This offer is outside the current filter; select All TEST offers to view it."));
       say("desk-status","TEST follow-up saved. The updated offer is now outside the selected filter; choose All TEST offers to view it.");
     }else{
       say("desk-status","✓ TEST follow-up saved. No pickup or donation was recorded.");
