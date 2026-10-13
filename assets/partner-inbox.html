@@ -56,6 +56,23 @@ textarea{width:100%;min-height:70px;margin:10px 0}.actions{display:flex;flex-wra
 .cost-warning{font-size:.86rem;color:#674f24;background:#fff5df;border:1px solid #ebd29b;padding:11px;border-radius:8px;margin:12px 0!important}
 @media(max-width:560px){.pilot-costing-panel{padding:12px}.cost-categories{grid-template-columns:1fr}.cost-fields,.cost-adjustments{grid-template-columns:1fr 1fr}.pilot-costing-panel .actions button{flex:1 1 100%}}
 
+
+.proposal-builder{border-top:2px solid #b3d3c0;margin-top:22px;padding-top:20px}
+.proposal-builder>.btn{width:100%;min-height:51px;background:#145c49!important;color:white!important}
+.proposal-body{background:#f3f8f4;border:1px solid #c9e0d2;border-radius:13px;padding:21px;margin:16px 0}
+.proposal-body[hidden]{display:none!important}
+.proposal-body h3{font-size:1.18rem;letter-spacing:-.02em;margin:0 0 9px}
+.proposal-label{display:flex;flex-direction:column;gap:9px;font-weight:800;font-size:.9rem;margin:17px 0}
+.proposal-editor{font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;min-height:420px;white-space:pre-wrap;overflow-wrap:anywhere;border-color:#b5d1c0;background:white;padding:14px;max-width:100%;resize:vertical}
+.proposal-review{border:1px solid #bfd6c7;border-radius:11px;background:white;margin:18px 0;padding:16px}
+.proposal-review legend{font-weight:850;padding:0 8px;color:#155643}
+.proposal-review-item{display:flex;gap:10px;align-items:flex-start;font-size:.88rem;line-height:1.5;padding:8px 0}
+.proposal-review-item input{width:18px;height:18px;flex:none;margin:3px 0}
+.proposal-status{margin:13px 0!important;min-height:24px;color:#375e4a;font-size:.88rem;font-weight:750;overflow-wrap:anywhere}
+.proposal-body .actions .btn{flex:1 1 175px}
+.proposal-body .actions .btn:disabled{opacity:.52;cursor:not-allowed}
+@media(max-width:560px){.proposal-body{padding:14px 12px}.proposal-editor{font-size:13px;min-height:350px}.proposal-body .actions .btn{flex:1 1 100%;min-height:47px}}
+
 .pilot-planner{border-top:1px solid var(--line);margin-top:20px;padding-top:16px}.pilot-planner-panel{background:#f4f7f3;border:1px solid var(--line);border-radius:12px;margin-top:14px;padding:16px}.pilot-planner-panel h3{margin:2px 0 9px;font-size:1.04rem}.pilot-planner-label{font-size:.87rem;font-weight:750;display:flex;flex-direction:column;gap:8px;margin-top:14px}.pilot-planner-output{display:block;width:100%;min-height:330px;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;background:white;white-space:pre-wrap;overflow-wrap:anywhere}.pilot-feedback{font-size:.88rem;font-weight:700;color:#246248;min-height:20px;margin-top:10px!important}.btn.secondary{background:#e8f2ed;color:#174c3c;border:1px solid #c2d9cc}.pilot-planner-panel[hidden]{display:none!important}@media(max-width:540px){.pilot-planner-panel{padding:12px}.pilot-planner-output{min-height:260px}.pilot-planner-panel .btn{width:100%}}
 .save-feedback{font-size:.95rem;font-weight:700;min-height:26px;margin:14px 0 4px!important;padding:0;overflow-wrap:anywhere}
 .save-feedback.success{color:#126044}.save-feedback.error{color:#a02d2d}.save-feedback.pending{color:#725827}
@@ -78,4 +95,4 @@ textarea{width:100%;min-height:70px;margin:10px 0}.actions{display:flex;flex-wra
 </div><p id="filter-summary" class="muted" role="status"></p>
 <div id="inbox" class="inbox"></div>
 <div id="save-toast" class="save-toast" role="status" aria-live="polite" hidden></div>
-</main><script src="../readmalawi-config.js"></script><script defer src="testing-notice.js"></script><script type="module" src="partner-inbox.js?v=20261013-demo-estimate"></script></body></html>
+</main><script src="../readmalawi-config.js"></script><script defer src="testing-notice.js"></script><script type="module" src="partner-inbox.js?v=20261013-proposal-draft1"></script></body></html>
