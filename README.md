@@ -120,3 +120,9 @@ A compact, private [Operations Readiness](assets/collection-desk.html) section a
 The librarian-only [Collection Desk](assets/collection-desk.html) now has a one-tap **Prepare TEST coordination & permission pack**. It reuses the existing school/prison recipient selection from the Readiness checklist; there are no new lengthy forms. The browser-generated, editable local document describes proposed volunteers/roles, routes/transport, storage and physical receipt safeguards, plus clearly marked **unsent** school and/or prison-authority discussion templates.
 
 No real coordinator is assigned, no route or cost is verified, no letters are dispatched, no permissions have been obtained and no collection/delivery is authorised. All file exports preserve mandatory **PRELAUNCH TEST / DO NOT SEND** warnings. The saved 15-book Mzuzu TEST offer and the public WhatsApp donor flow are unchanged.
+
+## Lower-friction librarian WhatsApp intake (13 October 2026)
+
+The private [Physical Book Collection Desk](assets/collection-desk.html) offers an optional **Paste WhatsApp offer** helper. A librarian can paste the donor's short book-offer message, then tap **Extract book count & area** to fill the existing two-field TEST offer form. The parser recognises ReadMalawi's own website-generated WhatsApp message. It runs locally, clears the original chat text immediately and rejects unclear quantities or detailed addresses. No sender identity, phone number, full transcript or donor private details are saved in ReadMalawi's database.
+
+The user still must verify the extracted count/area and press **Save TEST offer**; a likely duplicate prompts for explicit confirmation. This does not read WhatsApp messages automatically or contact anyone, and does not change the public two-input donation page. Testing mode, zero verified physical donations and the existing 15-book Mzuzu TEST entry are preserved.
