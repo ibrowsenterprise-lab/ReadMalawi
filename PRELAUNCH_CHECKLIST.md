@@ -64,8 +64,18 @@
 - [x] Librarian tapped Save follow-up; Supabase retained the changed private note and enquiry status `new`.
 - [x] After UI fix deployed as commit `1a0bf18e`, the founder confirmed the prominent mobile save confirmation **PASSED**.
 - [x] The BUA Construction trial enquiry remains flagged as TEST, with original private notes preserved.
-- [ ] **NEW**: mobile test the internal `Prepare TEST pilot brief` function, edit a draft, and download its local .txt file without emailing anyone or changing enquiry status.
+- [x] Android pilot scope builder displayed the editable TEST draft with the correct programme data, privacy notice and buttons. The founder confirmed `.txt` download PASSED; the local file's contents were not independently inspected.
+- [ ] **NEW**: mobile-test the internal `Prepare TEST internal costing` panel, calculate a sample MWK budget, mark an unused line Not applicable, and download its local `.txt` file.
 - [ ] Test access denial with a separate non-librarian account; an authenticated librarian session alone cannot prove signed-out denial.
 - [ ] Test remaining library, AI, translation, accessibility and rights checks before final launch.
 
 The internal scope-builder is not a quoting engine or an AI model. It uses local fixed templates from existing private enquiry details, saves nothing automatically and cannot send emails, invoices, payments or booked sessions.
+
+## Internal costing safeguards — 13 October 2026
+
+- A rule-based, *browser-only* `assets/pilot-costing.js` supports internal cost modelling per private programme enquiry. Rates and quantities start blank; no external prices are invented.
+- Eight editable expense categories cover preparation, facilitator hours, coordination, materials, internet, venue, travel and human review/safeguarding. Each category may be priced or marked Not applicable.
+- All estimates are in Malawi Kwacha (MWK). Overhead is calculated on direct costs; contingency is calculated on direct costs plus overhead. Invalid or incomplete entries are flagged.
+- Local `.txt` download excludes client identity/contact information; it is explicitly labelled TEST INTERNAL COSTING, not a quote, invoice, price list or contract. It records partial vs reviewed category coverage.
+- No database writes, real customer emails, bookings, AI model calls, payment initiation, invoices or confirmed proposals are performed.
+- [ ] Independently test MWK totals, editable rows, the mobile download and privacy on an authenticated librarian's phone; the code checks alone do not prove browser behaviour.
