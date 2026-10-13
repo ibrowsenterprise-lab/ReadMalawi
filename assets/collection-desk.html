@@ -46,6 +46,16 @@ textarea{min-height:80px}
 .record button{margin-top:8px}
 .status::first-letter{text-transform:uppercase}
 @media(max-width:640px){.inputs{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.actions>.btn{width:100%}}
+.plan-workspace{border:1px solid #c6dcca;border-radius:11px;padding:16px;margin:12px 0 8px;background:#f2f8f3}
+.plan-workspace[hidden]{display:none!important}
+.plan-editor{font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;min-height:340px;white-space:pre-wrap;overflow-wrap:anywhere;background:white}
+.record>.btn.secondary{margin-top:14px}
+.playbook{background:#fbfcf8;border:1px solid #d4e2d8}
+.playbook summary{cursor:pointer;font-weight:830;font-size:1.07rem;color:#15543e}
+.playbook ol{padding-left:24px;margin:16px 0 0}
+.playbook li{padding:5px 0;line-height:1.6}
+.playbook a{color:#135741;font-weight:760}
+@media(max-width:640px){.plan-workspace{padding:11px}.plan-editor{min-height:290px;font-size:12px}}
 </style>
 </head>
 <body>
@@ -59,6 +69,19 @@ textarea{min-height:80px}
 </div>
 <p id="desk-status" class="status" role="status">Verifying librarian access…</p>
 <section id="desk" hidden aria-label="Librarian physical book offer tracker">
+<details class="panel playbook">
+<summary>Collection & school/prison handover guide (draft) <span aria-hidden="true">▾</span></summary>
+<p class="muted">This is an internal procedure to prepare for a future authorised book drive. It is not permission to schedule real collection or distribution.</p>
+<ol>
+<li><strong>Receive the offer:</strong> Donors provide only a rough count and general area on WhatsApp. Thank them without promising a pickup.</li>
+<li><strong>Plan privately:</strong> Once authorised, a coordinator checks staffing, routes and storage capacity. Any detailed collection address stays in a one-to-one WhatsApp conversation.</li>
+<li><strong>Receive safely:</strong> For a future live drive, count physical books and check their condition. Keep a real inventory/receipt separate from TEST offers.</li>
+<li><strong>Agree recipient permissions:</strong> Coordinate with school leadership or the responsible prison authority before any handover.</li>
+<li><strong>Record only verified impact:</strong> Offered books, collected books and distributed books are different figures and must never be conflated.</li>
+</ol>
+<p><a href="https://github.com/ibrowsenterprise-lab/ReadMalawi/blob/main/PHYSICAL_BOOK_COLLECTION_PLAYBOOK_DRAFT.md" target="_blank" rel="noopener noreferrer">Read the complete draft collection playbook ↗</a></p>
+</details>
+
 <section class="panel" aria-labelledby="stats-heading">
 <h2 id="stats-heading">TEST coordination snapshot</h2>
 <div class="stats">
@@ -108,6 +131,6 @@ textarea{min-height:80px}
 </main>
 <script src="../readmalawi-config.js"></script>
 <script defer src="testing-notice.js"></script>
-<script type="module" src="collection-desk.js?v=20261013-test-register1"></script>
+<script type="module" src="collection-desk.js?v=20261013-plan-and-csv-safety"></script>
 </body>
 </html>
