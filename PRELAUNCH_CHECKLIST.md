@@ -163,3 +163,18 @@ Stored request notes are restricted from the public API, including browser-based
 - [ ] Verify group-join opening from a device/account that is not already a member; prepare for public invite moderation and rotate the link if unwanted joiners occur.
 - [ ] **Mobile smoke test** of two-field WhatsApp composition and per-card ask action when convenient, without posting actual test messages or creating real donor obligations.
 - [ ] Before actual physical collection/distribution, confirm coordinators, transport arrangements, recipient permissions, book quality/age appropriateness, handover records and operating legal status.
+
+## Private physical book offer coordination — 13 October 2026
+
+- [x] Created private, mobile-friendly [Physical Book Collection Desk](assets/collection-desk.html) for authenticated ReadMalawi librarians.
+- [x] Created `public.readmalawi_physical_book_offers` with RLS (3 librarian-only policies), restricted Data API grants and permanently TEST-only fields/stages. Anonymous readers cannot view or insert entries.
+- [x] All new records require a signed-in librarian, approximate **number of books** and **general area** only. Contacts remain in WhatsApp; no identity/name, phone, home address, author or book-title field is requested on the donor website.
+- [x] The administrator may mark `Offer noted`, `For follow-up`, `Potential collection planning` or `Closed without collection`, always with a visible TEST suffix. **No Collected or Distributed stage exists.**
+- [x] The admin page displays potential offers and potential book counts, NOT book donations received, and exports a local TEST CSV without internal notes, account IDs or contact details.
+- [x] Created no dummy database records. Verification after migration found **zero** TEST offers.
+- [x] The public donation flow is unchanged: two inputs → WhatsApp composition; it still stores no donor data in the website database.
+- [ ] **Future authenticated end-to-end testing** by a librarian: log one clearly fictional TEST lead, refresh, update its stage and download the summary. Do not require the founder to repeatedly enter dummy data.
+- [ ] Before a genuine collection programme: authorise coordinators/vehicles, obtain pickup consent through WhatsApp, agree safeguarding/privacy rules, confirm school/prison permissions, define book-condition checks, and implement a separately approved real-receipt and handover ledger.
+- [ ] Approve retention, access audit and cleanup rules for test offers before production launch.
+
+**Important:** A test offer is not a donation, a pickup, a school/prison distribution or a charitable fundraising receipt. No cash gifts or book shipments have been received by this software.
