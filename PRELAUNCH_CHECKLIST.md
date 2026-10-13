@@ -178,3 +178,14 @@ Stored request notes are restricted from the public API, including browser-based
 - [ ] Approve retention, access audit and cleanup rules for test offers before production launch.
 
 **Important:** A test offer is not a donation, a pickup, a school/prison distribution or a charitable fundraising receipt. No cash gifts or book shipments have been received by this software.
+
+## Collection planning and safe handovers — 13 October 2026
+
+- [x] Prepared [Physical Book Collection & Handover Playbook](PHYSICAL_BOOK_COLLECTION_PLAYBOOK_DRAFT.md) with low-friction donor intake and separate procedures for possible future collection, sorting, school/prison permission and verified handover.
+- [x] Added a collapsible internal guide to the librarian-only Physical Book Collection Desk.
+- [x] Added **Prepare TEST collection plan** for each existing internal offer: it reuses quantity, general area and TEST stage, with an editable local-only planning worksheet and local `.txt` export. No repeat data entry or customer communication.
+- [x] Export embeds an independent mandatory `TEST ONLY — NO COLLECTION OR DISTRIBUTION AUTHORISED` notice, even if someone edits the worksheet text.
+- [x] Sanitised CSV export against spreadsheet formula injection from untrusted location fields. The CSV still excludes personal contacts and internal planning notes.
+- [x] No database writes, donation receipts or fabricated collections/distributions were created by these additions.
+- [ ] Independent authenticated browser check of the new per-offer planner when needed. Avoid entering dummy records simply to repeat already passed logic tests.
+- [ ] Obtain explicit founder operational approval, verified coordinator assignments, child/prison safeguarding permissions and a separate real handover ledger before any physical collections begin.
