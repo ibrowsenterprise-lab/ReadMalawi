@@ -70,3 +70,7 @@ ReadMalawi's sustainability model is **free reading + optional contracted educat
 ## Current release status — TESTING ONLY
 
 The Render static site is a **publicly accessible development preview**, not an official commercial launch. `readmalawi-config.js` sets `sitePhase: "testing"`; the public reading/learning pages show a test notice and the programme and partner forms record `[READMALAWI TEST]` enquiries. Existing BUA Construction trial is recorded as a test. Customer notifications, bookings, payments and donations remain disabled. **Only the founder may authorise a final production launch.** See [PRELAUNCH_CHECKLIST.md](PRELAUNCH_CHECKLIST.md) for the acceptance tests and release gate.
+
+## Prelaunch security and approval safeguards (13 October 2026)
+
+ReadMalawi is a **development/testing preview**, not an officially launched company or charity. The database now enforces least-privilege enquiry access and a **member-book publication freeze** until the founder explicitly authorises a production release. The private proposal builder can generate an internal founder **review packet** but cannot approve, email, invoice or release client-facing documents. Do not confuse its browser-only checklist with a verified founder approval process. See [Security Audit](SECURITY_AUDIT_2026-10-13.md) and [Prelaunch Checklist](PRELAUNCH_CHECKLIST.md) for verified tests, unresolved security advisories and launch blockers.
