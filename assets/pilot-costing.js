@@ -150,6 +150,7 @@ export function attachPilotCosting(root,enquiry){
  const title=make("h3","", "Internal programme costing — TEST ONLY");
  const lead=make("p","muted","Enter verified, internal quantities and unit costs in MWK. All rates start blank. Draft calculations stay on this device and are not client prices.");
  const categories=make("div","cost-categories");
+ let demoLoaded=false;
  const controls=[];
  COST_ITEMS.forEach((item,i)=>{
   const card=make("div","cost-item");
@@ -254,6 +255,7 @@ export function attachPilotCosting(root,enquiry){
   overheadInput.value=DEMO_TEST_COSTING.overhead;
   contingencyInput.value=DEMO_TEST_COSTING.contingency;
   notes.value=DEMO_TEST_COSTING.assumptions;
+  demoLoaded=true;
   recalc();
   state.textContent="✓ DEMO estimate loaded. These are fictional testing figures only; no actual customer quote, payment or database update.";
   state.className="cost-feedback success";
@@ -279,7 +281,7 @@ export function attachPilotCosting(root,enquiry){
  clear.addEventListener("click",()=>{
   if(!window.confirm("Clear all test costing figures and assumptions from this browser view? Nothing has been saved online."))return;
   controls.forEach(c=>{c.quantity.value="";c.rate.value="";c.na.checked=false;c.quantity.disabled=false;c.rate.disabled=false});
-  overheadInput.value=contingencyInput.value="0";notes.value="";recalc();
+  overheadInput.value=contingencyInput.value="0";notes.value="";demoLoaded=false;recalc();
  });
  close.addEventListener("click",()=>{panel.hidden=true;toggle.setAttribute("aria-expanded","false");toggle.textContent="Prepare TEST internal costing";toggle.focus()});
  section.append(toggle,panel);root.append(section);
@@ -288,7 +290,7 @@ export function attachPilotCosting(root,enquiry){
    getCostingSnapshot:()=>({
      result:computePilotCost(readLines(),overheadInput.value,contingencyInput.value),
      assumptions:notes.value.trim(),
-     isDemo:notes.value.includes("FICTIONAL DEMO DATA ONLY"),
+     isDemo:demoLoaded||notes.value.includes("FICTIONAL DEMO DATA ONLY"),
      source:"internal-browser-draft"
    })
  };
