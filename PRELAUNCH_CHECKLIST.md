@@ -66,7 +66,9 @@
 - [x] The BUA Construction trial enquiry remains flagged as TEST, with original private notes preserved.
 - [x] Android pilot scope builder displayed the editable TEST draft with the correct programme data, privacy notice and buttons. The founder confirmed `.txt` download PASSED; the local file's contents were not independently inspected.
 - [x] Android costing screenshot displayed an internal estimated cost of MWK 627,000, overhead of MWK 95,000, contingency of MWK 57,000, and the browser-only download-request confirmation. The actual text file's contents and every input were not independently inspected.
-- [ ] **NEW**: mobile-test the download-request dialog for both pilot scopes and internal costings. Confirm filename, Preview file, Open in new tab (if browser permits), Download again and Close. Confirm nothing is emailed or saved online.
+- [x] Founder screenshots (13 Oct 2026) confirm the ReadMalawi costing modal opens with the filename, clear buttons and local-only warning, and that **Open in new tab** displays the 8/8-reviewed cost report. The displayed arithmetic reconciles: direct MWK 692,000; overhead MWK 69,200; contingency MWK 152,240; total MWK 913,440.
+- [ ] Test Preview file, Download again, Close, and the pilot scope builder's matching modal on a phone; visually inspect any downloaded file for accuracy.
+- [ ] Test the **new responsive HTML new-tab viewer** replacing the tiny plain-text tab, including mobile font size, line wrapping, offline content escaping and no external resource requests.
 - [ ] Test access denial with a separate non-librarian account; an authenticated librarian session alone cannot prove signed-out denial.
 - [ ] Test remaining library, AI, translation, accessibility and rights checks before final launch.
 
@@ -85,5 +87,9 @@ The internal scope-builder is not a quoting engine or an AI model. It uses local
 
 The founder requested a prominent popup after exporting a costing document. The website now includes a browser-side dialog after each local download request, shared by the Pilot Scope Builder and Internal Costing tools. It shows the filename and provides Preview file, Open in new tab, Download again and Close. The on-page preview is a reliable fallback if the Android browser restricts new tabs; it does not automatically read or open the device's Downloads app. The browser controls whether a file was actually saved, so the dialog accurately says **Download requested** rather than claiming that the operating system confirmed it.
 
-- [ ] Test the modal on mobile and check the text displayed matches the generated private draft.
+- [x] The mobile costing dialog and actual opened text tab were displayed in the founder's screenshots. The new responsive replacement remains to be retested.
 - [ ] Check a downloaded .txt file in Android Downloads before declaring the local file saved and readable.
+
+## Readable mobile new-tab viewer — 13 October 2026
+
+After the founder demonstrated that Android's native `text/plain` browser tab rendered the costing in tiny, hard-to-read type, the internal **Open in new tab** action was changed to create a local, responsive HTML preview from the same in-memory text. It uses a mobile viewport, clear heading and readable wrapped monospace text. The private text is HTML-escaped and the preview uses a restrictive Content Security Policy with no external scripts or requests. The original file download remains a plain `.txt`, without any change to pricing, RLS, cost calculations, production readiness or the public library. The Android-specific result needs visual retesting.
