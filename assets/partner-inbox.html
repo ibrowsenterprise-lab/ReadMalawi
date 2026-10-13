@@ -11,7 +11,12 @@ small,.muted{color:var(--muted)}.inbox{display:grid;gap:14px;margin-top:20px}
 .item{padding:19px;background:white;border:1px solid var(--line);border-radius:15px}
 .item h2{font-size:1.07rem;margin:0 0 8px}.item p{margin:6px 0}.item .message{white-space:pre-wrap;overflow-wrap:anywhere;margin:14px 0;background:#f3f7f4;padding:12px;border-radius:9px}
 select,textarea{font:inherit;padding:10px;border:1px solid #b7cebd;border-radius:9px;background:white;color:#19332a}
-textarea{width:100%;min-height:70px;margin:10px 0}.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.filters{display:flex;gap:13px;flex-wrap:wrap;margin-top:20px}.filters label{font-size:.85rem;font-weight:750;display:flex;flex-direction:column;gap:5px}.filters select{min-width:180px}
+textarea{width:100%;min-height:70px;margin:10px 0}.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.save-feedback{font-size:.95rem;font-weight:700;min-height:26px;margin:14px 0 4px!important;padding:0;overflow-wrap:anywhere}
+.save-feedback.success{color:#126044}.save-feedback.error{color:#a02d2d}.save-feedback.pending{color:#725827}
+.save-toast{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);max-width:min(95vw,480px);width:max-content;background:#124c3b;color:#fff;border:1px solid #a9d8b9;padding:15px 20px;border-radius:13px;box-shadow:0 8px 30px #0003;font-weight:800;z-index:110;text-align:center;overflow-wrap:anywhere}
+.save-toast.error{background:#852b29;border-color:#d8a3a2}.save-toast[hidden]{display:none!important}
+@media(max-width:540px){.save-toast{width:calc(100% - 30px);bottom:calc(14px + env(safe-area-inset-bottom,0px));font-size:15px}}.filters{display:flex;gap:13px;flex-wrap:wrap;margin-top:20px}.filters label{font-size:.85rem;font-weight:750;display:flex;flex-direction:column;gap:5px}.filters select{min-width:180px}
 </style></head><body>
 <header><a href="../library.html">← ReadMalawi library</a></header><main>
 <p style="color:#866021;font-weight:800;font-size:.74rem;text-transform:uppercase;letter-spacing:.12em">Private administrator area</p>
@@ -27,4 +32,5 @@ textarea{width:100%;min-height:70px;margin:10px 0}.actions{display:flex;flex-wra
 <label>Follow-up status<select id="status-filter" disabled><option value="all">All statuses</option><option value="new">New</option><option value="contacted">Contacted</option><option value="in_discussion">In discussion</option><option value="closed">Closed</option></select></label>
 </div><p id="filter-summary" class="muted" role="status"></p>
 <div id="inbox" class="inbox"></div>
-</main><script src="../readmalawi-config.js"></script><script defer src="testing-notice.js"></script><script type="module" src="partner-inbox.js"></script></body></html>
+<div id="save-toast" class="save-toast" role="status" aria-live="polite" hidden></div>
+</main><script src="../readmalawi-config.js"></script><script defer src="testing-notice.js"></script><script type="module" src="partner-inbox.js?v=20261013-followup-confirm"></script></body></html>
