@@ -65,7 +65,8 @@
 - [x] After UI fix deployed as commit `1a0bf18e`, the founder confirmed the prominent mobile save confirmation **PASSED**.
 - [x] The BUA Construction trial enquiry remains flagged as TEST, with original private notes preserved.
 - [x] Android pilot scope builder displayed the editable TEST draft with the correct programme data, privacy notice and buttons. The founder confirmed `.txt` download PASSED; the local file's contents were not independently inspected.
-- [ ] **NEW**: mobile-test the internal `Prepare TEST internal costing` panel, calculate a sample MWK budget, mark an unused line Not applicable, and download its local `.txt` file.
+- [x] Android costing screenshot displayed an internal estimated cost of MWK 627,000, overhead of MWK 95,000, contingency of MWK 57,000, and the browser-only download-request confirmation. The actual text file's contents and every input were not independently inspected.
+- [ ] **NEW**: mobile-test the download-request dialog for both pilot scopes and internal costings. Confirm filename, Preview file, Open in new tab (if browser permits), Download again and Close. Confirm nothing is emailed or saved online.
 - [ ] Test access denial with a separate non-librarian account; an authenticated librarian session alone cannot prove signed-out denial.
 - [ ] Test remaining library, AI, translation, accessibility and rights checks before final launch.
 
@@ -79,3 +80,10 @@ The internal scope-builder is not a quoting engine or an AI model. It uses local
 - Local `.txt` download excludes client identity/contact information; it is explicitly labelled TEST INTERNAL COSTING, not a quote, invoice, price list or contract. It records partial vs reviewed category coverage.
 - No database writes, real customer emails, bookings, AI model calls, payment initiation, invoices or confirmed proposals are performed.
 - [ ] Independently test MWK totals, editable rows, the mobile download and privacy on an authenticated librarian's phone; the code checks alone do not prove browser behaviour.
+
+## Download usability update — 13 October 2026
+
+The founder requested a prominent popup after exporting a costing document. The website now includes a browser-side dialog after each local download request, shared by the Pilot Scope Builder and Internal Costing tools. It shows the filename and provides Preview file, Open in new tab, Download again and Close. The on-page preview is a reliable fallback if the Android browser restricts new tabs; it does not automatically read or open the device's Downloads app. The browser controls whether a file was actually saved, so the dialog accurately says **Download requested** rather than claiming that the operating system confirmed it.
+
+- [ ] Test the modal on mobile and check the text displayed matches the generated private draft.
+- [ ] Check a downloaded .txt file in Android Downloads before declaring the local file saved and readable.
