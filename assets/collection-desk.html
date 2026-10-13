@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#104333">
+<title>Physical Book Offers · Private TEST Desk | ReadMalawi</title>
+<style>
+:root{--green:#126249;--dark:#103a30;--line:#d5e4da;--muted:#5b7164}
+*{box-sizing:border-box}
+body{margin:0;background:#f6f8f4;color:#213d30;font:16px/1.55 system-ui,-apple-system,Arial,sans-serif}
+a{color:inherit}button,input,select,textarea{font:inherit}button{cursor:pointer}
+:focus-visible{outline:3px solid #d79e39;outline-offset:2px}
+header{background:var(--dark);color:#fff;padding:18px max(18px,calc((100% - 960px)/2))}
+header a{color:#e6ce8d;font-weight:750}
+main{max-width:960px;margin:auto;padding:26px 18px 75px}
+h1{font-size:clamp(1.8rem,4.5vw,2.65rem);line-height:1.16;letter-spacing:-.045em;margin:7px 0 13px}
+h2{font-size:1.25rem;margin:0 0 12px}
+h3{font-size:1.08rem;letter-spacing:-.02em;overflow-wrap:anywhere;margin:0 0 8px}
+p{overflow-wrap:anywhere}
+.eyebrow{font-size:.76rem;font-weight:850;letter-spacing:.14em;color:#92712d;text-transform:uppercase}
+.notice{background:#fff3d5;border:1px solid #e5cb8a;color:#74571f;padding:15px 17px;border-radius:11px;font-weight:650;line-height:1.55}
+.muted{color:var(--muted);font-size:.9rem}
+.status,.feedback{font-size:.9rem;min-height:24px;margin:12px 0;color:#265948;font-weight:750}
+.error{color:#9b2e2e!important}
+.pending{color:#815d1f}
+.success{color:#145f43}
+#desk[hidden]{display:none!important}
+.panel{margin:18px 0;background:#fff;border:1px solid var(--line);border-radius:15px;padding:clamp(17px,3vw,25px)}
+label.field{display:flex;flex-direction:column;gap:6px;font-size:.89rem;font-weight:770}
+input,select,textarea{width:100%;padding:12px;border:1px solid #bdd2c5;border-radius:9px;background:white;color:#1c3c30;min-height:45px}
+textarea{min-height:80px}
+.inputs{display:grid;grid-template-columns:1fr 1.55fr;gap:16px}
+.btn{border:1px solid #126249;background:#126249;border-radius:10px;color:white;padding:12px 18px;min-height:48px;font-weight:790}
+.btn.secondary{background:#eaf3ec;border-color:#b6d3bd;color:#195a40}
+.btn:disabled{opacity:.55}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.metric{padding:14px;border:1px solid var(--line);border-radius:11px;background:#f3f8f3}
+.metric strong{display:block;font-size:clamp(1.4rem,3vw,1.95rem);color:#155e47}
+.metric span{display:block;font-size:.78rem;color:#557062;line-height:1.5}
+.list{display:grid;gap:12px;margin-top:18px}
+.record{padding:17px;border:1px solid #dae7de;border-radius:12px;background:#fcfdfb}
+.record .field{margin:13px 0}
+.record button{margin-top:8px}
+.status::first-letter{text-transform:uppercase}
+@media(max-width:640px){.inputs{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.actions>.btn{width:100%}}
+</style>
+</head>
+<body>
+<header><a href="partner-inbox.html">← Private ReadMalawi programme inbox</a></header>
+<main>
+<div class="eyebrow">ReadMalawi · Private administrator area</div>
+<h1>Physical book offer register</h1>
+<p class="muted">An easy coordination tool for offers received through the Lets Read Malawi WhatsApp forum.</p>
+<div class="notice">
+<strong>PRELAUNCH TEST ONLY.</strong> These records are fictional planning leads, not actual donated, collected or distributed books. Never schedule pickups, contact donors, or promise school/prison handovers from this page. The public donation process remains WhatsApp-only.
+</div>
+<p id="desk-status" class="status" role="status">Verifying librarian access…</p>
+<section id="desk" hidden aria-label="Librarian physical book offer tracker">
+<section class="panel" aria-labelledby="stats-heading">
+<h2 id="stats-heading">TEST coordination snapshot</h2>
+<div class="stats">
+<div class="metric"><strong id="total-offers">0</strong><span>Recorded TEST offers</span></div>
+<div class="metric"><strong id="total-books">0</strong><span>Potential books offered — not received</span></div>
+<div class="metric"><strong id="total-followups">0</strong><span>Follow-up TEST leads</span></div>
+<div class="metric"><strong id="total-plans">0</strong><span>Possible collection plans — TEST</span></div>
+</div>
+</section>
+<section class="panel" aria-labelledby="new-heading">
+<h2 id="new-heading">Record a TEST offer from WhatsApp</h2>
+<p class="muted">Only two inputs. Do not enter a donor's contact details, address, book titles or authors. Nothing is posted to WhatsApp.</p>
+<form id="offer-form">
+<div class="inputs">
+<label class="field">Number of books
+<input type="number" id="books" inputmode="numeric" min="1" max="50000" step="1" placeholder="e.g. 15" required>
+</label>
+<label class="field">Town or general area
+<input type="text" id="area" minlength="2" maxlength="95" placeholder="e.g. Blantyre or Lilongwe Area 25" autocomplete="off" required>
+</label>
+</div>
+<div class="actions"><button id="save-offer" type="submit" class="btn">Save TEST offer</button></div>
+<p class="feedback" id="entry-feedback" role="status" aria-live="polite"></p>
+</form>
+</section>
+<section class="panel" aria-labelledby="list-heading">
+<h2 id="list-heading">Follow-up register</h2>
+<p class="muted">The only available statuses are TEST planning stages. There is deliberately no “Collected” or “Distributed” option.</p>
+<label class="field" style="max-width:390px">Filter TEST offers
+<select id="stage-filter">
+<option value="all">All TEST offers</option>
+<option value="offered_test">Offer noted</option>
+<option value="followup_test">For follow-up</option>
+<option value="potential_pickup_test">Potential collection planning</option>
+<option value="closed_test">Closed without collection</option>
+</select>
+</label>
+<div class="actions">
+<button id="refresh-offers" class="btn secondary" type="button">Refresh offers</button>
+<button id="export-offers" class="btn secondary" type="button">Download TEST summary (.csv)</button>
+</div>
+<p id="offer-count" class="muted">No data loaded yet.</p>
+<div id="offer-list" class="list" aria-live="polite"></div>
+</section>
+</section>
+<p class="muted">For real collections later, ReadMalawi will first need approved coordinators, collection routes, safeguarding and institutional permissions. This page does not establish a registered charity or a confirmed distribution programme.</p>
+</main>
+<script src="../readmalawi-config.js"></script>
+<script defer src="testing-notice.js"></script>
+<script type="module" src="collection-desk.js?v=20261013-test-register1"></script>
+</body>
+</html>
