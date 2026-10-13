@@ -235,7 +235,10 @@ export function attachInternalProposalBuilder(root,enquiry,source={}){
   if(!ready.ready)return;
   // This records only a local TEST draft status, not a production authorisation.
   reviewMarked=true;
-  editor.value=makeInternalProposalDraft(enquiry,source.getDraft?.()||"",currentSnapshot(),true);
+  const oldStage="Document stage: INTERNAL DRAFT — REVIEW PENDING";
+  const newStage="Document stage: REVIEWED FOR FOUNDER CONSIDERATION (TEST ONLY)";
+  if(editor.value.includes(oldStage))editor.value=editor.value.replace(oldStage,newStage);
+  // Preserve every other manual edit rather than regenerating and discarding them.
   statusUpdate();
  });
  txt.addEventListener("click",()=>{
