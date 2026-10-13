@@ -149,3 +149,16 @@ Full evidence and release blockers are in [SECURITY_AUDIT_2026-10-13.md](SECURIT
 - [ ] Perform a live test with separate anonymous/non-librarian sessions before officially enabling real community book requests. No fresh dummy request needed at present.
 
 Stored request notes are restricted from the public API, including browser-based librarian reads; a **separate, privacy-reviewed administrative retrieval method** will be needed if those notes should later be consulted by librarians. This is preferable to reopening global public SELECT privileges. For now, users' private notes are not displayed on the public site.
+
+## WhatsApp forum and physical giving — 13 October 2026
+
+- [x] Per-book library action **Ask in our WhatsApp forum** opens a prewritten WhatsApp sharing request for lawful reading sources. Readers choose the existing forum or another chat and press Send themselves.
+- [x] Library and homepage include prominently labelled WhatsApp discussion and physical-book-giving destinations.
+- [x] New `assets/physical-books.html`: offers of physical books require only a **quantity** and **general town/area**, not titles, authors, email, phone or full street address. A prewritten user-initiated WhatsApp message is produced; no donor data is saved by the site.
+- [x] Existing partners page now routes ordinary physical-book donors to the simple option, rather than requiring its longer institutional partnership form.
+- [x] Website continues to say school/prison book distribution and physical collection are future goals, subject to consent, collection logistics and relevant institutional approval; not historical achievements.
+- [x] No payments, donation receipts, automatic pickup, automatic WhatsApp message or rights-infringing file distribution enabled. Testing phase retained.
+- [x] Logic validated without generating dummy records; WhatsApp action is based on WhatsApp's official prefilled-message, choose-contact format.
+- [ ] **Pending input:** founder must supply the REAL WhatsApp group invite URL. It has not been found in the project and is not guessed; a direct group JOIN link cannot be activated until supplied.
+- [ ] **Mobile smoke test** of two-field WhatsApp composition and per-card ask action when convenient, without posting actual test messages or creating real donor obligations.
+- [ ] Before actual physical collection/distribution, confirm coordinators, transport arrangements, recipient permissions, book quality/age appropriateness, handover records and operating legal status.
