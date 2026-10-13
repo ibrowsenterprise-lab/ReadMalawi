@@ -1,6 +1,7 @@
 import {getSupabaseModule} from "./supabase-loader.js";
 import {showDownloadPanel} from "./download-panel.js?v=20261013-readable-preview";
 import {initOperationsReadiness} from "./operations-readiness.js?v=20261013-operations1";
+import {initCoordinatorPack} from "./coordination-permissions.js?v=20261013-permissions1";
 // Authenticated ReadMalawi librarian TEST coordination. Never a proof of donated books.
 const cfg=window.READMALAWI_CONFIG||{}, $=id=>document.getElementById(id);
 const labels={offered_test:"Offer noted · TEST",followup_test:"For follow-up · TEST",potential_pickup_test:"Potential collection planning · TEST",closed_test:"Closed without collection · TEST"};
@@ -242,6 +243,7 @@ async function init(){
   if(perm.error||!perm.data){say("desk-status","Access restricted to authorised ReadMalawi librarians.",true);return}
   authorised=true;$("desk").hidden=false;
   initOperationsReadiness(); // Only after the signed-in librarian check succeeds.
+  initCoordinatorPack(); // Local-only planning drafts; no external actions.
   $("sample-plan").addEventListener("click",()=>{
    const label=$("sample-preview-label");
    const isOpening=label.hidden;
