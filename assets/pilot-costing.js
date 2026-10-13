@@ -88,7 +88,8 @@ function costReport(enquiry,result,assumptions){
  const details=[
  "READMALAWI | PRELAUNCH TEST INTERNAL COSTING WORKSHEET",
  "NOT A CUSTOMER QUOTATION, TAX INVOICE, PRICE LIST, CONTRACT OR BOOKING",
- "No client names, email addresses, telephone numbers or customer account details are exported.",
+ "Client contact details are not automatically taken from the enquiry or added to this export.",
+ "Check any free-text assumptions for personal or confidential data before sharing this local file.",
  "Currency: Malawi Kwacha (MWK); costs are blank until researched and entered by an administrator.",
  "Enquiry internal ID: "+String(enquiry?.id||"").slice(0,65),
  "Service category: "+String(enquiry?.interest||"").replaceAll("_"," "),
@@ -170,7 +171,7 @@ export function attachPilotCosting(root,enquiry){
  state.setAttribute("role","status");state.setAttribute("aria-live","polite");
  const notesLabel=make("label","cost-field","Cost sources, staffing assumptions and risks (internal only)");
  const notes=document.createElement("textarea");notes.rows=4;notes.maxLength=2500;
- notes.placeholder="Document where rates came from, available facilitators, safeguarding needs and anything still unverified.";
+ notes.placeholder="Record cost sources, facilitator availability and unverified assumptions. Do not include customer names, email addresses or phone numbers.";
  notesLabel.append(notes);
  const actions=make("div","actions");
  const save=make("button","btn secondary","Download TEST costing (.txt)");
