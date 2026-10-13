@@ -132,9 +132,20 @@ The founder requested an end to repeatedly entering dummy estimates for routine 
 - [x] Supabase security advisor's callable authenticated SECURITY DEFINER bulk-publishing warning was cleared after revoking authenticated execution.
 - [ ] **PENDING**: Supabase Auth leaked-password protection is disabled (advisor WARN). Review/enable in Supabase Auth settings, subject to account availability.
 - [ ] **PENDING**: Actual logged-out and unrelated logged-in account browser tests for enquiry and library access (SQL ACL/RLS inspection alone is not a penetration test).
-- [ ] **PENDING**: Restrict public book-request exposure of requester UUID and free-text notes before accepting real community requests; there are currently zero request rows.
+- [x] **DATABASE PRIVACY FIX**: Public and signed-in book-request listings expose only `id,title,author,language,status,created_at`. `requested_by` account UUID and free-text `notes` are denied by SQL column privileges. `library.js` no longer requests/displays `notes`. Zero requests existed at time of change.
 - [ ] **PENDING**: Pin browser Supabase SDK to a vetted version; retest before switching working mobile clients.
-- [ ] **PENDING**: Establish and verify a real founder-only identity, durable review/audit process and server-side release controls before any genuine approval functionality.
+- [x] **SECURITY DESIGN**: Created [Founder Approval Security Design](FOUNDER_APPROVAL_SECURITY_DESIGN.md) documenting identity verification, immutable proposal versions, RLS, audit and release gates.
+- [ ] **PENDING**: Establish and verify a real founder-only identity, durable review/audit process and server-side release controls before any genuine approval functionality. No founder account is designated.
 - [ ] **PENDING**: Independently review children's safeguarding, privacy/retention, third-party book rights, institutional contracting and pricing before final launch.
 
 Full evidence and release blockers are in [SECURITY_AUDIT_2026-10-13.md](SECURITY_AUDIT_2026-10-13.md). **No final production launch is authorised.**
+
+## Privacy hardening completed — 13 October 2026
+
+- [x] Public book-request page now selects only book title, author, language, request status and public timestamps; no stored requester's UID or notes are displayed.
+- [x] PostgreSQL column-level SELECT privilege denies `requested_by` and `notes` to `anon` and `authenticated`; verified direct grant checks (not merely UI hiding).
+- [x] Signed-in requesters may still submit notes privately, and librarian status updates remain limited by RLS with no permission to overwrite requester IDs.
+- [x] Public site source updated to avoid requesting restricted fields; the latest site version was automatically deployed by Render.
+- [ ] Perform a live test with separate anonymous/non-librarian sessions before officially enabling real community book requests. No fresh dummy request needed at present.
+
+Stored request notes are restricted from the public API, including browser-based librarian reads; a **separate, privacy-reviewed administrative retrieval method** will be needed if those notes should later be consulted by librarians. This is preferable to reopening global public SELECT privileges. For now, users' private notes are not displayed on the public site.
