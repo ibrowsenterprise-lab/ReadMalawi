@@ -1,3 +1,4 @@
+import {showDownloadPanel} from "./download-panel.js";
 // ReadMalawi INTERNAL programme scoping: local-only, rule-based and editable.
 // Loaded by the administrator inbox after librarian authentication.
 // Never quotes fees, emails clients, sends AI prompts, persists drafts or books sessions.
@@ -155,13 +156,18 @@ export function attachPilotPlanner(root,enquiry){
   download.addEventListener("click",()=>{
     const content=textarea.value.trim();
     if(!content){feedback.textContent="Draft is empty. Prepare the brief first.";return}
-    const file=new Blob([content+"\n"],{type:"text/plain;charset=utf-8"});
-    const url=URL.createObjectURL(file);
-    const a=document.createElement("a");
-    a.href=url;a.download="ReadMalawi_TEST_Pilot_Brief.txt";
-    document.body.append(a);a.click();a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),15000);
-    feedback.textContent="Draft saved to this device only. No enquiry status or payment changed.";
+    const filename="ReadMalawi_TEST_Pilot_Brief.txt";
+    const exportText=content+"\n";
+    const requestDownload=()=>{
+      const url=URL.createObjectURL(new Blob([exportText],{type:"text/plain;charset=utf-8"}));
+      const a=document.createElement("a");
+      a.href=url;a.download=filename;
+      document.body.append(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),15000);
+    };
+    requestDownload();
+    feedback.textContent="Download requested. The pop-up can preview your private draft. Nothing has been emailed or saved online.";
+    showDownloadPanel({filename,content:exportText,onDownload:requestDownload,trigger:download});
   });
   close.addEventListener("click",()=>{
     panel.hidden=true;create.setAttribute("aria-expanded","false");create.textContent="Prepare TEST pilot brief";create.focus();
