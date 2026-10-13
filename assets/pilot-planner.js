@@ -1,4 +1,4 @@
-import {showDownloadPanel} from "./download-panel.js";
+import {showDownloadPanel} from "./download-panel.js?v=20261013-readable-preview";
 // ReadMalawi INTERNAL programme scoping: local-only, rule-based and editable.
 // Loaded by the administrator inbox after librarian authentication.
 // Never quotes fees, emails clients, sends AI prompts, persists drafts or books sessions.
