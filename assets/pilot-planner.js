@@ -174,4 +174,9 @@ export function attachPilotPlanner(root,enquiry){
   });
   wrap.append(create,panel);
   root.append(wrap);
+  // Read-only local draft accessor for the test proposal builder; no database storage.
+  return {
+    getDraft:()=>textarea.value.trim()||makePilotBrief(enquiry),
+    hasEditedDraft:()=>textarea.value.trim().length>0
+  };
 }
