@@ -106,3 +106,16 @@ The founder requested an end to repeatedly entering dummy estimates for routine 
 - [ ] Verify the one-tap DEMO button's mobile display at the next meaningful feature milestone; do not repeatedly require the founder to generate dummy budgets for every small UI refinement.
 
 **Testing practice:** Reuse automated code/calculation checks and existing passed mobile evidence whenever possible. Only request fresh founder screenshots for a previously untested critical path or a newly reported defect. No production launch, customer invoicing, payment collection or client contact without explicit founder approval.
+
+## Internal proposal drafting — 13 October 2026
+
+- [x] GitHub feature added: the librarian-only **Prepare TEST proposal draft** section combines the current editable Pilot Scope Builder text with the currently entered browser-only costing. No re-entry of demo figures is required.
+- [x] Automatically generated report includes programme purpose, proposed outcomes, scope, pilot approach, resources/safeguarding, internal-only cost summary, risks and a founder-approval gate.
+- [x] Eight-section concept is editable in-browser. A `.txt` copy can be downloaded and a responsive print-friendly, self-contained `.html` file can be exported. Neither format is presented as a real quotation, contract or native `.docx`.
+- [x] Four local review checkboxes cover programme goals, verified costs, safeguarding/licensing/privacy, and legal/tax/staffing. **Ready for founder review (TEST)** is disabled for missing, partial or fictional DEMO costs. Even when enabled it cannot release, email or approve a real customer proposal.
+- [x] Local review state is cleared if the editor or checkboxes change. Imported demo costing retains a separate fake-data marker until explicitly cleared.
+- [x] Report omits source contact name and email; included free-text notes are best-effort redacted for emails and telephone numbers, and still require manual privacy review.
+- [ ] Test new proposal panel visually in a librarian-only Android session during a meaningful milestone; existing saved programme test and one-tap DEMO costing are sufficient for now, so do not require repeated dummy entries.
+- [ ] Independently confirm no unauthorised users can access the librarian inbox before official launch.
+
+**No client-facing proposals, automatic notifications, payments, contracts, invoices, bookings or official launch are authorised.** The site remains in development/testing mode.
