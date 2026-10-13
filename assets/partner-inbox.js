@@ -1,5 +1,5 @@
 import {attachPilotPlanner} from "./pilot-planner.js";
-import {attachPilotCosting} from "./pilot-costing.js";
+import {attachPilotCosting} from "./pilot-costing.js?v=20261013-demo-estimate";
 const $=id=>document.getElementById(id.startsWith("#")?id.slice(1):id);
 const cfg=window.READMALAWI_CONFIG||{};
 const statuses=["new","contacted","in_discussion","closed"];
