@@ -105,6 +105,12 @@ const entry=data=>{
    talk.setAttribute("aria-label","Discuss "+(data.title||"this book")+" with other readers");
    details.append(talk);
  }
+ // Invite readers to ASK for a lawful source in the existing WhatsApp forum.
+ // This does not automatically post or claim that a copyrighted book may be distributed.
+ if(window.ReadMalawiWhatsApp?.createRequestLink){
+   const ask=window.ReadMalawiWhatsApp.createRequestLink(data.title,data.author);
+   details.append(ask);
+ }
  const link=document.createElement("a");link.className="book-action";
  const isHosted=data.source==="member",isAudio=data.kind==="audio",isOfficial=data.source==="official";
  link.textContent=isOfficial?"Read on source site ↗":isHosted?(isAudio?"Listen ›":"Read ›"):"Read ›";
