@@ -189,3 +189,5 @@ Stored request notes are restricted from the public API, including browser-based
 - [x] No database writes, donation receipts or fabricated collections/distributions were created by these additions.
 - [ ] Independent authenticated browser check of the new per-offer planner when needed. Avoid entering dummy records simply to repeat already passed logic tests.
 - [ ] Obtain explicit founder operational approval, verified coordinator assignments, child/prison safeguarding permissions and a separate real handover ledger before any physical collections begin.
+
+- [x] One-tap **DEMO collection plan preview** added to the authenticated librarian desk, using only local fixed fictional sample data. Allows inspection with zero database rows and no repeated dummy offer entries.
