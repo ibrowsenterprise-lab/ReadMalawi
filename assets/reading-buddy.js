@@ -11,7 +11,7 @@ const route={
  upload:["physical-books.html","Offer physical books →"],
  ask:["../library.html#whatsapp-forum","Ask on WhatsApp →"],
  founder:["../index.html#founder","Meet the founder →"],
- learn:["../index.html#challenge","Reading challenge →"],
+ learn:["../library.html?section=kids#library","Kids & beginners →"],
  partner:["partners.html","Partner with ReadMalawi →"],
  plans:["learning-services.html","Learning tools →"]
 };
