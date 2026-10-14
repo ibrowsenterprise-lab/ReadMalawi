@@ -18,19 +18,19 @@ const route={
 function item(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e}
 function bubble(txt,speaker,links){
  const box=item("div","bubble "+speaker,txt);
- if(links&&links.length){const row=item("div","links");for(const link of links){const a=item("a","",link[1]);a.href=link[0];row.append(a)}box.append(row)}
+ if(links&&links.length){const row=item("div","links");for(const link of links){const a=item("a","",link[1]);a.href=link[0];a.target="_top";row.append(a)}box.append(row)}
  messages.append(box);messages.scrollTop=messages.scrollHeight;
 }
 const normalized=value=>String(value||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9\s]/g," ").replace(/\s+/g," ").trim();
 const topics=["Fiction","Education","History","Religion","Science","Biography","Poetry","Technology","Language"];
-const topicLinks=()=>topics.map(category=>["../library.html?category="+encodeURIComponent(category)+"#library",category+" →"]);
+const topicLinks=()=>topics.map(category=>({category,count:approved.filter(book=>book.category===category).length})).filter(topic=>topic.count>0).map(topic=>["../library.html?category="+encodeURIComponent(topic.category)+"#library",topic.category+" ("+topic.count+") →"]);
 function respond(phrase){
  const s=normalized(phrase);
  if(/\b(how|where)\b.*\b(read|open|listen)\b|how to read/.test(s))return ["Choose a book in Books, then tap “Read here”. It opens in the reader. If your phone shows a blank reader, use “Open this book in a new tab”. Reading is free and needs no sign-in.",[route.books]];
  if(/\b(comment|comments|discuss|discussion|review|reviews)\b|book club/.test(s))return ["Open “More” on a book’s card, then choose “Reader comments”. You can read published comments freely. To write a thought or question about that book, sign in by email. Comments appear after review.",[route.club]];
  if(/\b(whatsapp|missing|request)\b|can t find|cannot find/.test(s))return ["If a book is missing from our collection, ask the ReadMalawi WhatsApp community for a recommendation or reading source. The link prepares a message; you choose the group and send it yourself.",[route.ask]];
  if(/\b(kids|children|child|beginners)\b/.test(s))return ["Kids & beginners is a separate collection of short stories with simple questions.",[route.kids]];
- if(/\b(topics|categories|category)\b|choose a topic/.test(s))return ["Choose a topic to browse. Or type an author or book title above.",topicLinks()];
+ if(/\b(topics|categories|category)\b|choose a topic/.test(s))return catalogueReady?["Choose a topic available in our collection. Or type an author or book title above.",topicLinks()]:["Topics couldn’t load right now. Browse Books to try again.",[route.books]];
  if(/\b(audio|audiobooks|listen)\b/.test(s))return ["The collection currently focuses on e-books. The Audiobooks filter shows only listening titles actually available; some short stories also offer your device’s read-aloud voice.",[route.books,route.kids]];
  if(/\b(chichewa|chitumbuka|chiyao|chilomwe|chisena|chitonga|language|languages|translate)\b/.test(s))return ["Use the Language field in Books to check available titles. Most current books are in English. Choosing a language filters the collection; it does not translate a book.",[route.language]];
  if(/\b(donate|donation|give|offer)\b.*\b(physical|books)\b/.test(s))return ["For physical books, share the approximate number and your general area. Collection is discussed separately on WhatsApp.",[route.upload]];
@@ -66,10 +66,10 @@ async function send(text){
  if(!phrase||aiBusy)return;
  bubble(phrase,"me");
  if(!aiMode){
-  const help=respond(phrase);
-  if(!help&&!catalogueReady){
+  let help=respond(phrase);
+  if((!help||/\b(topics|categories|category)\b/.test(normalized(phrase)))&&!catalogueReady){
    const checking=item("div","bubble bot","Checking our book collection…");messages.append(checking);
-   await cataloguePromise;checking.remove();
+   await cataloguePromise;checking.remove();help=respond(phrase);
   }
   const match=help||catalogueSuggestion(phrase);
   const [reply,links]=match||(catalogueReady?[
