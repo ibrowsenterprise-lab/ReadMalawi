@@ -67,7 +67,17 @@
 header .wrap{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important}
 #readmalawi-testing-banner{font-size:11px!important;padding:5px 12px!important;gap:4px!important;line-height:1.4!important}
 .hero{padding:28px 0!important}.hero h1{font-size:clamp(1.9rem,5vw,3rem)}.section{padding:32px 0}.chips{gap:8px}
-.more-filters{margin:12px 0}.more-filters summary{cursor:pointer;font-weight:700}.more-filters[open] summary{margin-bottom:12px}.more-filters .filters{display:block}.more-filters .controls{margin-top:12px}#fetch-message:empty{display:none}</style>
+.more-filters{margin:12px 0}.more-filters summary{cursor:pointer;font-weight:700}.more-filters[open] summary{margin-bottom:12px}.more-filters .filters{display:block}.more-filters .controls{margin-top:12px}#fetch-message:empty{display:none}#catalogue.cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+#catalogue .book-tile{padding:14px;min-height:224px;display:flex;flex-direction:column;gap:8px;border-radius:13px}
+.book-tile .book-info{display:flex;flex:1;flex-direction:column;gap:5px;min-width:0}
+.book-tile h3{font-size:.94rem;line-height:1.35;-webkit-line-clamp:3}.book-tile p.book-author{font-size:.78rem;-webkit-line-clamp:1}.book-tile p.book-label{font-size:.71rem}
+.book-tile .book-pict{width:34px;height:40px;font-size:1.1rem;margin:0}
+.book-tile .book-action{display:flex;align-items:center;justify-content:center;min-height:40px;padding:8px;background:var(--green);color:white;border-radius:8px;font-size:.84rem;text-decoration:none;font-weight:750}
+.book-more{margin-top:auto;font-size:.78rem}.book-more summary{cursor:pointer;min-height:32px;padding:5px 0;color:var(--green);font-weight:700}.book-more a{display:block;font-size:.77rem;margin:5px 0}
+.collection-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}.catalogue-pages{display:flex;justify-content:center;align-items:center;gap:18px;margin:22px 0}.catalogue-pages[hidden]{display:none}.catalogue-pages span{font-size:.85rem}
+@media(max-width:900px){#catalogue.cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){#catalogue.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}#catalogue .book-tile{padding:11px;min-height:220px}.catalogue-pages{gap:10px}.catalogue-pages .btn{padding:9px 12px}}
+</style>
 </head>
 <body>
 <a href="#library" class="skip">Skip to library</a>
@@ -75,22 +85,23 @@ header .wrap{display:flex!important;flex-direction:row!important;align-items:cen
 <main>
 <section class="hero"><div class="wrap">
 <div class="eyebrow">Tiyeni tiwelenge · ReadMalawi</div><h1>Discover a book. Start reading.</h1>
-<p>Browse the titles below. Open a book to read, try a short reading exercise, or ask our WhatsApp group for help finding a title.</p>
-<div class="chips"><a class="chip" href="#library">Find books</a><a class="chip" href="?category=Children#library">Kids’ books</a><a class="chip" href="#whatsapp-forum">Ask on WhatsApp</a></div>
+<p>Explore our collection and read a book here. Looking for another title? Ask our WhatsApp community.</p>
+<div class="chips"><a class="chip" href="#library">Find books</a><a class="chip" href="?section=kids#library">Kids’ books</a><a class="chip" href="#whatsapp-forum">Ask on WhatsApp</a></div>
 </div></section>
 <section class="section" id="library"><div class="wrap">
-<div class="eyebrow">Explore the catalogue</div><h2>Browse books &amp; reading practice</h2><p class="intro">Use the search or choose a category or language. Each card tells you where it opens: on ReadMalawi or on the publisher’s website. “Reading practice” means a short fictional story created for this site, with a comprehension question.</p>
+<div class="eyebrow">Explore the catalogue</div><h2 id="catalogue-heading">Browse our books</h2><p class="intro" id="catalogue-intro">Search by title or author, or choose a category. Tap Read to open a book here.</p>
+<div class="collection-tabs" role="group" aria-label="Choose a collection"><button class="pill" data-collection="books" aria-pressed="true">Books</button><button class="pill" data-collection="kids" aria-pressed="false">Kids &amp; beginners</button><button class="pill" data-collection="external" aria-pressed="false">External titles ↗</button></div>
 
 
 
 <div class="filters">
 <label class="field">Search books or authors<input type="search" id="search" placeholder="Title, author, subject..." autocomplete="off"></label>
-<label class="field">Category<select id="category"><option value="all">All categories</option><option>Fiction</option><option>Children</option><option>Education</option><option>History</option><option>Science</option><option>Poetry</option><option>Biography</option><option>Language</option><option>Other</option></select></label>
+<label class="field">Category<select id="category"><option value="all">All categories</option><option>Fiction</option><option>Children</option><option>Education</option><option>History</option><option>Science</option><option>Poetry</option><option>Biography</option><option>Language</option><option>Religion</option><option>Technology</option><option>Other</option></select></label>
 <label class="field">Language (choose or type any)<input id="language" list="readmalawi-languages" placeholder="All languages" autocomplete="off"><datalist id="readmalawi-languages"><option value="Chichewa"><option value="Chitumbuka"><option value="Chiyao"><option value="Chilomwe"><option value="Chisena"><option value="Chitonga"><option value="English"><option value="Swahili"><option value="French"><option value="Portuguese"><option value="Spanish"><option value="Arabic"><option value="Shona"><option value="Zulu"><option value="Hindi"><option value="Chinese"><option value="German"><option value="Japanese"></datalist></label>
 </div><details class="more-filters"><summary>More filters</summary><div class="filters"><label class="field">Sort<select id="sort"><option value="title">Title (A–Z)</option><option value="recent">Recently listed</option></select></label>
 </div>
 <div class="controls"><div class="switches" role="group" aria-label="Publication type"><button class="pill" data-kind="all" aria-pressed="true">All</button><button class="pill" data-kind="book" aria-pressed="false">E-books</button><button class="pill" data-kind="audio" aria-pressed="false">Audiobooks</button></div></div></details><p class="muted small" id="count" aria-live="polite">Loading catalogue…</p>
-<div id="catalogue" class="cards" aria-live="polite"></div><p id="fetch-message" class="formhint" aria-live="polite"></p>
+<div id="catalogue" class="cards" aria-live="polite"></div><nav id="catalogue-pages" class="catalogue-pages" aria-label="Book pages" hidden><button class="btn secondary" id="page-prev" type="button">← Previous</button><span id="page-status" aria-live="polite"></span><button class="btn secondary" id="page-next" type="button">Next →</button></nav><p id="fetch-message" class="formhint" aria-live="polite"></p>
 
 <section id="whatsapp-forum" class="rm-forum-panel" aria-labelledby="rm-forum-headline">
   <div>
@@ -117,6 +128,6 @@ header .wrap{display:flex!important;flex-direction:row!important;align-items:cen
 <script src="readmalawi-config.js"></script>
 <script defer src="assets/testing-notice.js"></script>
 <script defer src="assets/whatsapp-community.js?v=20261014-clear-journey"></script>
-<script type="module" src="library.js?v=20261014-clear-journey"></script>
+<script type="module" src="library.js?v=20261014-paged-books"></script>
 <script defer src="assets/readmalawi-chat-widget.js"></script>
 </body></html>
