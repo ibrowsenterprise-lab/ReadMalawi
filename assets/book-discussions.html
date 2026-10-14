@@ -31,16 +31,16 @@ input:focus-visible,button:focus-visible,textarea:focus-visible,a:focus-visible{
 <h1 id="book-title">Let's talk about a book!</h1>
 <p id="book-author" class="muted"></p>
 <div class="panel">
-<h2>What do other readers think?</h2>
-<p class="muted">A friendly space to share ideas about this book. You can read comments without signing in.</p>
+<h2>Reader comments about this title</h2>
+<p class="muted">This page is a conversation about the title shown above. After reading it, share something you learned, a question about the text, or your opinion. You can read published comments without signing in.</p>
 <div class="notice small">Be kind. Talk about the story, not private details. Do not post links, email addresses or phone numbers. A parent or teacher should help younger readers. Every comment is checked before it appears.</div>
 <div id="discussion-summary" class="status" role="status">Loading book discussion…</div>
 <div id="discussion-list" aria-live="polite"></div>
 <button class="button secondary" id="load-more" type="button" hidden>Show more comments</button>
 </div>
 <div class="panel" id="write">
-<h2>Share your thoughts 💬</h2>
-<p class="muted small">What did you enjoy or learn? What would you ask another reader?</p>
+<h2>Write a comment about this title</h2>
+<p class="muted small">This is optional—not a book request or an application. To find a book, return to the library and use the WhatsApp request link. To comment: enter your email, open the sign-in link sent to your inbox, then write your comment below.</p>
 <div id="signin" class="login">
 <form id="login-form" class="row login"><input type="email" id="login-email" aria-label="Your email" autocomplete="email" required placeholder="Your email for private sign-in"><button class="button" type="submit" id="login-button" disabled>Sign in to comment</button></form>
 <p class="small muted">Your email will never appear in the public conversation. Readers under 13 should use a parent or guardian's account with their help.</p>
@@ -48,13 +48,13 @@ input:focus-visible,button:focus-visible,textarea:focus-visible,a:focus-visible{
 <div id="signedin" hidden><p class="small muted" id="signedin-status"></p>
 <form id="comment-form">
 <div class="row" id="reply-indicator" hidden><strong id="reply-label" class="small">Replying to a reader</strong><button class="text-button" id="cancel-reply" type="button">Cancel reply</button></div>
-<label class="form-label" for="comment-body">Your comment</label>
-<textarea id="comment-body" minlength="10" maxlength="1200" required placeholder="I liked this book because…"></textarea>
+<label class="form-label" for="comment-body">What did you learn, enjoy or want to ask about the text?</label>
+<textarea id="comment-body" minlength="10" maxlength="1200" required placeholder="For example: I learned… / My question about the story is…"></textarea>
 <p class="small muted">10–1,200 characters. No public profiles, private messages or personal contact details.</p>
-<button class="button" id="post-button" type="submit">Send for review</button>
+<button class="button" id="post-button" type="submit">Submit comment for review</button>
 </form></div>
 <div class="status" id="post-status" role="status" aria-live="polite"></div>
 </div>
 </main><footer>ReadMalawi · Tiyeni tiwelenge.<br>Simple, safe book conversations.</footer>
 <script src="../readmalawi-config.js"></script>
-<script type="module" src="book-discussions.js"></script></body></html>
+<script type="module" src="book-discussions.js?v=20261014-clear-journey"></script></body></html>
