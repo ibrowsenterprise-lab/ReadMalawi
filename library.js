@@ -52,7 +52,7 @@ const officialSourceBooks=[
   category:"Education",language:"English",url:"https://www.navalmanack.com/"}
 ].map((book,index)=>({...book,kind:"book",source:"official",rank:80-index}));
 
-const app={collection:"books",page:1,pageSize:12,kind:"all",sourceFilter:"all",local:originalStories.concat(officialSourceBooks),remote:[],client:null,user:null,requests:[],backend:false};
+const app={collection:"books",page:1,pageSize:12,catalogueReady:false,kind:"all",sourceFilter:"all",local:originalStories.concat(officialSourceBooks),remote:[],client:null,user:null,requests:[],backend:false};
 const cfg=window.READMALAWI_CONFIG||{};
 const types={book:"E-book",audio:"Audiobook"};
 const show=(id,text,good)=>{const el=$(id);el.textContent=text;el.className="status "+(good?"ok":"err")};
@@ -179,13 +179,13 @@ function filterAndRender(resetPage=true){
    &&(!term||[book.title,book.author,book.category,book.language,book.description].join(" ").toLowerCase().includes(term)));
  items.sort((a,b)=>sort==="recent"?(b.rank||0)-(a.rank||0):(a.title||"").localeCompare(b.title||""));
  const target=$("#catalogue");target.replaceChildren();
- if(!items.length){const notice=document.createElement("div");notice.className="notice";notice.textContent="No matching books yet. Try another language or search for a title.";target.append(notice)}
+ if(!items.length){const notice=document.createElement("div");notice.className="notice";notice.textContent=app.collection==="books"&&!app.catalogueReady?"Loading our books…":"No matching titles. Try another category, language or search.";target.append(notice)}
  else {
  const pages=Math.ceil(items.length/app.pageSize);app.page=Math.max(1,Math.min(app.page,pages));
  items.slice((app.page-1)*app.pageSize,app.page*app.pageSize).forEach(book=>target.append(entry(book)));
  }
  const totalPages=Math.max(1,Math.ceil(items.length/app.pageSize));
- $("#count").textContent=items.length?((app.page-1)*app.pageSize+1)+"–"+Math.min(app.page*app.pageSize,items.length)+" of "+items.length+" titles":"No matching titles";
+ $("#count").textContent=app.collection==="books"&&!app.catalogueReady?"Loading catalogue…":items.length?((app.page-1)*app.pageSize+1)+"–"+Math.min(app.page*app.pageSize,items.length)+" of "+items.length+" titles":"No matching titles";
  $("#page-status").textContent="Page "+app.page+" of "+totalPages;
  $("#page-prev").disabled=app.page<=1;$("#page-next").disabled=app.page>=totalPages;
  $("#catalogue-pages").hidden=items.length<=app.pageSize;
@@ -275,7 +275,8 @@ $("#logout-btn").addEventListener("click",async()=>{if(app.client)await app.clie
 async function loadApproved(){
  if(!app.client)return;
  const {data,error}=await app.client.from("library_books").select("id,title,author,description,media_type,category,language,file_path,access_mode").eq("status","approved").order("submitted_at",{ascending:false}).limit(100);
- if(error){$("#fetch-message").textContent="Approved member catalogue unavailable: "+error.message;return}
+ app.catalogueReady=true;
+ if(error){$("#fetch-message").textContent="Book catalogue unavailable: "+error.message;return}
  app.local=[...originalStories,...officialSourceBooks,...(data||[]).map(b=>({...b,kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",discussion_key:"member:"+b.id,rank:2}))];filterAndRender();
 }
 // The catalogue renderer is synchronous; it has no Promise to catch.
