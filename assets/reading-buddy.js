@@ -4,7 +4,7 @@ const find=id=>document.getElementById(id);
 const messages=find("messages"),form=find("chat-form"),field=find("question"),quick=find("quick");
 const route={
  books:["../library.html#library","Find a book →"],
- kids:["../library.html?category=Children#library","Children's books →"],
+ kids:["../library.html?section=kids#library","Children's books →"],
  language:["../library.html#library","Search by language →"],
  audio:["../library.html#library","Find audiobooks →"],
  club:["../library.html#book-club","Book Club →"],
@@ -28,7 +28,7 @@ function respond(phrase){
  if(has(s,["moni","mabuku","ndikufuna","buku","kuwerenga","werenga"]))return ["Moni! Tiyeni tiwelenge. Let's find a book to read right here on ReadMalawi.",[route.books,route.kids]];
  if(has(s,["kids","kid","children","child","baby","young","fairy","picture book"]))return ["Let's find a story for younger readers. A grown-up can help you share comments.",[route.kids,route.learn]];
  if(has(s,["audio","listen","hearing a book","spoken"]))return ["You can look for audiobooks in our library. Choose the Audiobooks filter.",[route.audio]];
- if(has(s,["comment","discuss","book club","forum","reply","talk about","discussion","review"]))return ["You can discuss a book with other readers. Choose a title, then tap “Discuss this book.” A librarian checks comments before they appear.",[route.club]];
+ if(has(s,["comment","discuss","book club","forum","reply","talk about","discussion","review"]))return ["You can discuss a book with other readers. Choose a title, then open “More” on its card, then choose “Reader comments.” A librarian checks comments before they appear.",[route.club]];
  if(has(s,["upload","share a book","submit","contribute","give a book","donate books","pdf"]))return ["Public digital book uploads are no longer offered. Ask our WhatsApp forum for book recommendations or offer physical books through Give physical books.",[route.upload]];
  if(has(s,["request","can't find","cannot find","missing","ask for book"]))return ["Can't find a book? Ask our WhatsApp reading forum for recommendations or lawful sources.",[route.ask]];
  if(has(s,["school","science","history","maths","math","novel","story","stories","poem","poetry","fiction","technology","book","read","find"]))return ["Let's find a book in our ReadMalawi collection. You can search by title, author, language or subject.",[route.books]];
@@ -43,7 +43,7 @@ const cfg=window.READMALAWI_CONFIG||{};
 const aiRoute="readmalawi-reading-ai";
 let aiReady=false,aiMode=false,aiBusy=false,client=null,reader=null;
 let dialogue=[];
-let approved=[{title:"The Book on the Bench",author:"ReadMalawi",category:"Children",language:"English",media_type:"original"}];
+let approved=[];
 const aiStatus=text=>find("ai-status").textContent=text;
 const modeLabel=()=>find("chat-mode").textContent=aiMode?"✨ AI reading help (10 questions per day)":"📚 Guided book help";
 function catalogueSuggestion(phrase){
@@ -51,7 +51,7 @@ function catalogueSuggestion(phrase){
  if(q.length<3)return null;
  const found=approved.filter(book=>{
   const title=String(book.title||"").toLowerCase(),author=String(book.author||"").toLowerCase();
-  return title.includes(q)||author.includes(q)||(q.length>=7&&q.includes(title)&&title.length>6);
+  return q.split(" ").filter(Boolean).every(word=>(title+" "+author).includes(word));
  }).slice(0,3);
  if(!found.length)return null;
  return ["I found "+found.length+" book"+(found.length===1?"":"s")+" you can read on ReadMalawi:",found.map(book=>["../library.html?q="+encodeURIComponent(book.title)+"#library",book.title+" →"])];
@@ -102,7 +102,7 @@ async function send(text){
 async function initBookSearch(){
  if(!cfg.supabaseUrl||!cfg.supabasePublishableKey)return;
  try{
-  const response=await fetch(cfg.supabaseUrl+"/rest/v1/library_books?select=title,author,category,language,media_type&status=eq.approved&verified_rights=eq.true&limit=200",{
+  const response=await fetch(cfg.supabaseUrl+"/rest/v1/library_books?select=title,author,category,language,media_type&status=eq.approved&limit=200",{
    headers:{"apikey":cfg.supabasePublishableKey},
    signal:AbortSignal.timeout(6500)
   });

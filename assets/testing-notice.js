@@ -17,9 +17,9 @@
   bar.id = "readmalawi-testing-banner";
   bar.setAttribute("role", "status");
   const label = document.createElement("strong");
-  label.textContent = "DEVELOPMENT / TESTING";
+  label.textContent = "COMMUNITY PREVIEW";
   const note = document.createElement("span");
-  note.textContent = "ReadMalawi has not officially launched. Forms are for test submissions only. No bookings or payments.";
+  note.textContent = "Books are free to read. Enquiry forms are test-only. No bookings or payments.";
   bar.append(label, note);
   // Header remains accessible and the banner never covers buttons on mobile.
   const header = document.querySelector("header");

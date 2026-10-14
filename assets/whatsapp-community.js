@@ -15,7 +15,7 @@
   const name=String(title||"a book").replace(/[\r\n\t]/g," ").trim().slice(0,170);
   const writer=String(author||"").replace(/[\r\n\t]/g," ").trim().slice(0,130);
   return "Hello ReadMalawi reading forum. I saw this title on the ReadMalawi website and am interested in \""+name+"\""+
-    (writer&&writer!=="Unknown author"?" by "+writer:"")+
+    (writer&&!["Unknown author","Unknown","Author not listed"].includes(writer)?" by "+writer:"")+
     ". Can someone point me to a lawful copy, the official publisher, or where to borrow it? Please share authorised sources only. Tiyeni tiwelenge!";
  }
  function createRequestLink(title,author){
