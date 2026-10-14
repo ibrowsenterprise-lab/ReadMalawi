@@ -14,14 +14,14 @@
  function requestBookText(title,author){
   const name=String(title||"a book").replace(/[\r\n\t]/g," ").trim().slice(0,170);
   const writer=String(author||"").replace(/[\r\n\t]/g," ").trim().slice(0,130);
-  return "Hello ReadMalawi reading forum. I enjoyed / am interested in \""+name+"\""+
+  return "Hello ReadMalawi reading forum. I saw this title on the ReadMalawi website and am interested in \""+name+"\""+
     (writer&&writer!=="Unknown author"?" by "+writer:"")+
     ". Can someone point me to a lawful copy, the official publisher, or where to borrow it? Please share authorised sources only. Tiyeni tiwelenge!";
  }
  function createRequestLink(title,author){
   const a=document.createElement("a");
   a.className="readmalawi-whatsapp-book-link";
-  a.textContent="Ask in our WhatsApp forum ↗";
+  a.textContent="Ask about this title on WhatsApp ↗";
   a.setAttribute("aria-label","Ask the ReadMalawi reading forum about "+String(title||"this book"));
   a.href=shareUrl(requestBookText(title,author));
   a.target="_blank";
