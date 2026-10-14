@@ -235,7 +235,7 @@ async function backend(){
     }catch(e){
       userStatus.textContent="You can still enter your email and request a secure sign-in link.";
     }
-    await Promise.allSettled([loadApproved(),loadRequests()]);
+    await loadApproved();
   }catch(err){
     state.className="notice";
     state.textContent="Sign-in connection unavailable: "+err.message;
@@ -244,50 +244,10 @@ async function backend(){
 }
 function updateUser(user){
  app.user=user;
- $("#user-status").textContent=user?"Signed in as "+user.email:"Sign in with email to share books and stories.";
+ $("#user-status").textContent=user?"Signed in as "+user.email:"Sign in for book discussions or library administration.";
  $("#logout-btn").classList.toggle("hide",!user);
- $("#upload-submit").disabled=!user||uploadRunning;
- $("#upload-gate-note").hidden=!!user;
- $("#request-submit").disabled=!user;
- $("#my-submission-refresh").disabled=!user;
- if(user)loadMyContributions(user);
- else $("#my-submission-list").replaceChildren(submissionMessage("Sign in to see your submissions."));
  updateAdminLink(user);
 }
-function submissionMessage(message){
- const p=document.createElement("p");p.className="small muted";p.textContent=message;return p;
-}
-async function loadMyContributions(user=app.user){
- const target=$("#my-submission-list");
- if(!user||!app.client){target.replaceChildren(submissionMessage("Sign in to see your submissions."));return}
- target.replaceChildren(submissionMessage("Checking private submissions…"));
- try{
-  const {data,error}=await app.client.from("library_books")
-   .select("id,title,media_type,status,verified_rights,submitted_at")
-   .eq("uploaded_by",user.id)
-   .order("submitted_at",{ascending:false}).limit(30);
-  if(app.user?.id!==user.id)return;
-  if(error)throw error;
-  target.replaceChildren();
-  if(!data?.length){target.append(submissionMessage("No submissions yet."));return}
-  for(const book of data){
-   const card=document.createElement("div");
-   card.style.cssText="border:1px solid var(--line);border-radius:10px;background:#fff;padding:10px 12px;margin-bottom:8px";
-   const title=document.createElement("strong");title.textContent=book.title||"Untitled submission";
-   title.style.cssText="display:block;overflow-wrap:anywhere";
-   const meta=document.createElement("p");meta.className="small";
-   meta.style.cssText="margin:3px 0 0;color:var(--muted)";
-   const label=book.status==="approved"&&book.verified_rights?"Published":
-     book.status==="pending"?"Awaiting librarian review":
-     book.status==="rejected"?"Not approved for publication":
-     book.status==="removed"?"Withdrawn":"Not publicly available";
-   meta.textContent=(book.media_type==="audiobook"?"Audiobook":"E-book")+" · "+label;
-   card.append(title,meta);target.append(card);
-  }
-  if(data.length===30)target.append(submissionMessage("Showing your 30 most recent submissions."));
- }catch(e){if(app.user?.id===user.id)target.replaceChildren(submissionMessage("Unable to load submissions: "+e.message))}
-}
-$("#my-submission-refresh").addEventListener("click",()=>loadMyContributions());
 async function updateAdminLink(user){
  const link=$("#admin-link");link.classList.add("hide");if(!user||!app.client)return;
  try{
@@ -310,76 +270,6 @@ async function loadApproved(){
  const {data,error}=await app.client.from("library_books").select("id,title,author,description,media_type,category,language,file_path,access_mode").eq("status","approved").order("submitted_at",{ascending:false}).limit(100);
  if(error){$("#fetch-message").textContent="Approved member catalogue unavailable: "+error.message;return}
  app.local=[...originalStories,...officialSourceBooks,...(data||[]).map(b=>({...b,kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",discussion_key:"member:"+b.id,rank:2}))];filterAndRender();
-}
-let uploadRunning=false;
-const uploadExtensions={pdf:["ebook","application/pdf"],epub:["ebook","application/epub+zip"],mp3:["audiobook","audio/mpeg"],m4a:["audiobook","audio/mp4"]};
-const titleFromFilename=name=>{
- const base=name.replace(/\.(pdf|epub|mp3|m4a)$/i,"").replace(/[_]+/g," ").replace(/\s+/g," ").trim();
- return (base||"Untitled book").slice(0,240);
-};
-$("#upload-file").addEventListener("change",()=>{
- const files=Array.from($("#upload-file").files||[]);
- $("#upload-selection").textContent=files.length===0?"No books selected yet.":files.length===1?
-  "Selected: "+files[0].name:files.length+" books ready to share: "+files.slice(0,3).map(x=>x.name).join(", ")+(files.length>3?" and more…":"");
-});
-$("#upload-form").addEventListener("submit",async e=>{
- e.preventDefault();if(!app.client||!app.user||uploadRunning)return;
- const files=Array.from($("#upload-file").files||[]);if(!files.length){show("#upload-status","Choose your books first.",false);return}
- const progress=$("#upload-progress");progress.hidden=false;progress.max=files.length;progress.value=0;
- uploadRunning=true;$("#upload-submit").disabled=true;
- let done=0,failed=[];
- for(const [i,file] of files.entries()){
-  const ext=(file.name.split(".").pop()||"").toLowerCase(),def=uploadExtensions[ext];
-  if(!def||file.size<1||file.size>50*1024*1024){
-   failed.push(file.name+" (unsupported file or over 50 MB)");progress.value=i+1;continue;
-  }
-  show("#upload-status","Adding book "+(i+1)+" of "+files.length+": "+file.name+"…",true);
-  const path=app.user.id+"/"+crypto.randomUUID()+"."+ext;
-  try{
-   const uploaded=await app.client.storage.from("readmalawi-library").upload(path,file,{upsert:false,contentType:def[1]});
-   if(uploaded.error)throw uploaded.error;
-   const row={
-    uploaded_by:app.user.id,title:titleFromFilename(file.name),author:"Unknown",
-    media_type:def[0],category:"Other",language:"Unconfirmed",origin:"Unspecified",
-    access_mode:"online_only",rights_basis:"unknown",rights_url:null,attested_rights:false,
-    file_path:path,mime_type:def[1],description:""
-   };
-   const {error}=await app.client.from("library_books").insert(row);
-   if(error)throw error;
-   done++;
-  }catch(err){failed.push(file.name+" ("+(err.message||"upload failed")+")")}
-  progress.value=i+1;
- }
- uploadRunning=false;$("#upload-submit").disabled=!app.user;$("#upload-form").reset();
- $("#upload-selection").textContent="No books selected yet.";
- if(failed.length){
-  show("#upload-status",done+" book(s) received. "+failed.length+" could not be submitted. "+failed.slice(0,3).join("; ")+(failed.length>3?" and others":""),false);
- }else{
-  show("#upload-status","Thank you! "+done+" book"+(done===1?"":"s")+" received. They are private until a librarian checks the details and permissions.",true);
- }
- if(done)await loadMyContributions(app.user);
-});
-$("#request-form").addEventListener("submit",async e=>{
- e.preventDefault();if(!app.client||!app.user)return;
- $("#request-submit").disabled=true;
- try{const {error}=await app.client.from("book_requests").insert({requested_by:app.user.id,title:$("#request-title").value.trim(),author:$("#request-author").value.trim(),notes:$("#request-notes").value.trim(),status:"open"});
- if(error)throw error;$("#request-form").reset();show("#request-status","Request published. Other members can now offer a lawful source.",true);await loadRequests()
- }catch(err){show("#request-status","Could not publish request: "+err.message,false)}
- finally{$("#request-submit").disabled=!app.user}
-});
-async function loadRequests(){
- if(!app.client)return;const {data,error}=await app.client.from("book_requests").select("id,title,author,language,status,created_at").order("created_at",{ascending:false}).limit(30);
- if(error){$("#requests-list").textContent="Requests unavailable.";return}
- const parent=$("#requests-list");parent.replaceChildren();
- if(!data?.length){const p=document.createElement("p");p.className="muted";p.textContent="No public requests yet. Be the first to suggest a title.";parent.appendChild(p);return}
- for(const r of data){const block=document.createElement("article");block.className="request";const h=document.createElement("h3");h.textContent=r.title;block.appendChild(h);const p=document.createElement("p");p.textContent=[r.author?"Author: "+r.author:"",r.language?"Language: "+r.language:"", "Status: "+r.status].filter(Boolean).join(" · ");block.appendChild(p);if(r.status==="open"){const b=document.createElement("button");b.type="button";b.className="btn secondary";b.textContent="I can help";b.addEventListener("click",()=>offer(r.id));block.appendChild(b)}parent.appendChild(block)}
-}
-async function offer(id){
- if(!app.client||!app.user){alert("Please sign in first. Your private details will not be posted publicly.");return}
- const note=prompt("Share a legal source link or explain how you can help. Do not offer pirated files.");if(!note||!note.trim())return;
- if(note.length>800){alert("Please keep your message under 800 characters.");return}
- const {error}=await app.client.from("book_request_offers").insert({request_id:id,offered_by:app.user.id,message:note.trim()});
- alert(error?"Could not submit your offer: "+error.message:"Thank you. Your offer was recorded privately for administrator coordination.");
 }
 // The catalogue renderer is synchronous; it has no Promise to catch.
 // Start authentication independently so a catalogue rendering fault cannot disable sign-in.

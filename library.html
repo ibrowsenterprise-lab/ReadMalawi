@@ -61,16 +61,22 @@
 .readmalawi-whatsapp-join-link{display:block;width:fit-content;margin:4px 0 0;font-size:.80rem;color:#26614d;text-decoration:underline;text-underline-offset:3px}
 @media(max-width:680px){.rm-forum-panel{grid-template-columns:1fr}.rm-forum-actions a.btn{width:100%}}
 
+
+.public-menu{position:relative}.public-menu>summary{cursor:pointer;padding:8px 12px;border:1px solid #41756e;border-radius:8px;font-weight:700}
+.public-menu nav{position:absolute;right:0;top:42px;display:flex;flex-direction:column;width:245px;gap:0;padding:10px;background:#073d35;z-index:30;border-radius:12px}.public-menu nav a{padding:9px 10px}
+header .wrap{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important}
+#readmalawi-testing-banner{font-size:11px!important;padding:5px 12px!important;gap:4px!important;line-height:1.4!important}
+.hero{padding:28px 0!important}.hero h1{font-size:clamp(1.9rem,5vw,3rem)}.section{padding:32px 0}.chips{gap:8px}
 </style>
 </head>
 <body>
 <a href="#library" class="skip">Skip to library</a>
-<header><div class="wrap"><a class="brand" href="index.html">Read<span>Malawi</span></a><nav aria-label="Main navigation"><a href="index.html">Home</a><a href="#library">📚 Books</a><a href="#book-club">💬 Book Club</a><a href="assets/reading-buddy.html">Ask Buddy</a><a href="#contribute">Share a Book</a><a href="#requests">Ask for a Book</a><a href="#whatsapp-forum">WhatsApp Forum</a><a href="assets/physical-books.html">Give physical books</a><a href="assets/learning-services.html">Learning &amp; AI</a><a href="#support">Our model</a></nav></div></header>
+<header><div class="wrap"><a class="brand" href="index.html">Read<span>Malawi</span></a><details class="public-menu"><summary>Menu</summary><nav aria-label="Main navigation"><a href="index.html">Home</a><a href="#library">📚 Books</a><a href="#book-club">💬 Book Club</a><a href="assets/reading-buddy.html">Ask Buddy</a><a href="#whatsapp-forum">WhatsApp Forum</a><a href="assets/physical-books.html">Give physical books</a><a href="assets/learning-services.html">Learning &amp; AI</a><a href="assets/partners.html">Partners</a></nav></details></div></header>
 <main>
 <section class="hero"><div class="wrap">
 <div class="eyebrow">Tiyeni tiwelenge · ReadMalawi</div><h1>Small books. Big ideas. Every language.</h1>
-<p>Read approved community books online for free. Browse children’s stories, listen to audiobooks and discover books in Malawian and world languages. Donate a book in a few taps.</p>
-<div class="chips"><a class="chip" style="text-decoration:none" href="#start-reading">🌟 Start a story</a><a class="chip" style="text-decoration:none;background:#f4d58f;color:#203a2f;border-color:#f4d58f" href="?category=Children#library">🧒 Kids' books</a><a class="chip" href="#library" style="text-decoration:none">📚 Find books</a><a class="chip" href="#book-club" style="text-decoration:none">💬 Book Club</a><a class="chip" href="#contribute" style="text-decoration:none">📤 Share a book</a><a class="chip" href="#whatsapp-forum" style="text-decoration:none">💬 WhatsApp reading forum</a><a class="chip" href="assets/physical-books.html" style="text-decoration:none">📚 Give physical books</a><a class="chip" href="assets/learning-services.html#study" style="text-decoration:none">Smart study tools</a></div>
+<p>Read approved community books online for free. Browse children’s stories, listen to audiobooks and discover books in Malawian and world languages. Ask fellow readers for your next book on WhatsApp.</p>
+<div class="chips"><a class="chip" href="#library">Find books</a><a class="chip" href="?category=Children#library">Kids’ books</a><a class="chip" href="#whatsapp-forum">Ask on WhatsApp</a></div>
 </div></section>
 <section class="section" id="library"><div class="wrap">
 <div class="eyebrow">Explore the catalogue</div><h2>Your digital reading shelf</h2><p class="intro">Read books and listen to stories here on ReadMalawi. We list only our original stories and books approved for publication.</p>
@@ -87,8 +93,19 @@
     <a href="assets/physical-books.html" class="btn secondary">I have physical books to give →</a>
   </div>
 </section>
-<section id="start-reading" aria-labelledby="readmalawi-stories-heading" style="margin:23px 0 25px;scroll-margin-top:22px">
-  <h3 id="readmalawi-stories-heading" style="font-size:1.4rem;margin:0 0 5px">🌟 Start with a short story</h3>
+
+<div id="book-club" class="banner" style="margin:16px 0 19px;scroll-margin-top:12px"><strong>💬 Book Club:</strong> Choose any book below and tap <strong>Discuss this book</strong>. You can read comments for free. New comments are checked by a librarian before appearing.</div>
+<div class="filters">
+<label class="field">Search books or authors<input type="search" id="search" placeholder="Title, author, subject..." autocomplete="off"></label>
+<label class="field">Category<select id="category"><option value="all">All categories</option><option>Fiction</option><option>Children</option><option>Education</option><option>History</option><option>Science</option><option>Poetry</option><option>Biography</option><option>Language</option><option>Other</option></select></label>
+<label class="field">Language (choose or type any)<input id="language" list="readmalawi-languages" placeholder="All languages" autocomplete="off"><datalist id="readmalawi-languages"><option value="Chichewa"><option value="Chitumbuka"><option value="Chiyao"><option value="Chilomwe"><option value="Chisena"><option value="Chitonga"><option value="English"><option value="Swahili"><option value="French"><option value="Portuguese"><option value="Spanish"><option value="Arabic"><option value="Shona"><option value="Zulu"><option value="Hindi"><option value="Chinese"><option value="German"><option value="Japanese"></datalist></label>
+<label class="field">Sort<select id="sort"><option value="title">Title (A–Z)</option><option value="recent">Recently listed</option></select></label>
+</div>
+<div class="controls"><div class="switches" role="group" aria-label="Publication type"><button class="pill" data-kind="all" aria-pressed="true">All</button><button class="pill" data-kind="book" aria-pressed="false">E-books</button><button class="pill" data-kind="audio" aria-pressed="false">Audiobooks</button></div><label class="field">Reading source<select id="source-filter" aria-label="Filter books by reading source"><option value="all">All sources</option><option value="original">ReadMalawi stories</option><option value="official">Original-provider links</option><option value="member">Approved member books</option></select></label><span class="muted small" id="count" aria-live="polite">Loading catalogue…</span></div>
+<div id="catalogue" class="cards" aria-live="polite"></div><p id="fetch-message" class="formhint" aria-live="polite"></p>
+<div class="banner" style="margin-top:22px"><strong>Explore more legitimate reading.</strong> This search includes 10 curated <a href="assets/official-reading.html"><strong>original-source reading links</strong></a> from publishers, universities and public archives, clearly marked “Official source.” ReadMalawi does not rehost those PDFs. You can also <a href="#whatsapp-forum">ask our WhatsApp forum</a> or <a href="assets/reading-buddy.html">ask Reading Buddy</a>.</div>
+<section id="start-reading" aria-labelledby="readmalawi-stories-heading" style="margin:18px 0">
+<details><summary>Explore original short stories</summary><h3 id="readmalawi-stories-heading" style="font-size:1.4rem;margin:0 0 5px">🌟 Start with a short story</h3>
   <p class="intro" style="margin-bottom:14px">Ten original stories made for ReadMalawi, free to read here. Choose one and try its question.</p>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:11px">
     <a href="assets/the-book-on-the-bench.html" style="display:block;background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;text-decoration:none;min-height:110px">
@@ -132,93 +149,19 @@
       <span class="small muted">A misplaced pencil teaches a class not to jump to conclusions.</span>
     </a>
   </div>
-</section>
-<div id="book-club" class="banner" style="margin:16px 0 19px;scroll-margin-top:12px"><strong>💬 Book Club:</strong> Choose any book below and tap <strong>Discuss this book</strong>. You can read comments for free. New comments are checked by a librarian before appearing.</div>
-<div class="filters">
-<label class="field">Search books or authors<input type="search" id="search" placeholder="Title, author, subject..." autocomplete="off"></label>
-<label class="field">Category<select id="category"><option value="all">All categories</option><option>Fiction</option><option>Children</option><option>Education</option><option>History</option><option>Science</option><option>Poetry</option><option>Biography</option><option>Language</option><option>Other</option></select></label>
-<label class="field">Language (choose or type any)<input id="language" list="readmalawi-languages" placeholder="All languages" autocomplete="off"><datalist id="readmalawi-languages"><option value="Chichewa"><option value="Chitumbuka"><option value="Chiyao"><option value="Chilomwe"><option value="Chisena"><option value="Chitonga"><option value="English"><option value="Swahili"><option value="French"><option value="Portuguese"><option value="Spanish"><option value="Arabic"><option value="Shona"><option value="Zulu"><option value="Hindi"><option value="Chinese"><option value="German"><option value="Japanese"></datalist></label>
-<label class="field">Sort<select id="sort"><option value="title">Title (A–Z)</option><option value="recent">Recently listed</option></select></label>
-</div>
-<div class="controls"><div class="switches" role="group" aria-label="Publication type"><button class="pill" data-kind="all" aria-pressed="true">All</button><button class="pill" data-kind="book" aria-pressed="false">E-books</button><button class="pill" data-kind="audio" aria-pressed="false">Audiobooks</button></div><label class="field">Reading source<select id="source-filter" aria-label="Filter books by reading source"><option value="all">All sources</option><option value="original">ReadMalawi stories</option><option value="official">Original-provider links</option><option value="member">Approved member books</option></select></label><span class="muted small" id="count" aria-live="polite">Loading catalogue…</span></div>
-<div id="catalogue" class="cards" aria-live="polite"></div><p id="fetch-message" class="formhint" aria-live="polite"></p>
-<div class="banner" style="margin-top:22px"><strong>Explore more legitimate reading.</strong> This search includes 10 curated <a href="assets/official-reading.html"><strong>original-source reading links</strong></a> from publishers, universities and public archives, clearly marked “Official source.” ReadMalawi does not rehost those PDFs. You can also <a href="#contribute">share a book for private review</a> or <a href="assets/reading-buddy.html">ask Reading Buddy</a>.</div>
-</div></section>
-<section class="section subtle" id="contribute"><div class="wrap">
-<div class="banner" style="margin-bottom:24px"><strong>Have a large PDF collection?</strong> Use the <a href="assets/bulk-import.html"><strong>Bulk PDF Scanner &amp; Private Upload</strong></a> to select a folder, prepare a draft catalogue, and submit files in a private librarian-reviewed batch. No books are published automatically.</div>
-<div class="eyebrow">Share a story. Spark a reader.</div>
-<h2>Give a book a new reader <span aria-hidden="true">📚</span></h2>
-<p class="intro">Books are a gift to our reading community. Have a PDF, e-book or audiobook? Add it in seconds—no long forms. Our library team organises the details and reviews each contribution before it appears publicly.</p>
-<div class="two">
-<div class="panel" id="member-access">
-<h3>Welcome, book lover!</h3>
-<p class="small muted">Sign in with your email once, then choose the files you want to share.</p>
+</details></section></div></section>
+<section class="section" id="member-access"><div class="wrap"><details><summary>Reader &amp; librarian sign-in</summary><div class="panel">
+<h3>Email sign-in</h3><p class="small muted">For book discussions and authorised library administration. Browsing does not require an account.</p>
 <div id="service-message" class="notice">Connecting the library…</div>
 <form id="login-form" class="login"><input id="email" type="email" autocomplete="email" placeholder="Your email address" required aria-label="Email address"><button type="submit" class="btn" id="login-btn" disabled>Email sign-in</button></form>
-<div class="small" id="user-status">Checking member sign-in…</div>
-<button class="btn secondary hide" id="logout-btn" type="button" style="margin-top:12px">Sign out</button>
-<p class="small hide" id="admin-link" style="margin:18px 0 0">Library moderator? <a href="assets/moderate.html"><strong>Open admin review dashboard →</strong></a></p>
-<section id="my-contributions" aria-labelledby="my-contributions-heading" style="margin-top:20px;border-top:1px solid var(--line);padding-top:18px">
-<h3 id="my-contributions-heading" style="font-size:1.05rem">My book submissions</h3>
-<p class="small muted" style="margin:0 0 11px">Only you and authorised librarians can see submissions awaiting review.</p>
-<button type="button" class="btn secondary" id="my-submission-refresh" disabled style="min-height:39px;padding:8px 12px">Refresh my submissions</button>
-<div id="my-submission-list" aria-live="polite" aria-atomic="true" style="margin-top:12px"><p class="small muted">Sign in to see your submitted books and their review status.</p></div>
-</section>
-<div class="reader-fun" style="margin-top:19px"><span aria-hidden="true" style="font-size:1.5rem">🌈</span><span><strong>Young readers are welcome!</strong><br>Explore stories in the Children category. A parent or guardian should handle book submissions for younger readers.</span></div>
-</div>
-<div class="panel">
-<h3>Donate your books</h3>
-<p class="small muted">That's it: select your files and tap the button. You don't need to enter a title, author, category or description.</p>
-<form id="upload-form">
-<label class="field" for="upload-file">Choose your PDF, EPUB or audiobook files
-<input id="upload-file" type="file" accept=".pdf,.epub,.mp3,.m4a,application/pdf,application/epub+zip,audio/mpeg,audio/mp4" multiple required>
-</label>
-<div class="upload-selection" id="upload-selection" role="status">No books selected yet.</div>
-<button type="submit" class="btn upload-cta" id="upload-submit" disabled>📖 Donate books</button>
-<p id="upload-gate-note" class="formhint" role="status" style="margin:9px 0 4px"><strong>Sign-in required.</strong> <a href="#member-access">Go to the email sign-in section ↑</a> to enable book uploads.</p>
-<progress id="upload-progress" max="100" value="0" hidden style="width:100%;margin-top:14px"></progress>
-<div class="status" id="upload-status" role="status" aria-live="polite"></div>
-</form>
-<p class="formhint" style="margin-top:13px">Each file up to 50 MB. Books stay private during review. The librarian checks publication permissions, titles and categories. Books that cannot be lawfully shared won't be publicly published.</p>
-<p class="small muted" style="margin:13px 0 0">Thank you for helping more people discover the joy of reading.</p>
-</div>
-</div>
-</div></section>
-<section class="section" id="requests"><div class="wrap">
-<div class="eyebrow">Community requests</div><h2>Can't find a book?</h2><p class="intro">Request a title and allow other members or an administrator to suggest lawful sources or offer a work they are authorised to share. Requests never authorise copying copyrighted material.</p>
-<div class="two"><div class="panel"><h3>Request a title</h3><form id="request-form" class="stack">
-<label class="field">Book title<input id="request-title" maxlength="180" required></label><label class="field">Author (if known)<input id="request-author" maxlength="150"></label><label class="field">Private notes / preferred language (not shown in public list)<textarea id="request-notes" maxlength="700" placeholder="Add learning or language preferences for private review. Do not enter contact details, student names, or sensitive information."></textarea></label>
-<button type="submit" class="btn" id="request-submit" disabled>Publish request</button><div class="status" id="request-status" aria-live="polite"></div>
-</form><p class="formhint">Testing only: please use fictional examples. The title, author and status can appear publicly; request notes and your account ID are restricted from public listings. Do not include sensitive data.</p></div>
-<div class="panel"><h3>Recent public requests</h3><div id="requests-list" aria-live="polite"><p class="muted">Requests will appear here when community submissions are activated.</p></div></div></div>
-</div></section>
-<section class="section subtle" id="support"><div class="wrap">
-<div class="eyebrow">ReadMalawi · Our sustainable learning approach</div>
-<h2>Free reading. Practical study skills. Responsible AI.</h2>
-<p class="intro"><strong>Reading ReadMalawi's original stories and linking to official reading sources remains free.</strong>
-We are developing additional educational services for schools, readers, authors and sponsoring organisations. Optional AI capabilities are only enabled when tested, funded and configured securely.</p>
-<div class="plan-grid" aria-label="ReadMalawi current learning options and proposed services">
-<div class="plan"><span class="plan-period">Free · Available today</span><h3>Read &amp; discover</h3><p>Original ReadMalawi stories, Book Club discussions, trusted public-source links and rights-cleared hosted books when approved.</p><p><a href="assets/official-reading.html"><strong>Official reading sources →</strong></a></p></div>
-<div class="plan"><span class="plan-period">Free · Available today</span><h3>Smart Study Sprint</h3><p>Build a reading and recall plan from your own notes using a local, browser-only study tool. No upload or account needed.</p><p><a href="assets/learning-services.html#study"><strong>Open study tool →</strong></a></p></div>
-<div class="plan"><span class="plan-period">AI · Activation dependent</span><h3>AI Reading Coach</h3><p>The generative AI backend is prepared, with sign-in and usage limits. It will only be available when private AI configuration and safety checks are in place.</p><p><a href="assets/reading-buddy.html"><strong>Check Reading Buddy →</strong></a></p></div>
-<div class="plan"><span class="plan-period">Institutional pilots · Enquiries open</span><h3>Schools, sponsors &amp; authors</h3><p>Discuss reading workshops, AI literacy, sponsored programmes and rights-cleared publishing support. Scope and fees must be agreed individually.</p><p><a href="assets/learning-services.html#organisations"><strong>Explore learning services →</strong></a></p></div>
-</div>
-<div class="banner" style="margin:20px 0"><strong>Our business model is evolving.</strong> We plan to sustain free reading through contracted educational services, responsible AI-enabled learning projects, publisher collaboration and sponsorships. <a href="assets/partners.html"><strong>Explore partnership opportunities →</strong></a></div>
-<div class="two" style="margin-top:20px">
-<div class="panel"><h3>No payment collection yet</h3>
-<p>Earlier download-pass and membership prices are <strong>inactive proposals</strong>, not services for sale. We are not charging for access to third-party free reading links, and no service checkout is active.</p>
-<div class="notice" role="status">Please do not send payments. Future prices, legal arrangements, rights-cleared entitlements and verified payment systems will be announced only after approval.</div></div>
-<div class="panel"><h3>What revenue could support</h3>
-<p>Future income may support site operations, legally licensed materials, human-reviewed Malawian-language stories and proposed school reading initiatives.</p>
-<p class="small muted">ReadMalawi is not currently a registered charity or NGO, and physical book distributions to schools or prisons remain future goals requiring appropriate partnerships and approvals.</p>
-<a href="assets/learning-services.html"><strong>Visit Learning &amp; AI Lab →</strong></a>
-</div></div>
-</div></section>
+<div class="small" id="user-status">Checking sign-in…</div><button class="btn secondary hide" id="logout-btn" type="button">Sign out</button>
+<p class="small hide" id="admin-link">Library moderator? <a href="assets/moderate.html">Open admin review dashboard →</a></p>
+</div></details></div></section>
 </main>
-<footer class="footer"><div class="wrap"><strong>ReadMalawi</strong> · Books • Technology • Knowledge for All<br><span class="small">Independent reading community. Book uploads are private until reviewed; memberships and payments are not active.</span><br><a href="assets/learning-services.html">Learning &amp; AI</a> · <a href="assets/official-reading.html">Official reading sources</a> · <a href="index.html#story">Our Story</a> · <a href="assets/partners.html">Partners</a> · <a href="index.html">Home</a></div></footer>
+<footer class="footer"><div class="wrap"><strong>ReadMalawi</strong> · Books • Technology • Knowledge for All<br><span class="small">Independent reading community. Read freely. Ask the WhatsApp community for book recommendations. Physical book offers are welcome.</span><br><a href="assets/learning-services.html">Learning &amp; AI</a> · <a href="assets/official-reading.html">Official reading sources</a> · <a href="index.html#story">Our Story</a> · <a href="assets/partners.html">Partners</a> · <a href="index.html">Home</a></div></footer>
 <script src="readmalawi-config.js"></script>
 <script defer src="assets/testing-notice.js"></script>
 <script defer src="assets/whatsapp-community.js?v=20261013-privacy3"></script>
-<script type="module" src="library.js?v=20261013-forum-join1"></script>
+<script type="module" src="library.js?v=20261014-public-cleanup"></script>
 <script defer src="assets/readmalawi-chat-widget.js"></script>
 </body></html>
