@@ -22,7 +22,7 @@ function bubble(txt,speaker,links){
  messages.append(box);messages.scrollTop=messages.scrollHeight;
 }
 const normalized=value=>String(value||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9\s]/g," ").replace(/\s+/g," ").trim();
-const topics=["Fiction","Education","History","Religion","Science","Biography","Poetry","Technology","Language"];
+const topics=["Fiction","Education","History","Religion","Science","Biography","Poetry","Technology","Language","Other"];
 const topicLinks=()=>topics.map(category=>({category,count:approved.filter(book=>book.category===category).length})).filter(topic=>topic.count>0).map(topic=>["../library.html?category="+encodeURIComponent(topic.category)+"#library",topic.category+" ("+topic.count+") →"]);
 function respond(phrase){
  const s=normalized(phrase);
