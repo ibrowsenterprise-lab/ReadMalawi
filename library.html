@@ -67,7 +67,7 @@
 header .wrap{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important}
 #readmalawi-testing-banner{font-size:11px!important;padding:5px 12px!important;gap:4px!important;line-height:1.4!important}
 .hero{padding:28px 0!important}.hero h1{font-size:clamp(1.9rem,5vw,3rem)}.section{padding:32px 0}.chips{gap:8px}
-</style>
+.more-filters{margin:12px 0}.more-filters summary{cursor:pointer;font-weight:700}.more-filters[open] summary{margin-bottom:12px}.more-filters .filters{display:block}.more-filters .controls{margin-top:12px}#fetch-message:empty{display:none}</style>
 </head>
 <body>
 <a href="#library" class="skip">Skip to library</a>
@@ -99,57 +99,12 @@ header .wrap{display:flex!important;flex-direction:row!important;align-items:cen
 <label class="field">Search books or authors<input type="search" id="search" placeholder="Title, author, subject..." autocomplete="off"></label>
 <label class="field">Category<select id="category"><option value="all">All categories</option><option>Fiction</option><option>Children</option><option>Education</option><option>History</option><option>Science</option><option>Poetry</option><option>Biography</option><option>Language</option><option>Other</option></select></label>
 <label class="field">Language (choose or type any)<input id="language" list="readmalawi-languages" placeholder="All languages" autocomplete="off"><datalist id="readmalawi-languages"><option value="Chichewa"><option value="Chitumbuka"><option value="Chiyao"><option value="Chilomwe"><option value="Chisena"><option value="Chitonga"><option value="English"><option value="Swahili"><option value="French"><option value="Portuguese"><option value="Spanish"><option value="Arabic"><option value="Shona"><option value="Zulu"><option value="Hindi"><option value="Chinese"><option value="German"><option value="Japanese"></datalist></label>
-<label class="field">Sort<select id="sort"><option value="title">Title (A–Z)</option><option value="recent">Recently listed</option></select></label>
+</div><details class="more-filters"><summary>More filters</summary><div class="filters"><label class="field">Sort<select id="sort"><option value="title">Title (A–Z)</option><option value="recent">Recently listed</option></select></label>
 </div>
-<div class="controls"><div class="switches" role="group" aria-label="Publication type"><button class="pill" data-kind="all" aria-pressed="true">All</button><button class="pill" data-kind="book" aria-pressed="false">E-books</button><button class="pill" data-kind="audio" aria-pressed="false">Audiobooks</button></div><label class="field">Reading source<select id="source-filter" aria-label="Filter books by reading source"><option value="all">All sources</option><option value="original">ReadMalawi stories</option><option value="official">Original-provider links</option><option value="member">Approved member books</option></select></label><span class="muted small" id="count" aria-live="polite">Loading catalogue…</span></div>
+<div class="controls"><div class="switches" role="group" aria-label="Publication type"><button class="pill" data-kind="all" aria-pressed="true">All</button><button class="pill" data-kind="book" aria-pressed="false">E-books</button><button class="pill" data-kind="audio" aria-pressed="false">Audiobooks</button></div></div></details><p class="muted small" id="count" aria-live="polite">Loading catalogue…</p>
 <div id="catalogue" class="cards" aria-live="polite"></div><p id="fetch-message" class="formhint" aria-live="polite"></p>
-<div class="banner" style="margin-top:22px"><strong>Explore more legitimate reading.</strong> This search includes 10 curated <a href="assets/official-reading.html"><strong>original-source reading links</strong></a> from publishers, universities and public archives, clearly marked “Official source.” ReadMalawi does not rehost those PDFs. You can also <a href="#whatsapp-forum">ask our WhatsApp forum</a> or <a href="assets/reading-buddy.html">ask Reading Buddy</a>.</div>
-<section id="start-reading" aria-labelledby="readmalawi-stories-heading" style="margin:18px 0">
-<details><summary>Explore original short stories</summary><h3 id="readmalawi-stories-heading" style="font-size:1.4rem;margin:0 0 5px">🌟 Start with a short story</h3>
-  <p class="intro" style="margin-bottom:14px">Ten original stories made for ReadMalawi, free to read here. Choose one and try its question.</p>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:11px">
-    <a href="assets/the-book-on-the-bench.html" style="display:block;background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;text-decoration:none;min-height:110px">
-      <strong style="display:block;color:#0c5a48">📖 The Book on the Bench</strong>
-      <span class="small muted">Chisomo discovers the joy of sharing a book.</span>
-    </a>
-    <a href="assets/the-seed-jar.html" style="display:block;background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;text-decoration:none;min-height:110px">
-      <strong style="display:block;color:#0c5a48">🌱 The Seed Jar</strong>
-      <span class="small muted">Memory learns to be patient while growing seeds.</span>
-    </a>
-    <a href="assets/the-rainy-day-book-club.html" style="display:block;background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;text-decoration:none;min-height:110px">
-      <strong style="display:block;color:#0c5a48">☔ The Rainy Day Book Club</strong>
-      <span class="small muted">Friends learn that everyone belongs.</span>
-    </a>
-    <a href="assets/thoko-and-the-clean-stream.html" style="display:block;background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;text-decoration:none;min-height:110px">
-      <strong style="display:block;color:#0c5a48">💧 Thoko and the Clean Stream</strong>
-      <span class="small muted">Thoko helps her community stay clean and safe.</span>
-    </a>
-    <a href="assets/a-library-in-a-bag.html" style="display:block;background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;text-decoration:none;min-height:110px">
-      <strong style="display:block;color:#0c5a48">🎒 A Library in a Bag</strong>
-      <span class="small muted">A travelling bag of stories brings a new reading idea to a classroom.</span>
-    </a>
-    <a href="assets/tadalas-market-puzzle.html" style="display:block;background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;text-decoration:none;min-height:110px">
-      <strong style="display:block;color:#0c5a48">🧮 Tadala&#39;s Market Puzzle</strong>
-      <span class="small muted">Tadala solves a counting problem while helping at a market stall.</span>
-    </a>
-    <a href="assets/the-blue-rain-notebook.html" style="display:block;background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;text-decoration:none;min-height:110px">
-      <strong style="display:block;color:#0c5a48">🌧️ The Blue Rain Notebook</strong>
-      <span class="small muted">Two friends discover how careful observations become useful evidence.</span>
-    </a>
-    <a href="assets/grandmothers-word-basket.html" style="display:block;background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;text-decoration:none;min-height:110px">
-      <strong style="display:block;color:#0c5a48">🗣️ Grandmother&#39;s Word Basket</strong>
-      <span class="small muted">A family learns that a story can travel between languages with care.</span>
-    </a>
-    <a href="assets/the-message-that-asked-for-a-code.html" style="display:block;background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;text-decoration:none;min-height:110px">
-      <strong style="display:block;color:#0c5a48">🔐 The Message That Asked for a Code</strong>
-      <span class="small muted">Sella learns about suspicious messages and account codes.</span>
-    </a>
-    <a href="assets/the-missing-pencil.html" style="display:block;background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;text-decoration:none;min-height:110px">
-      <strong style="display:block;color:#0c5a48">✏️ The Missing Pencil</strong>
-      <span class="small muted">A misplaced pencil teaches a class not to jump to conclusions.</span>
-    </a>
-  </div>
-</details></section></div></section>
+
+</div></section>
 <section class="section" id="member-access"><div class="wrap"><details><summary>Reader &amp; librarian sign-in</summary><div class="panel">
 <h3>Email sign-in</h3><p class="small muted">For book discussions and authorised library administration. Browsing does not require an account.</p>
 <div id="service-message" class="notice">Connecting the library…</div>
@@ -162,6 +117,6 @@ header .wrap{display:flex!important;flex-direction:row!important;align-items:cen
 <script src="readmalawi-config.js"></script>
 <script defer src="assets/testing-notice.js"></script>
 <script defer src="assets/whatsapp-community.js?v=20261013-privacy3"></script>
-<script type="module" src="library.js?v=20261014-public-cleanup"></script>
+<script type="module" src="library.js?v=20261014-reader-focus"></script>
 <script defer src="assets/readmalawi-chat-widget.js"></script>
 </body></html>
