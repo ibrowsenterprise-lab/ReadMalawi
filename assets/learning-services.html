@@ -82,7 +82,7 @@ footer{padding:22px 0;border-top:1px solid var(--line);font-size:.88rem;color:va
 </div></div></section>
 <section class="light" id="study"><div class="wrap">
 <div class="section-head"><div class="eyebrow">Try something useful today</div><h2>Smart Study Sprint</h2>
-<p>A practical reading companion. Paste a short passage from your own notes or other content you are allowed to use, and create a timed recall exercise. <strong>Rule-based and local—not a generative AI model.</strong></p></div>
+<p>Turn your own short notes into a timed study routine: read, explain, then recall. Choose 5, 10 or 15 minutes. Your text stays on this device.</p></div>
 <div class="lab">
 <div class="box">
 <label for="study-notes">Your own notes or passage</label>
@@ -96,6 +96,12 @@ footer{padding:22px 0;border-top:1px solid var(--line);font-size:.88rem;color:va
 <div class="cap">Your on-device study guide</div>
 <div id="study-summary"></div>
 <ol class="study-plan" id="study-plan"></ol>
+<section aria-label="Study sprint timer" style="padding:14px;background:white;border:1px solid #bcd8c4;border-radius:10px;margin:14px 0">
+<strong id="study-clock" role="timer" aria-live="off" style="font-size:1.8rem">Ready</strong>
+<p id="study-phase" role="status" aria-live="polite">Start your timed Read → Explain → Recall routine.</p>
+<div class="row"><button id="study-timer-toggle" class="btn" type="button">Start sprint</button><button id="study-timer-reset" class="btn secondary" type="button">Reset timer</button></div>
+<p class="form-note">Pause whenever needed. Leave this page and the sprint ends.</p>
+</section>
 <h3>Keywords to recall</h3><div class="terms" id="study-terms"></div>
 <h3>A sentence to explain in your own words</h3><blockquote id="study-quote"></blockquote>
 <label for="study-own-summary">Write your own summary without looking back</label>
@@ -107,7 +113,7 @@ footer{padding:22px 0;border-top:1px solid var(--line);font-size:.88rem;color:va
 <aside class="box"><div class="cap">How to use your guide</div>
 <h3>Think, don't just copy.</h3>
 <ul><li>Read the passage once to understand the subject.</li><li>Close the passage and try explaining the main idea aloud.</li><li>Use your keyword prompts to test what you remember.</li><li>Check your understanding against the source or with a teacher.</li></ul>
-<div class="note"><strong>What this tool does not do:</strong> It cannot tell whether your written summary is factually correct, provide a professional diagnosis or replace a teacher. More advanced AI feedback is a separate, not-yet-guaranteed service.</div>
+<div class="note">This tool provides a routine and keyword prompts. It does not grade your understanding. Check your summary against your notes or with a teacher.</div>
 </aside>
 </div></div></section>
 <section id="organisations"><div class="wrap">
@@ -128,5 +134,5 @@ footer{padding:22px 0;border-top:1px solid var(--line);font-size:.88rem;color:va
 <footer><div class="wrap">ReadMalawi · Knowledge for all · Digital-first community initiative, not currently a registered charity. <a href="../index.html">Home</a> · <a href="../library.html">Library</a> · <a href="partners.html">Partnerships</a></div></footer>
 <script src="../readmalawi-config.js"></script>
 <script defer src="testing-notice.js"></script>
-<script defer src="learning-services.js?v=20261012-ai-learning1"></script>
+<script defer src="learning-services.js?v=20261014-free-sprint"></script>
 </body></html>

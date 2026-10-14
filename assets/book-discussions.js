@@ -16,13 +16,17 @@ async function init(){
  if(!supported){msg("discussion-summary","Choose a book from the ReadMalawi library to start a discussion.");$("write").hidden=true;return}
  if(!cfg.supabaseUrl||!cfg.supabasePublishableKey){msg("discussion-summary","Discussions are temporarily unavailable.");$("write").hidden=true;return}
  try{
-  const module=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
+  const {getSupabaseModule}=await import("./supabase-loader.js");
+  const module=await getSupabaseModule();
   client=module.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey);
   $("login-button").disabled=false;
-  const a=await client.auth.getUser();
-  user=a.data?.user||null;
   client.auth.onAuthStateChange((evt,s)=>{user=s?.user||null;authView()});
-  authView();await fetchPage();
+  authView();
+  // Reading public comments does not wait for the separate sign-in check.
+  client.auth.getUser().then(a=>{user=a.data?.user||null;authView()}).catch(()=>{
+   msg("post-status","Sign-in could not be checked. You can still read published comments.");
+  });
+  await fetchPage();
  }catch(err){msg("discussion-summary","Could not connect to book discussions. Please try again later.")}
 }
 function clearReply(){replyTo=null;$("reply-indicator").hidden=true;$("comment-body").placeholder="I liked this book because…"}
@@ -66,7 +70,7 @@ async function fetchPage(){
  if(loading||!client)return;loading=true;$("load-more").disabled=true;
  const {data,error}=await client.from("readmalawi_book_comments")
  .select("id,body,reply_to,created_at,status").eq("book_key",key).eq("status","approved")
- .order("created_at",{ascending:true}).range(offset,offset+79);
+ .order("created_at",{ascending:true}).range(offset,offset+79).abortSignal(AbortSignal.timeout(12000));
  if(error)msg("discussion-summary","Unable to load comments: "+error.message);
  else{seen.push(...(data||[]));offset+=data?.length||0;draw();$("load-more").hidden=(data||[]).length<80}
  loading=false;$("load-more").disabled=false;

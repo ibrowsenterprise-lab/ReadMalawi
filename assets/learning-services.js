@@ -3,6 +3,43 @@
 const $=id=>document.getElementById(id);
 const stopWords=new Set("about above after again against almost along already also although among another around because become before being between beyond book both could during each either enough every finally first found from further gave have having however into itself just keep known later learn learning least little made make many might more most much must never often once only other over people place read reader really same should since some still such than that their them there these they thing think those through together under until very want were what when where which while with without would your yourself".split(" "));
 let generated="";
+let phases=[],timer=null,remaining=0,deadline=0,phaseIndex=0,running=false;
+function stopTimer(){clearInterval(timer);timer=null;running=false}
+function showTimer(){
+ const seconds=Math.max(0,Math.ceil(remaining/1000));
+ $("study-clock").textContent=Math.floor(seconds/60)+":"+String(seconds%60).padStart(2,"0");
+ $("study-timer-toggle").textContent=running?"Pause":remaining>0?"Resume":"Start sprint";
+}
+function resetTimer(){
+ stopTimer();phaseIndex=0;remaining=0;$("study-clock").textContent="Ready";
+ $("study-phase").textContent="Start your timed Read → Explain → Recall routine.";
+ $("study-timer-toggle").textContent="Start sprint";
+}
+function tick(){
+ remaining=Math.max(0,deadline-Date.now());
+ const elapsed=phases.reduce((sum,p)=>sum+p.minutes*60000,0)-remaining;
+ let boundary=0;phaseIndex=phases.length-1;
+ for(let i=0;i<phases.length;i++){boundary+=phases[i].minutes*60000;if(elapsed<boundary){phaseIndex=i;break}}
+ if(remaining===0){stopTimer();$("study-phase").textContent="Sprint complete. Check your summary against your notes.";$("study-timer-toggle").textContent="Start again";$("study-clock").textContent="0:00";return}
+ const instruction=phases[phaseIndex].name+": "+phases[phaseIndex].instruction;
+ if($("study-phase").textContent!==instruction)$("study-phase").textContent=instruction;
+ showTimer();
+}
+$("study-timer-toggle").addEventListener("click",()=>{
+ if(!generated||!phases.length)return;
+ if(running){remaining=Math.max(0,deadline-Date.now());stopTimer();showTimer();return}
+ if(remaining<=0)remaining=phases.reduce((sum,p)=>sum+p.minutes*60000,0);
+ running=true;deadline=Date.now()+remaining;tick();timer=setInterval(tick,250);
+});
+$("study-timer-reset").addEventListener("click",resetTimer);
+function invalidateGuide(){
+ if(!generated)return;
+ resetTimer();generated="";$("study-result").hidden=true;
+ $("study-status").textContent="Notes or time changed. Create a new guide to use the updated version.";
+}
+$("study-notes").addEventListener("input",invalidateGuide);
+$("study-minutes").addEventListener("change",invalidateGuide);
+window.addEventListener("pagehide",resetTimer);
 function element(tag,text,cls){
  const e=document.createElement(tag); if(text!==undefined)e.textContent=text;
  if(cls)e.className=cls;return e;
@@ -19,6 +56,8 @@ function keyTerms(text){
   .slice(0,6).map(([word])=>word);
 }
 function makeGuide(){
+ resetTimer();
+ generated="";$("study-result").hidden=true;
  const notes=$("study-notes").value.trim().replace(/\s+/g," ");
  const status=$("study-status");
  if(notes.length<80){status.textContent="Add at least 80 characters from your own notes or a passage you have permission to use.";return}
@@ -26,6 +65,7 @@ function makeGuide(){
  const words=(notes.match(/[\p{L}\p{M}]+(?:[-’'][\p{L}\p{M}]+)*/gu)||[]);
  const length=words.length;
  const mins=Number($("study-minutes").value);
+ if(![5,10,15].includes(mins)){status.textContent="Choose a 5-, 10- or 15-minute sprint.";return}
  const sentences=notes.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[];
  const usable=sentences.map(x=>x.trim()).filter(x=>x.length>=35);
  const quotation=(usable.find(x=>x.length<=220)||usable[0]||notes.slice(0,220)).slice(0,220);
@@ -42,6 +82,7 @@ function makeGuide(){
   ["Recall",Math.max(1,mins-Math.max(2,Math.round(mins*.4))-Math.max(1,Math.round(mins*.35)))+" min","Use the key terms below to remember important information."]
  ];
  const plan=$("study-plan");plan.replaceChildren();
+ phases=items.map(([name,time,instruction])=>({name,minutes:Number.parseInt(time,10),instruction}));
  for(const [title,time,desc] of items){
   const card=element("li");
   card.append(element("strong",title+" · "+time),element("span",desc));
@@ -66,6 +107,7 @@ function makeGuide(){
 }
 $("study-build").addEventListener("click",makeGuide);
 $("study-clear").addEventListener("click",()=>{
+ resetTimer();phases=[];
  $("study-notes").value="";$("study-own-summary").value="";
  $("study-result").hidden=true;$("study-status").textContent="Notes cleared from this page.";generated="";
 });
