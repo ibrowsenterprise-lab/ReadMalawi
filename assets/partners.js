@@ -32,7 +32,7 @@ form.addEventListener("submit",async event=>{
  const rawMessage=$("contact-message").value.trim();
  const message=testMode?"[READMALAWI TEST] Prelaunch test only — no payment, client follow-up or agreement.\n"+rawMessage:rawMessage;
  if(message.length>2200){notify("Please shorten the message slightly to allow room for the test record label.");return}
- if(contact_name.length<2||message.length<12||!$("contact-consent").checked){notify("Please add your name, a short message, and consent to a reply.");return}
+ if(contact_name.length<2||rawMessage.length<12||!$("contact-consent").checked){notify("Please add your name, a message of at least 12 characters, and consent to a reply.");return}
  button.disabled=true;notify("Sending your enquiry…");
  try{
  const {error}=await client.from("readmalawi_partnership_enquiries").insert({contact_name,contact_email,organisation,country,interest,message,consent:true});

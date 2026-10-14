@@ -52,7 +52,7 @@ const officialSourceBooks=[
   category:"Education",language:"English",url:"https://www.navalmanack.com/"}
 ].map((book,index)=>({...book,kind:"book",source:"official",rank:80-index}));
 
-const app={collection:"books",page:1,pageSize:12,catalogueReady:false,kind:"all",sourceFilter:"all",local:originalStories.concat(officialSourceBooks),remote:[],client:null,user:null,requests:[],backend:false};
+const app={collection:"books",page:1,pageSize:12,catalogueReady:false,catalogueError:false,kind:"all",sourceFilter:"all",local:originalStories.concat(officialSourceBooks),remote:[],client:null,user:null,requests:[],backend:false};
 const cfg=window.READMALAWI_CONFIG||{};
 const types={book:"E-book",audio:"Audiobook"};
 const show=(id,text,good)=>{const el=$(id);el.textContent=text;el.className="status "+(good?"ok":"err")};
@@ -153,7 +153,8 @@ function openReader(url,book){
   box.style.cssText="position:fixed;inset:0;z-index:1000;background:#092e2bf2;display:flex;flex-direction:column;padding:16px;gap:12px";
   const top=document.createElement("div");top.style.cssText="display:flex;justify-content:space-between;align-items:center;gap:12px;color:white";
   const title=document.createElement("strong");title.textContent=(book.title||"ReadMalawi")+" · "+(book.access_mode==="online_only"?"Online only":"Online preview");
-  const close=document.createElement("button");close.className="btn secondary";close.textContent="Close reader";close.addEventListener("click",()=>{box.remove();document.removeEventListener("keydown",onEscape)});
+  const previousFocus=document.activeElement;
+  const close=document.createElement("button");close.className="btn secondary";close.textContent="Close reader";close.addEventListener("click",()=>{box.remove();document.removeEventListener("keydown",onEscape);if(previousFocus?.isConnected)previousFocus.focus()});
   function onEscape(e){if(e.key==="Escape")close.click()} document.addEventListener("keydown",onEscape);
   top.append(title,close);box.append(top);
   const container=document.createElement("div");container.style.cssText="flex:1;min-height:0;background:white;border-radius:10px;overflow:auto";box.append(container);
@@ -162,7 +163,9 @@ function openReader(url,book){
     const target=document.createElement("div");target.style.cssText="height:100%;min-height:360px";container.append(target);
     const lib=document.createElement("script");lib.src="https://cdn.jsdelivr.net/npm/epubjs@0.3.93/dist/epub.min.js";lib.onload=()=>{try{window.ePub(url).renderTo(target,{width:"100%",height:"100%"}).display()}catch(e){target.textContent="EPUB preview unavailable. Contact the library moderator."}};lib.onerror=()=>target.textContent="EPUB viewer unavailable right now.";document.head.append(lib);
   } else {const pdf=document.createElement("iframe");pdf.src=url+"#toolbar=0&navpanes=0";pdf.title="ReadMalawi PDF reader";pdf.style.cssText="height:100%;min-height:360px;width:100%;border:0";container.append(pdf)}
-  const foot=document.createElement("p");foot.style.cssText="color:#e9f4ed;font-size:.8rem;margin:0";foot.textContent="No site download option for online-only works. Browser tools and recording may still copy content; this is not DRM.";box.append(foot);document.body.append(box);close.focus();
+  const foot=document.createElement("p");foot.style.cssText="color:#e9f4ed;font-size:.85rem;margin:0";
+  const fallback=document.createElement("a");fallback.href=url;fallback.target="_blank";fallback.rel="noopener noreferrer";fallback.style.cssText="color:white;font-weight:700;text-decoration:underline";fallback.textContent="Reader blank? Open this book in a new tab ↗";
+  foot.append(fallback);box.append(foot);document.body.append(box);close.focus();
 }
 
 function filterAndRender(resetPage=true){
@@ -179,21 +182,28 @@ function filterAndRender(resetPage=true){
    &&(!term||[book.title,book.author,book.category,book.language,book.description].join(" ").toLowerCase().includes(term)));
  items.sort((a,b)=>sort==="recent"?(b.rank||0)-(a.rank||0):(a.title||"").localeCompare(b.title||""));
  const target=$("#catalogue");target.replaceChildren();
- if(!items.length){const notice=document.createElement("div");notice.className="notice";notice.textContent=app.collection==="books"&&!app.catalogueReady?"Loading our books…":"No matching titles. Try another category, language or search.";target.append(notice)}
+ if(!items.length){const notice=document.createElement("div");notice.className="notice";notice.textContent=app.collection==="books"&&!app.catalogueReady?"Loading our books…":app.collection==="books"&&app.catalogueError?"We couldn’t load the book collection. Check your connection and try again.":"No matching titles. Try another category, language or search.";target.append(notice);
+ if(app.collection==="books"&&app.catalogueError){const retry=document.createElement("button");retry.type="button";retry.className="btn secondary";retry.textContent="Retry loading books";retry.addEventListener("click",()=>location.reload());notice.append(document.createElement("br"),retry)}
+ else if(app.catalogueReady&&(term||cat!=="all"||lang||app.kind!=="all")){const clear=document.createElement("button");clear.type="button";clear.className="btn secondary";clear.textContent="Clear filters";clear.addEventListener("click",()=>{resetFilters();filterAndRender()});notice.append(document.createElement("br"),clear)}
+ }
  else {
  const pages=Math.ceil(items.length/app.pageSize);app.page=Math.max(1,Math.min(app.page,pages));
  items.slice((app.page-1)*app.pageSize,app.page*app.pageSize).forEach(book=>target.append(entry(book)));
  }
  const totalPages=Math.max(1,Math.ceil(items.length/app.pageSize));
- $("#count").textContent=app.collection==="books"&&!app.catalogueReady?"Loading catalogue…":items.length?((app.page-1)*app.pageSize+1)+"–"+Math.min(app.page*app.pageSize,items.length)+" of "+items.length+" titles":"No matching titles";
+ $("#count").textContent=app.collection==="books"&&!app.catalogueReady?"Loading catalogue…":app.collection==="books"&&app.catalogueError?"Catalogue unavailable":items.length?((app.page-1)*app.pageSize+1)+"–"+Math.min(app.page*app.pageSize,items.length)+" of "+items.length+" titles":"No matching titles";
  $("#page-status").textContent="Page "+app.page+" of "+totalPages;
  $("#page-prev").disabled=app.page<=1;$("#page-next").disabled=app.page>=totalPages;
  $("#catalogue-pages").hidden=items.length<=app.pageSize;
 }
 $("#page-prev").addEventListener("click",()=>{app.page--;filterAndRender(false);$("#library").scrollIntoView({behavior:"smooth",block:"start"})});
 $("#page-next").addEventListener("click",()=>{app.page++;filterAndRender(false);$("#library").scrollIntoView({behavior:"smooth",block:"start"})});
+function resetFilters(){
+ $("#category").value="all";$("#search").value="";$("#language").value="";app.kind="all";
+ document.querySelectorAll("[data-kind]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.kind==="all")));
+}
 document.querySelectorAll("[data-collection]").forEach(button=>button.addEventListener("click",()=>{
- app.collection=button.dataset.collection;$("#category").value="all";$("#search").value="";$("#language").value="";
+ app.collection=button.dataset.collection;resetFilters();
  document.querySelectorAll("[data-collection]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.collection===app.collection)));
  $("#catalogue-heading").textContent=app.collection==="kids"?"Kids & beginners":app.collection==="external"?"More reading sources":"Browse our books";
  $("#catalogue-intro").textContent=app.collection==="kids"?"Short stories with simple questions for younger readers and beginners.":app.collection==="external"?"Extra titles to read on the original publisher’s website.":"Search by title or author, or choose a category. Tap Read to open a book here.";
@@ -220,6 +230,7 @@ async function backend(){
   if(!cfg.supabaseUrl||!(cfg.supabasePublishableKey||cfg.supabaseAnonKey)){
     state.textContent="Sign-in settings are unavailable. Please contact the ReadMalawi librarian.";
     userStatus.textContent="Secure sign-in is not ready.";
+    app.catalogueReady=true;app.catalogueError=true;filterAndRender();
     return;
   }
   state.textContent="Connecting secure email sign-in…";
@@ -247,6 +258,7 @@ async function backend(){
     state.className="notice";
     state.textContent="Sign-in connection unavailable: "+err.message;
     userStatus.textContent="Please refresh this page to try again. If it persists, try Chrome without browser-blocking extensions.";
+    app.catalogueReady=true;app.catalogueError=true;filterAndRender();
   }
 }
 function updateUser(user){
@@ -274,10 +286,11 @@ $("#login-form").addEventListener("submit",async e=>{
 $("#logout-btn").addEventListener("click",async()=>{if(app.client)await app.client.auth.signOut()});
 async function loadApproved(){
  if(!app.client)return;
- const {data,error}=await app.client.from("library_books").select("id,title,author,description,media_type,category,language,file_path,access_mode").eq("status","approved").order("submitted_at",{ascending:false}).limit(100);
+ const {data,error}=await app.client.from("library_books").select("id,title,author,description,media_type,category,language,file_path,access_mode").eq("status","approved").order("submitted_at",{ascending:false}).limit(100).abortSignal(AbortSignal.timeout(12000));
  app.catalogueReady=true;
- if(error){$("#fetch-message").textContent="Book catalogue unavailable: "+error.message;return}
- app.local=[...originalStories,...officialSourceBooks,...(data||[]).map(b=>({...b,kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",discussion_key:"member:"+b.id,rank:2}))];filterAndRender();
+ app.catalogueError=!!error;
+ if(error){filterAndRender();return}
+ app.local=[...originalStories,...officialSourceBooks,...(data||[]).map((b,index)=>({...b,kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",discussion_key:"member:"+b.id,rank:100-index}))];filterAndRender();
 }
 // The catalogue renderer is synchronous; it has no Promise to catch.
 // Start authentication independently so a catalogue rendering fault cannot disable sign-in.
