@@ -130,7 +130,8 @@ const entry=data=>{
      e.preventDefault();if(!app.client)return;
      const previous=link.textContent;link.textContent="Opening…";
      try{
-       const result=await app.client.storage.from("readmalawi-library").createSignedUrl(data.storage_path,120);
+       // Allow a reading session, including later PDF page requests, rather than expiring after two minutes.
+       const result=await app.client.storage.from("readmalawi-library").createSignedUrl(data.storage_path,3600);
        if(result.error)throw result.error;
        const url=secureURL(result.data?.signedUrl);
        if(!url)throw Error("Approved book link unavailable");
