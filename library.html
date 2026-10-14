@@ -74,27 +74,15 @@ header .wrap{display:flex!important;flex-direction:row!important;align-items:cen
 <header><div class="wrap"><a class="brand" href="index.html">Read<span>Malawi</span></a><details class="public-menu"><summary>Menu</summary><nav aria-label="Main navigation"><a href="index.html">Home</a><a href="#library">📚 Books</a><a href="#book-club">💬 Book Club</a><a href="assets/reading-buddy.html">Ask Buddy</a><a href="#whatsapp-forum">WhatsApp Forum</a><a href="assets/physical-books.html">Give physical books</a><a href="assets/learning-services.html">Learning &amp; AI</a><a href="assets/partners.html">Partners</a></nav></details></div></header>
 <main>
 <section class="hero"><div class="wrap">
-<div class="eyebrow">Tiyeni tiwelenge · ReadMalawi</div><h1>Small books. Big ideas. Every language.</h1>
-<p>Read approved community books online for free. Browse children’s stories, listen to audiobooks and discover books in Malawian and world languages. Ask fellow readers for your next book on WhatsApp.</p>
+<div class="eyebrow">Tiyeni tiwelenge · ReadMalawi</div><h1>Discover a book. Start reading.</h1>
+<p>Browse the titles below. Open a book to read, try a short reading exercise, or ask our WhatsApp group for help finding a title.</p>
 <div class="chips"><a class="chip" href="#library">Find books</a><a class="chip" href="?category=Children#library">Kids’ books</a><a class="chip" href="#whatsapp-forum">Ask on WhatsApp</a></div>
 </div></section>
 <section class="section" id="library"><div class="wrap">
-<div class="eyebrow">Explore the catalogue</div><h2>Your digital reading shelf</h2><p class="intro">Read books and listen to stories here on ReadMalawi. We list only our original stories and books approved for publication.</p>
-<section id="whatsapp-forum" class="rm-forum-panel" aria-labelledby="rm-forum-headline">
-  <div>
-    <span class="rm-eyebrow">Our existing reading community</span>
-    <h3 id="rm-forum-headline">Found a book you like? Ask our WhatsApp forum.</h3>
-    <p>Every catalogue book has an <strong>Ask in our WhatsApp forum</strong> link. Already in the group? Tap the book request link, select Lets Read Malawi in WhatsApp, and tap Send. New to the group? Use the Join link first. Other readers may suggest a lawful copy, publisher link or library where you can borrow it.</p>
-    <p class="rm-smallprint">We share reading recommendations and books we have permission to share. Please don't upload or request unauthorised copyrighted copies.</p>
-  </div>
-  <div class="rm-forum-actions">
-    <a href="#" data-rm-forum-share class="btn">Ask the forum on WhatsApp ↗</a>
-    <a href="#" data-rm-forum-invite class="btn secondary" hidden>Join our WhatsApp forum ↗</a>
-    <a href="assets/physical-books.html" class="btn secondary">I have physical books to give →</a>
-  </div>
-</section>
+<div class="eyebrow">Explore the catalogue</div><h2>Browse books &amp; reading practice</h2><p class="intro">Use the search or choose a category or language. Each card tells you where it opens: on ReadMalawi or on the publisher’s website. “Reading practice” means a short fictional story created for this site, with a comprehension question.</p>
 
-<p id="book-club" class="small muted">Want to discuss a book? Tap “Discuss this book” on its card.</p>
+
+
 <div class="filters">
 <label class="field">Search books or authors<input type="search" id="search" placeholder="Title, author, subject..." autocomplete="off"></label>
 <label class="field">Category<select id="category"><option value="all">All categories</option><option>Fiction</option><option>Children</option><option>Education</option><option>History</option><option>Science</option><option>Poetry</option><option>Biography</option><option>Language</option><option>Other</option></select></label>
@@ -104,7 +92,19 @@ header .wrap{display:flex!important;flex-direction:row!important;align-items:cen
 <div class="controls"><div class="switches" role="group" aria-label="Publication type"><button class="pill" data-kind="all" aria-pressed="true">All</button><button class="pill" data-kind="book" aria-pressed="false">E-books</button><button class="pill" data-kind="audio" aria-pressed="false">Audiobooks</button></div></div></details><p class="muted small" id="count" aria-live="polite">Loading catalogue…</p>
 <div id="catalogue" class="cards" aria-live="polite"></div><p id="fetch-message" class="formhint" aria-live="polite"></p>
 
-</div></section>
+<section id="whatsapp-forum" class="rm-forum-panel" aria-labelledby="rm-forum-headline">
+  <div>
+    <span class="rm-eyebrow">Help finding a book</span>
+    <h3 id="rm-forum-headline">Can’t find the book you want?</h3>
+    <p>Search this page first. If a title is missing, ask the ReadMalawi WhatsApp group. If a listed title interests you, use “Ask about this title on WhatsApp” on its card. Join the group first if needed; WhatsApp lets you choose the group and send the prepared message yourself.</p>
+    <p class="rm-smallprint">We share reading recommendations and books we have permission to share. Please don't upload or request unauthorised copyrighted copies.</p>
+  </div>
+  <div class="rm-forum-actions">
+    <a href="#" data-rm-forum-share class="btn">Ask for a book on WhatsApp ↗</a>
+    <a href="#" data-rm-forum-invite class="btn secondary" hidden>Join our WhatsApp forum ↗</a>
+    <a href="assets/physical-books.html" class="btn secondary">I have physical books to give →</a>
+  </div>
+</section></div></section>
 <section class="section" id="member-access"><div class="wrap"><details><summary>Reader &amp; librarian sign-in</summary><div class="panel">
 <h3>Email sign-in</h3><p class="small muted">For book discussions and authorised library administration. Browsing does not require an account.</p>
 <div id="service-message" class="notice">Connecting the library…</div>
@@ -116,7 +116,7 @@ header .wrap{display:flex!important;flex-direction:row!important;align-items:cen
 <footer class="footer"><div class="wrap"><strong>ReadMalawi</strong> · Books • Technology • Knowledge for All<br><span class="small">Independent reading community. Read freely. Ask the WhatsApp community for book recommendations. Physical book offers are welcome.</span><br><a href="assets/learning-services.html">Learning &amp; AI</a> · <a href="assets/official-reading.html">Official reading sources</a> · <a href="index.html#story">Our Story</a> · <a href="assets/partners.html">Partners</a> · <a href="index.html">Home</a></div></footer>
 <script src="readmalawi-config.js"></script>
 <script defer src="assets/testing-notice.js"></script>
-<script defer src="assets/whatsapp-community.js?v=20261013-privacy3"></script>
-<script type="module" src="library.js?v=20261014-reader-focus"></script>
+<script defer src="assets/whatsapp-community.js?v=20261014-clear-journey"></script>
+<script type="module" src="library.js?v=20261014-clear-journey"></script>
 <script defer src="assets/readmalawi-chat-widget.js"></script>
 </body></html>
