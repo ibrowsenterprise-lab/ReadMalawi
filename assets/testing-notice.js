@@ -19,7 +19,7 @@
   const label = document.createElement("strong");
   label.textContent = "COMMUNITY PREVIEW";
   const note = document.createElement("span");
-  note.textContent = "Books are free to read. Enquiry forms are test-only. No bookings or payments.";
+  note.textContent = "Free reading and community ideas. Service enquiries are test-only. No bookings or payments.";
   bar.append(label, note);
   // Header remains accessible and the banner never covers buttons on mobile.
   const header = document.querySelector("header");
