@@ -47,7 +47,7 @@ footer{background:var(--deep);color:#d2e7dd;padding:25px 0;font-size:.9rem}foote
 <main><div class="wrap content">
 <section class="panel" aria-labelledby="form-title">
 <h2 id="form-title">Request a programme discussion</h2>
-<p class="note">Prelaunch testing: any information submitted on this form will be treated as a test record until ReadMalawi is officially launched. Use fictional contact details where possible; do not enter personal data belonging to others.</p>
+<p class="note">Programme enquiries are open. Tell us what you need and provide your contact details for a private follow-up. Delivery and availability are discussed before anything is agreed.</p>
 <p class="help">This form is a private expression of interest. It does not reserve a session, establish a contract, or request payment. Please do not include learners' names or other sensitive personal details.</p>
 <form id="programme-form">
 <fieldset><legend>1 · What would you like to explore?</legend>
@@ -103,14 +103,13 @@ footer{background:var(--deep);color:#d2e7dd;padding:25px 0;font-size:.9rem}foote
 </aside>
 </div></main>
 <footer><div class="wrap">ReadMalawi · Tiyeni tiwelenge. · <a href="../index.html">Home</a> · <a href="learning-services.html">Learning &amp; AI</a> · <a href="partners.html">Partners</a></div></footer>
-<script src="../readmalawi-config.js"></script>
+<script src="../readmalawi-config.js?v=20261015-live"></script>
 <script defer src="testing-notice.js"></script>
 <script type="module">
 import {getSupabaseModule} from "./supabase-loader.js";
 const el=id=>document.getElementById(id);
 const form=el("programme-form"), button=el("submit"), feedback=el("status");
 const cfg=window.READMALAWI_CONFIG||{};
-const testMode=cfg.sitePhase!=="production";
 const allowed=new Set(["education_services","ai_services","author_services"]);
 const names={education_services:"School reading / study-skills pilot",ai_services:"Responsible AI training workshop",author_services:"Author / publisher / translation support"};
 let client=null,loading=false;
@@ -123,8 +122,7 @@ async function initialise(){
   const sdk=await getSupabaseModule();
   client=sdk.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey);
   button.disabled=false;
-  if(testMode)button.textContent="Submit TEST programme request";
-  feedback.textContent=testMode?"Testing only · no real customers will be contacted.":"Ready to receive your programme request.";
+  feedback.textContent="Ready to receive your programme request.";
   feedback.className="status";
  }catch(e){status("Could not connect securely. Check your internet connection and refresh this page.")}
 }
@@ -137,7 +135,6 @@ form.addEventListener("submit",async event=>{
  const goals=el("goals").value.trim();
  if(!allowed.has(interest)||contact_name.length<2||goals.length<30||!el("consent").checked){status("Please check the required fields and consent.");return}
  const message=[
-  ...(testMode?["[READMALAWI TEST] Prelaunch test only — no booking, quotation, invoice or customer follow-up."]:[]),
   "ReadMalawi Learning & AI Lab programme request",
   "Service: "+names[interest],
   "Audience: "+el("audience").value,
@@ -155,7 +152,7 @@ form.addEventListener("submit",async event=>{
    contact_name,contact_email,organisation,country,interest,message,consent:true
   });
   if(error)throw error;
-  form.reset();status(testMode?"TEST request saved in the private ReadMalawi inbox. It is not a real customer enquiry. No booking, payment or notification was made.":"Your enquiry has been received privately. ReadMalawi can review it and respond by email. This is not a confirmed booking or a payment request.",true);
+  form.reset();status("Your enquiry has been received privately. ReadMalawi can review it and respond by email. This is not a confirmed booking or a payment request.",true);
   el("status").scrollIntoView({block:"nearest",behavior:"smooth"});
  }catch(error){
   status("Your enquiry could not be recorded. Please check your connection and retry. If this continues, contact ReadMalawi through its official channels.");

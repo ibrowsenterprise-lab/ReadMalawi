@@ -1,6 +1,6 @@
 const $=id=>document.getElementById(id.startsWith("#")?id.slice(1):id);
 const cfg=window.READMALAWI_CONFIG||{};
-const prelaunch=cfg.sitePhase!=="production";
+const prelaunch=cfg.publicationEnabled!==true;
 const bookCategories=["Other","Children","Education","Fiction","History","Science","Biography","Poetry","Religion","Technology","Language"];
 const countries=["Unspecified","Malawian","International"];
 const licenceOptions=[["unknown","Permission not established"],["original_creator","Original rights holder authorised publication"],["authorised","Permission granted by rights holder"],["open_licence","Verified open licence"],["public_domain","Verified public domain"]];
@@ -100,8 +100,8 @@ function render(book){
  if(prelaunch){
    approve.disabled=true;reject.disabled=true;
    approve.textContent="Publish paused until launch";
-   reject.textContent="Reject paused during testing";
-   approve.title=reject.title="ReadMalawi prelaunch safeguard: no publication or permanent review disposition until founder approves final release.";
+   reject.textContent="Release review required";
+   approve.title=reject.title="Additional book releases require separate administrative approval.";
  }
  actions.style.marginTop="17px";actions.append(preview,save,approve,reject);card.append(actions);
  const note=el("div","status");note.setAttribute("role","status");card.append(note);
@@ -120,7 +120,7 @@ function render(book){
   if(r.error)throw r.error;title.textContent=v.title;status(note,"Details saved. The file remains private and pending.");
  }catch(e){status(note,"Save failed: "+e.message,false)}finally{loading(false)}});
  approve.addEventListener("click",async()=>{
-  if(prelaunch){status(note,"ReadMalawi testing mode: public member-book publication is disabled.",false);return}
+  if(prelaunch){status(note,"Additional book publication requires separate release approval.",false);return}
   if(edit.rights_basis==="unknown"||!check.checked){status(note,"Verify publication rights first, select a valid permission basis and tick the confirmation.",false);return}
   if(!confirm("Publish this book to the public ReadMalawi catalogue? You must have verified distribution rights."))return;
   loading(true);
@@ -130,7 +130,7 @@ function render(book){
   }catch(e){status(note,"Approval failed: "+e.message,false)}finally{loading(false)}
  });
  reject.addEventListener("click",async()=>{
-  if(prelaunch){status(note,"ReadMalawi testing mode: changing a book to rejected is paused until launch review.",false);return}if(!confirm("Reject this submission? The file will stay private."))return;loading(true);
+  if(prelaunch){status(note,"This review action requires release approval.",false);return}if(!confirm("Reject this submission? The file will stay private."))return;loading(true);
   try{const r=await client.from("library_books").update({status:"rejected",verified_rights:false,reviewed_at:new Date().toISOString(),reviewer_id:user.id}).eq("id",book.id);
    if(r.error)throw r.error;await load();
   }catch(e){status(note,"Could not reject: "+e.message,false)}finally{loading(false)}

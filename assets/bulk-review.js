@@ -2,7 +2,7 @@
 import { getSupabaseModule } from "./supabase-loader.js";
 const $=id=>document.getElementById(id);
 const cfg=window.READMALAWI_CONFIG||{};
-const prelaunch=cfg.sitePhase!=="production";
+const prelaunch=cfg.publicationEnabled!==true;
 const PAGE_SIZE=50;
 let client=null,admin=null,rows=[],page=0,total=0,busy=false;
 let selected=new Set();
@@ -96,7 +96,7 @@ async function initialize(){
   if(prelaunch){
     $("bulk-review-panel").hidden=false;
     $("bulk-review-controls").hidden=true;
-    $("bulk-review-auth").textContent="Prelaunch testing: bulk publishing is suspended. You may review submitted works privately using the Book Review Desk; no PDFs will be released.";
+    $("bulk-review-auth").textContent="Additional bulk releases require approval. Existing published books remain available; pending records can be reviewed privately.";
     return;
   }
   $("bulk-review-auth").textContent="Authorised librarian · "+user.email+
@@ -107,7 +107,7 @@ async function initialize(){
  }catch(e){$("bulk-review-auth").textContent="Could not verify librarian sign-in: "+e.message}
 }
 async function publish(allOnPage){
- if(prelaunch){status("Bulk publication is disabled throughout ReadMalawi testing.",true);return}
+ if(prelaunch){status("Additional bulk publication requires release approval.",true);return}
  if(!admin||busy)return;
  const selectedRows=(allOnPage?eligible():eligible().filter(row=>selected.has(row.id)));
  const rights=$("bulk-review-rights").value,evidence=$("bulk-review-evidence").value.trim();

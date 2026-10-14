@@ -31,11 +31,8 @@
  function offerText(count,location){
   const amount=Number(count);
   const where=String(location||"").replace(/[\r\n\t]/g," ").trim().slice(0,95);
-  const prefix=cfg.sitePhase!=="production"?"[READMALAWI PRELAUNCH TEST] ":"";
-  const status=cfg.sitePhase!=="production"
-    ?" This is a prelaunch test offer. Please do not arrange collection. Physical collections and school/prison deliveries are not authorised yet."
-    :" Please reply here to discuss whether collection might be possible; nothing is booked or guaranteed.";
-  return prefix+"Hello ReadMalawi. I would like to offer approximately "+amount+
+  const status=" Please reply here to discuss whether collection might be possible; nothing is booked or guaranteed.";
+  return "Hello ReadMalawi. I would like to offer approximately "+amount+
     " physical book"+(amount===1?"":"s")+
     ". My general town/area is "+where+"."+status;
  }

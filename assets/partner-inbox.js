@@ -28,7 +28,8 @@ const status=message=>$("#status").textContent=message;
 async function init(){
  if(!cfg.supabaseUrl||!cfg.supabasePublishableKey){status("ReadMalawi configuration missing.");return}
  try{
- const mod=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
+ const {getSupabaseModule}=await import("./supabase-loader.js");
+ const mod=await getSupabaseModule();
  client=mod.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey);
  const auth=await client.auth.getUser();user=auth.data?.user;
  if(!user){status("Sign in to the ReadMalawi library, then return here.");return}
@@ -100,12 +101,14 @@ function card(x){
   }finally{save.disabled=false}
  });
  root.append(notes,bar,msg);
+ if(isTestRecord(x)){
  const scopeTool=attachPilotPlanner(root,x);
  const costingTool=attachPilotCosting(root,x);
  attachInternalProposalBuilder(root,x,{
   getDraft:()=>scopeTool?.getDraft?.()||"",
   getCostingSnapshot:()=>costingTool?.getCostingSnapshot?.()||{}
  });
+ }
  return root;
 }
 $("#refresh").addEventListener("click",load);
