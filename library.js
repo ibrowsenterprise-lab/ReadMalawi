@@ -52,7 +52,7 @@ const officialSourceBooks=[
   category:"Education",language:"English",url:"https://www.navalmanack.com/"}
 ].map((book,index)=>({...book,kind:"book",source:"official",rank:80-index}));
 
-const app={kind:"all",sourceFilter:"all",local:originalStories.concat(officialSourceBooks),remote:[],client:null,user:null,requests:[],backend:false};
+const app={collection:"books",page:1,pageSize:12,kind:"all",sourceFilter:"all",local:originalStories.concat(officialSourceBooks),remote:[],client:null,user:null,requests:[],backend:false};
 const cfg=window.READMALAWI_CONFIG||{};
 const types={book:"E-book",audio:"Audiobook"};
 const show=(id,text,good)=>{const el=$(id);el.textContent=text;el.className="status "+(good?"ok":"err")};
@@ -74,7 +74,7 @@ const categoryFrom=subjects=>{
 const secureURL=url=>{try{const u=new URL(url);return u.protocol==="https:"?u.href:null}catch(e){return null}};
 const entry=data=>{
  const row=document.createElement("article");
- row.className="card book-row";
+ row.className="card book-tile";
  const pict=document.createElement("div");
  pict.className="book-pict "+(data.kind==="audio"?"audio-icon":"ebook-icon");
  pict.textContent=data.kind==="audio"?"🎧":data.category==="Children"?"📗":"📖";
@@ -86,14 +86,16 @@ const entry=data=>{
  author.textContent=data.author&&data.author!=="Unknown"&&data.author!=="Unknown author"?data.author:"Author not listed";
  const meta=document.createElement("p");meta.className="book-label";
  meta.textContent=[data.language&&data.language!=="Unconfirmed"?data.language:null,data.category,
-  data.source==="official"?"Publisher website":data.source==="original"?"Reading practice · short fictional story":"Read on ReadMalawi"]
+  data.source==="official"?"Publisher website":data.source==="original"?"Short story":"Read on ReadMalawi"]
   .filter(Boolean).join(" · ")||"Book";
  details.append(heading,author,meta);
+ const extra=document.createElement("details");extra.className="book-more";
+ const summary=document.createElement("summary");summary.textContent="More";extra.append(summary);
  if(data.source==="official"){
    const desc=document.createElement("p");
    desc.className="small muted";desc.textContent=data.description||"Read on the original provider's website.";
    desc.style.cssText="margin:4px 0 7px;line-height:1.45";
-   details.append(desc);
+   extra.append(desc);
  }
  const bookKey=data.discussion_key;
  if(bookKey){
@@ -103,28 +105,19 @@ const entry=data=>{
    const p=new URLSearchParams({book:bookKey,title:(data.title||"Untitled book").slice(0,240),author:(data.author||"").slice(0,180)});
    talk.href="assets/book-discussions.html?"+p.toString();
    talk.setAttribute("aria-label","Discuss "+(data.title||"this book")+" with other readers");
-   details.append(talk);
+   extra.append(talk);
  }
  // Invite readers to ASK for a lawful source in the existing WhatsApp forum.
  // This does not automatically post or claim that a copyrighted book may be distributed.
  if(window.ReadMalawiWhatsApp?.createRequestLink){
    const ask=window.ReadMalawiWhatsApp.createRequestLink(data.title,data.author);
-   details.append(ask);
-   // Readers who have not joined the group yet may follow the founder's official invite.
-   const groupUrl=window.ReadMalawiWhatsApp.forumInviteUrl;
-   if(groupUrl){
-     const join=document.createElement("a");
-     join.className="readmalawi-whatsapp-join-link";
-     join.textContent="Join the WhatsApp group ↗";
-     join.href=groupUrl;
-     join.target="_blank";
-     join.rel="noopener noreferrer";
-     details.append(join);
-   }
+   extra.append(ask);
+
  }
+ if(extra.children.length>1)details.append(extra);
  const link=document.createElement("a");link.className="book-action";
  const isHosted=data.source==="member",isAudio=data.kind==="audio",isOfficial=data.source==="official";
- link.textContent=isOfficial?"Read at publisher ↗":isHosted?(isAudio?"Listen here ›":"Read here ›"):"Read practice story ›";
+ link.textContent=isOfficial?"Read at publisher ↗":isHosted?(isAudio?"Listen here ›":"Read here ›"):"Read story ›";
  link.setAttribute("aria-label",(isOfficial?"Open original source for: ":isAudio?"Listen on ReadMalawi: ":"Read on ReadMalawi: ")+(data.title||"Untitled book"));
  if(isOfficial){
    link.href=secureURL(data.url)||"assets/official-reading.html";
@@ -148,7 +141,7 @@ const entry=data=>{
  }
  row.append(pict,details,link);
  row.addEventListener("click",event=>{
-   if(event.target.closest("a,button,input,select,textarea"))return;
+   if(event.target.closest("a,button,input,select,textarea,summary,details"))return;
    link.click();
  });
  return row;
@@ -172,23 +165,42 @@ function openReader(url,book){
   const foot=document.createElement("p");foot.style.cssText="color:#e9f4ed;font-size:.8rem;margin:0";foot.textContent="No site download option for online-only works. Browser tools and recording may still copy content; this is not DRM.";box.append(foot);document.body.append(box);close.focus();
 }
 
-function filterAndRender(){
+function filterAndRender(resetPage=true){
+ if(resetPage)app.page=1;
  const term=$("#search").value.trim().toLowerCase();
  const cat=$("#category").value;
  const lang=$("#language").value.trim().toLowerCase();
  const sort=$("#sort").value;
  const items=app.local.concat(app.remote).filter(book=>
-   (app.kind==="all"||book.kind===app.kind)
+   (app.collection==="kids"?book.source==="original":app.collection==="external"?book.source==="official":book.source==="member")
+   &&(app.kind==="all"||book.kind===app.kind)
    &&(cat==="all"||book.category===cat)
    &&(!lang||String(book.language||"").toLowerCase().includes(lang))
    &&(!term||[book.title,book.author,book.category,book.language,book.description].join(" ").toLowerCase().includes(term)));
  items.sort((a,b)=>sort==="recent"?(b.rank||0)-(a.rank||0):(a.title||"").localeCompare(b.title||""));
  const target=$("#catalogue");target.replaceChildren();
  if(!items.length){const notice=document.createElement("div");notice.className="notice";notice.textContent="No matching books yet. Try another language or search for a title.";target.append(notice)}
- else items.forEach(book=>target.append(entry(book)));
- $("#count").textContent=items.length+" listing"+(items.length===1?"":"s")+" shown";
+ else {
+ const pages=Math.ceil(items.length/app.pageSize);app.page=Math.max(1,Math.min(app.page,pages));
+ items.slice((app.page-1)*app.pageSize,app.page*app.pageSize).forEach(book=>target.append(entry(book)));
+ }
+ const totalPages=Math.max(1,Math.ceil(items.length/app.pageSize));
+ $("#count").textContent=items.length?((app.page-1)*app.pageSize+1)+"–"+Math.min(app.page*app.pageSize,items.length)+" of "+items.length+" titles":"No matching titles";
+ $("#page-status").textContent="Page "+app.page+" of "+totalPages;
+ $("#page-prev").disabled=app.page<=1;$("#page-next").disabled=app.page>=totalPages;
+ $("#catalogue-pages").hidden=items.length<=app.pageSize;
 }
+$("#page-prev").addEventListener("click",()=>{app.page--;filterAndRender(false);$("#library").scrollIntoView({behavior:"smooth",block:"start"})});
+$("#page-next").addEventListener("click",()=>{app.page++;filterAndRender(false);$("#library").scrollIntoView({behavior:"smooth",block:"start"})});
+document.querySelectorAll("[data-collection]").forEach(button=>button.addEventListener("click",()=>{
+ app.collection=button.dataset.collection;$("#category").value="all";$("#search").value="";$("#language").value="";
+ document.querySelectorAll("[data-collection]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.collection===app.collection)));
+ $("#catalogue-heading").textContent=app.collection==="kids"?"Kids & beginners":app.collection==="external"?"More reading sources":"Browse our books";
+ $("#catalogue-intro").textContent=app.collection==="kids"?"Short stories with simple questions for younger readers and beginners.":app.collection==="external"?"Extra titles to read on the original publisher’s website.":"Search by title or author, or choose a category. Tap Read to open a book here.";
+ filterAndRender();
+}));
 const searchParams=new URLSearchParams(location.search);
+if(searchParams.get("section")==="kids"||searchParams.get("category")==="Children")document.querySelector('[data-collection="kids"]').click();
 const preselectedCategory=searchParams.get("category");
 const preselectedQuery=searchParams.get("q");
 if(preselectedQuery)$("#search").value=preselectedQuery.slice(0,120);
