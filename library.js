@@ -86,7 +86,7 @@ const entry=data=>{
  author.textContent=data.author&&data.author!=="Unknown"&&data.author!=="Unknown author"?data.author:"Author not listed";
  const meta=document.createElement("p");meta.className="book-label";
  meta.textContent=[data.language&&data.language!=="Unconfirmed"?data.language:null,data.category,
-  data.source==="official"?"Official source · "+data.provider:data.source==="original"?"ReadMalawi original":null]
+  data.source==="official"?"Publisher website":data.source==="original"?"Reading practice · short fictional story":"Read on ReadMalawi"]
   .filter(Boolean).join(" · ")||"Book";
  details.append(heading,author,meta);
  if(data.source==="official"){
@@ -99,7 +99,7 @@ const entry=data=>{
  if(bookKey){
    const talk=document.createElement("a");
    talk.className="book-discuss";
-   talk.textContent="💬 Discuss this book";
+   talk.textContent="💬 Reader comments";
    const p=new URLSearchParams({book:bookKey,title:(data.title||"Untitled book").slice(0,240),author:(data.author||"").slice(0,180)});
    talk.href="assets/book-discussions.html?"+p.toString();
    talk.setAttribute("aria-label","Discuss "+(data.title||"this book")+" with other readers");
@@ -115,7 +115,7 @@ const entry=data=>{
    if(groupUrl){
      const join=document.createElement("a");
      join.className="readmalawi-whatsapp-join-link";
-     join.textContent="Not a member? Join the group ↗";
+     join.textContent="Join the WhatsApp group ↗";
      join.href=groupUrl;
      join.target="_blank";
      join.rel="noopener noreferrer";
@@ -124,7 +124,7 @@ const entry=data=>{
  }
  const link=document.createElement("a");link.className="book-action";
  const isHosted=data.source==="member",isAudio=data.kind==="audio",isOfficial=data.source==="official";
- link.textContent=isOfficial?"Read on source site ↗":isHosted?(isAudio?"Listen ›":"Read ›"):"Read ›";
+ link.textContent=isOfficial?"Read at publisher ↗":isHosted?(isAudio?"Listen here ›":"Read here ›"):"Read practice story ›";
  link.setAttribute("aria-label",(isOfficial?"Open original source for: ":isAudio?"Listen on ReadMalawi: ":"Read on ReadMalawi: ")+(data.title||"Untitled book"));
  if(isOfficial){
    link.href=secureURL(data.url)||"assets/official-reading.html";
@@ -200,7 +200,7 @@ for(const id of ["search","category","language","sort"]){$("#"+id).addEventListe
 document.querySelectorAll("[data-kind]").forEach(btn=>btn.addEventListener("click",()=>{app.kind=btn.dataset.kind;document.querySelectorAll("[data-kind]").forEach(b=>b.setAttribute("aria-pressed",String(b===btn)));filterAndRender()}));
 const fetchJSON=async (url,timeout=9500)=>{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),timeout);try{const r=await fetch(url,{signal:controller.signal,headers:{"Accept":"application/json"}});if(!r.ok)throw Error(String(r.status));return await r.json()}finally{clearTimeout(timer)}};
 function loadCatalogue(){
- $("#fetch-message").textContent="Some books open here; others open on the publisher’s website.";
+ $("#fetch-message").textContent="";
  filterAndRender();
 }
 async function backend(){
