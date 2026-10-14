@@ -12,7 +12,7 @@ h1{font-size:clamp(1.8rem,4vw,2.45rem);line-height:1.14;margin:5px 0 10px;letter
 .sub{color:var(--muted);margin:0 0 17px}.chat{background:white;border:1px solid var(--border);border-radius:17px;overflow:hidden}
 .chat-head{padding:16px 17px;background:#e8f3ea;display:flex;gap:10px;align-items:center}
 .chat-head .icon{font-size:2rem}.chat-head strong{display:block}.chat-head small{font-size:.85rem;color:var(--muted)}
-.messages{height:min(48vh,400px);min-height:270px;overflow-y:auto;background:#f8fbf7;padding:16px;display:flex;flex-direction:column;gap:11px}
+.messages{height:min(38vh,330px);min-height:210px;overflow-y:auto;background:#f8fbf7;padding:16px;display:flex;flex-direction:column;gap:11px}
 .bubble{padding:12px;border-radius:13px;max-width:94%;font-size:.95rem;overflow-wrap:anywhere;white-space:pre-wrap}
 .bubble.bot{background:white;border:1px solid #d8e5dd;align-self:flex-start}.bubble.me{background:#dff2e7;align-self:flex-end}
 .links{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}.links a{border-radius:10px;background:#126a4d;color:white;text-decoration:none;padding:9px 12px;font-weight:700;font-size:.88rem}
@@ -25,7 +25,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #efba
 .notice{padding:14px;border-radius:11px;background:#fff4da;border:1px solid #e5d4ab;color:#70541f;margin-top:17px;font-size:.9rem}
 .note{font-size:.81rem;color:var(--muted);padding:8px 15px 15px;background:white}
 .ai-panel{padding:14px 16px;margin:0 0 15px;background:#fff;border:1px solid #d1e2d5;border-radius:14px}
-.ai-panel strong{font-weight:850}.ai-panel p{font-size:.88rem;color:#56695f;margin:5px 0 10px}
+.ai-panel summary{cursor:pointer;font-weight:750}.ai-panel strong{font-weight:850}.ai-panel p{font-size:.88rem;color:#56695f;margin:5px 0 10px}
 .ai-buttons{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
 .ai-buttons button{border:0;border-radius:9px;padding:10px 12px;background:#14624b;color:white;min-height:43px;font:750 .9rem system-ui;cursor:pointer}
 .ai-buttons button.secondary{background:#e7f2e9;color:#124831;border:1px solid #bad5c3}
@@ -37,32 +37,33 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #efba
 [hidden]{display:none!important}
 
 footer{padding:20px;text-align:center;color:var(--muted);font-size:.87rem}
-@media(max-width:550px){main{padding:17px 10px 35px}.messages{min-height:320px;height:48dvh}.chat-head{padding:12px}.choices{padding:11px}form{padding:9px}}
+@media(max-width:550px){main{padding:17px 10px 35px}.messages{min-height:200px;height:32dvh}.chat-head{padding:12px}.choices{padding:11px}form{padding:9px}}
 </style></head><body>
 <header><div class="wrap"><a href="../index.html">← ReadMalawi</a><a href="../library.html">📚 Books</a></div></header>
 <main>
 <h1>📚 Reading Buddy</h1>
-<p class="sub">Moni! Let's find something wonderful to read.</p>
-<section class="ai-panel" aria-label="Reading Buddy AI settings">
-<strong>✨ Want to ask AI a question?</strong>
-<p>Guided help works for everyone. Advanced AI can explain a short story, practise vocabulary and help you learn languages.</p>
+<p class="sub">Find a book by title, author or topic—or get help using ReadMalawi.</p>
+
+<section class="chat" aria-label="Chat with Reading Buddy">
+<div class="chat-head"><div><strong>Book finder &amp; site help</strong><small id="catalogue-status" role="status">Loading our book collection…</small></div></div>
+<div id="chat-mode" class="mode">Book help · No sign-in needed</div>
+
+<div id="quick" class="choices" aria-label="Try asking"></div>
+<form id="chat-form"><input id="question" type="text" minlength="2" maxlength="750" placeholder="Title, author or topic…" aria-label="Ask Reading Buddy a question" autocomplete="off" required><button class="submit" type="submit">Send</button></form>
+<div id="messages" class="messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+<p class="note">Book help searches our collection, not the whole internet. Your messages stay in this tab unless you choose AI mode.</p>
+</section>
+<details id="ai-panel" class="ai-panel" hidden><summary>Optional AI reading help</summary>
+
+<p>Ask about a short passage or a word. AI does not read whole books for you and can make mistakes.</p>
 <div id="ai-status" role="status">Checking whether AI is ready…</div>
 <div class="ai-buttons" style="margin-top:9px"><button id="ai-enable" type="button" hidden>✨ Ask AI</button><button id="ai-basic" class="secondary" type="button" hidden>← Basic help</button></div>
-<form id="ai-signin-form" hidden><input id="ai-email" type="email" placeholder="Parent or adult's email" autocomplete="email" aria-label="Email for AI sign-in" required><button id="ai-signin-submit" class="submit" type="submit">Email sign-in</button></form>
+<form id="ai-signin-form" hidden><input id="ai-email" type="email" placeholder="Your email" autocomplete="email" aria-label="Email for AI sign-in" required><button id="ai-signin-submit" class="submit" type="submit">Email sign-in</button></form>
 <div id="ai-user" class="note" hidden></div>
-<p class="note" style="padding:8px 0 0;margin:5px 0 0">Advanced AI requires email sign-in by an adult or guardian for younger readers. AI questions are sent securely to a model provider when enabled. Don't enter personal details.</p>
-</section>
-<section class="chat" aria-label="Chat with Reading Buddy">
-<div class="chat-head"><span class="icon" aria-hidden="true">📖</span><div><strong>Your ReadMalawi helper</strong><small>Ask in everyday words. Easy to use.</small></div></div>
-<div id="chat-mode" class="mode">📚 Guided book help</div>
-<div id="messages" class="messages" role="log" aria-live="polite" aria-relevant="additions"></div>
-<div id="quick" class="choices" aria-label="Try asking"></div>
-<form id="chat-form"><input id="question" type="text" minlength="2" maxlength="750" placeholder="Ask me about books…" aria-label="Ask Reading Buddy a question" autocomplete="off" required><button class="submit" type="submit">Send</button></form>
-<p class="note">Guided-chat messages stay in this tab. AI questions, if enabled, are sent securely to the model provider. Please don't share personal information.</p>
-</section>
-<div class="notice"><strong>Try it:</strong> Ask for children's stories or a book discussion. When advanced AI is activated, signed-in readers can also ask reading questions. AI can make mistakes, especially in local-language translations.</div>
+<p class="note" style="padding:8px 0 0;margin:5px 0 0">AI requires email sign-in. Questions are sent to an external AI provider. Avoid personal details; younger readers should use a guardian’s help.</p>
+</details>
 </main><footer>ReadMalawi · Tiyeni tiwelenge.</footer>
 <script src="../readmalawi-config.js"></script>
 <script defer src="testing-notice.js"></script>
-<script type="module" src="reading-buddy.js"></script>
+<script type="module" src="reading-buddy.js?v=20261014-book-helper"></script>
 </body></html>
