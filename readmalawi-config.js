@@ -8,5 +8,12 @@ window.READMALAWI_CONFIG = Object.freeze({
   customerNotificationsEnabled: false,
   bookingsEnabled: false,
   paymentsEnabled: false,
+  financialSupport: Object.freeze({
+    provider: "PayChangu",
+    minimumMwk: 500,
+    donationUrl: "", // Add only the verified public donation link.
+    recipientName: "", // Actual verified account holder; never infer from branding.
+    verified: false
+  }),
   donationsEnabled: false
 });
