@@ -1,4 +1,4 @@
-# ReadMalawi financial support — prepared, not launched
+# ReadMalawi financial support — temporary transfers; hosted checkout not launched
 
 Founder decision: PayChangu; minimum contribution MWK700, replacing all earlier minimum proposals.
 
@@ -35,3 +35,9 @@ The hosted-link approach does not need API keys in the frontend or a custom paym
 - Reconcile provider transactions, the ledger and bank/mobile settlement weekly. Retain expense evidence and document refunds and spending approvals. Publish only reconciled aggregate summaries.
 - Confirm actual account collection and withdrawal fees before choosing payout frequency. Do not configure a withdrawal after every small contribution.
 - The website's MK700 policy is not payment-provider enforcement. Confirm that MK699 is rejected and MK700 is accepted at the hosted checkout before activation.
+
+## Founder-authorised temporary channels — 15 October 2026
+
+Publish only TNM Mpamba 0882242594 (Jones Nalikungwi) and FCB 0041502003599 (IBROWS Enterprise), copied from the IBROWS project and selected explicitly by the founder. These are existing receiving accounts, not ReadMalawi-named accounts. Branch information was not present and must not be invented. Minimum MK700; provider transfer charges may apply.
+
+Request only amount, date, channel and transaction reference through the existing email/WhatsApp contacts. Confirm against the actual receiving-account record; screenshots alone are not proof. Do not auto-mark payments, issue charitable tax receipts or collect banking credentials. Maintain separate records of ReadMalawi receipts and spending. General payments and hosted checkout flags remain false. No financial transaction was performed during publication.

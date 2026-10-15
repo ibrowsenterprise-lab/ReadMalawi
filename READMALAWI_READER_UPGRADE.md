@@ -22,7 +22,7 @@ Live browser checks are recorded in the final delivery message.
 - All 100 released records have `verified_rights=false` and rely on pre-existing founder release. Publication was not changed. A librarian must verify and record actual permission evidence.
 - 27 authors and 100 descriptions need source review. The quality desk exposes the work; display formatting does not certify metadata.
 - Cloud reading AI and translation status endpoints report disabled. A provider key, budget, tested languages and deployment are needed before translation or cloud narration can be enabled.
-- No live PayChangu donation link or account clearance has been confirmed. Payments remain inactive; agreed minimum is MK700.
+- No live PayChangu donation link or account clearance has been confirmed. Hosted checkout remains inactive; temporary TNM Mpamba and FCB instructions are now authorised, with an MK700 minimum.
 - No invented budgets, delivery partners, facilitator qualifications, governance officers, school outcomes or collection/distribution statistics were published.
 - Phone screen-lock speech, device voices, scanned/OCR text, DRM and very large files have limitations; text/PDF reading remains available where supported.
 

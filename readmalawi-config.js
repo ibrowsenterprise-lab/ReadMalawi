@@ -15,6 +15,6 @@ window.READMALAWI_CONFIG = Object.freeze({
     recipientName: "", // Actual verified receiving account holder.
     verified: false
   }),
-  donationsEnabled: false
+  donationsEnabled: false // Hosted checkout only; temporary transfer instructions are on the support page.
 });
 
