@@ -1,0 +1,1 @@
+{"name":"readmalawi-quality-checks","private":true,"type":"module","scripts":{"test":"node tests/catalogue.test.mjs && node tests/private-reader.test.mjs && node tests/epub.test.mjs"},"devDependencies":{"fflate":"0.8.3","linkedom":"0.18.12"}}

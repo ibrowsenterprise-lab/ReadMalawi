@@ -20,7 +20,7 @@
  }
  function createRequestLink(title,author){
   const a=document.createElement("a");
-  a.className="readmalawi-whatsapp-book-link";
+  a.className="readmalawi-whatsapp-book-link rm-whatsapp-logo";
   a.textContent="Ask about this title on WhatsApp ↗";
   a.setAttribute("aria-label","Ask the ReadMalawi reading forum about "+String(title||"this book"));
   a.href=shareUrl(requestBookText(title,author));
@@ -83,10 +83,10 @@
    }
    // The website stores nothing. The donor chooses a WhatsApp chat and taps Send.
    const link=document.createElement("a");
-   link.href=shareUrl(offerText(value,area));
+   link.href="https://wa.me/265882242594?text="+encodeURIComponent(offerText(value,area));
    link.target="_blank";link.rel="noopener noreferrer";
    document.body.append(link);link.click();link.remove();
-   message.textContent="WhatsApp requested. Choose the ReadMalawi forum or coordinator chat, then tap Send. Nothing has been submitted to ReadMalawi by this website.";
+   message.textContent="WhatsApp will open the ReadMalawi coordinator’s chat. Review your offer and tap Send. This website has not submitted or stored your details.";
   });
  }
  window.ReadMalawiWhatsApp=Object.freeze({shareUrl,requestBookText,createRequestLink,offerText,forumInviteUrl:validInvite});

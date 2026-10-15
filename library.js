@@ -1,4 +1,5 @@
 import { getSupabaseModule } from "./assets/supabase-loader.js";
+import { cleanBook, loadPublicCatalogue, scoreBooks } from "./assets/catalogue-tools.js";
 const $=s=>document.querySelector(s);
 const sampleBook={title:"The Book on the Bench",author:"ReadMalawi",description:"An original short practice story about sharing a book.",category:"Children",language:"English",kind:"book",source:"original",discussion_key:"readmalawi:bench",url:"assets/the-book-on-the-bench.html",rank:100};
 const originalStories=[
@@ -89,9 +90,10 @@ const entry=data=>{
   data.source==="official"?"Publisher website":data.source==="original"?"Short story":"Read on ReadMalawi"]
   .filter(Boolean).join(" · ")||"Book";
  details.append(heading,author,meta);
+ if(data.description){const d=document.createElement("p");d.className="small muted";d.textContent=data.description.slice(0,220);details.append(d)}
  const extra=document.createElement("details");extra.className="book-more";
- const summary=document.createElement("summary");summary.textContent="More";extra.append(summary);
- if(data.source==="official"){
+ const summary=document.createElement("summary");summary.textContent="Book details";extra.append(summary);
+ if(data.description){
    const desc=document.createElement("p");
    desc.className="small muted";desc.textContent=data.description||"Read on the original provider's website.";
    desc.style.cssText="margin:4px 0 7px;line-height:1.45";
@@ -105,7 +107,7 @@ const entry=data=>{
    const p=new URLSearchParams({book:bookKey,title:(data.title||"Untitled book").slice(0,240),author:(data.author||"").slice(0,180)});
    talk.href="assets/book-discussions.html?"+p.toString();
    talk.setAttribute("aria-label","Discuss "+(data.title||"this book")+" with other readers");
-   extra.append(talk);
+   details.append(talk);
  }
  // Invite readers to ASK for a lawful source in the existing WhatsApp forum.
  // This does not automatically post or claim that a copyrighted book may be distributed.
@@ -125,20 +127,8 @@ const entry=data=>{
  }else if(data.source==="original"){
    link.href=data.url;
  }else if(isHosted){
-   link.href="#";
-   link.addEventListener("click",async e=>{
-     e.preventDefault();if(!app.client)return;
-     const previous=link.textContent;link.textContent="Opening…";
-     try{
-       // Allow a reading session, including later PDF page requests, rather than expiring after two minutes.
-       const result=await app.client.storage.from("readmalawi-library").createSignedUrl(data.storage_path,3600);
-       if(result.error)throw result.error;
-       const url=secureURL(result.data?.signedUrl);
-       if(!url)throw Error("Approved book link unavailable");
-       openReader(url,data);
-     }catch(err){alert("Unable to open this book: "+err.message)}
-     finally{link.textContent=previous}
-   });
+   link.href="assets/private-reader.html?book="+encodeURIComponent(data.id);
+
  }
  row.append(pict,details,link);
  row.addEventListener("click",event=>{
@@ -147,27 +137,6 @@ const entry=data=>{
  });
  return row;
 };
-
-function openReader(url,book){
-  document.querySelector("#readmalawi-viewer")?.remove();
-  const box=document.createElement("section");box.id="readmalawi-viewer";box.setAttribute("role","dialog");box.setAttribute("aria-modal","true");box.setAttribute("aria-label","Online reading");
-  box.style.cssText="position:fixed;inset:0;z-index:1000;background:#092e2bf2;display:flex;flex-direction:column;padding:16px;gap:12px";
-  const top=document.createElement("div");top.style.cssText="display:flex;justify-content:space-between;align-items:center;gap:12px;color:white";
-  const title=document.createElement("strong");title.textContent=(book.title||"ReadMalawi")+" · "+(book.access_mode==="online_only"?"Online only":"Online preview");
-  const previousFocus=document.activeElement;
-  const close=document.createElement("button");close.className="btn secondary";close.textContent="Close reader";close.addEventListener("click",()=>{box.remove();document.removeEventListener("keydown",onEscape);if(previousFocus?.isConnected)previousFocus.focus()});
-  function onEscape(e){if(e.key==="Escape")close.click()} document.addEventListener("keydown",onEscape);
-  top.append(title,close);box.append(top);
-  const container=document.createElement("div");container.style.cssText="flex:1;min-height:0;background:white;border-radius:10px;overflow:auto";box.append(container);
-  if(book.kind==="audio"){const audio=document.createElement("audio");audio.controls=true;audio.preload="metadata";audio.controlsList="nodownload";audio.style.cssText="display:block;width:100%;margin:35px auto";audio.src=url;container.append(audio);}
-  else if(/\.epub$/i.test(book.storage_path||"")) {
-    const target=document.createElement("div");target.style.cssText="height:100%;min-height:360px";container.append(target);
-    const lib=document.createElement("script");lib.src="https://cdn.jsdelivr.net/npm/epubjs@0.3.93/dist/epub.min.js";lib.onload=()=>{try{window.ePub(url).renderTo(target,{width:"100%",height:"100%"}).display()}catch(e){target.textContent="EPUB preview unavailable. Contact the library moderator."}};lib.onerror=()=>target.textContent="EPUB viewer unavailable right now.";document.head.append(lib);
-  } else {const pdf=document.createElement("iframe");pdf.src=url+"#toolbar=0&navpanes=0";pdf.title="ReadMalawi PDF reader";pdf.style.cssText="height:100%;min-height:360px;width:100%;border:0";container.append(pdf)}
-  const foot=document.createElement("p");foot.style.cssText="color:#e9f4ed;font-size:.85rem;margin:0";
-  const fallback=document.createElement("a");fallback.href=url;fallback.target="_blank";fallback.rel="noopener noreferrer";fallback.style.cssText="color:white;font-weight:700;text-decoration:underline";fallback.textContent="Reader blank? Open this book in a new tab ↗";
-  foot.append(fallback);box.append(foot);document.body.append(box);close.focus();
-}
 
 function filterAndRender(resetPage=true){
  if(resetPage)app.page=1;
@@ -180,8 +149,9 @@ function filterAndRender(resetPage=true){
    &&(app.kind==="all"||book.kind===app.kind)
    &&(cat==="all"||book.category===cat)
    &&(!lang||String(book.language||"").toLowerCase().includes(lang))
-   &&(!term||[book.title,book.author,book.category,book.language,book.description].join(" ").toLowerCase().includes(term)));
- items.sort((a,b)=>sort==="recent"?(b.rank||0)-(a.rank||0):(a.title||"").localeCompare(b.title||""));
+   &&(!term||scoreBooks([book],term).length>0));
+ const starts=["A Question of Power","Life Is What You Make It","How to Study","English Grammar","Business Plan ya chichewa"];
+ items.sort((a,b)=>sort==="recent"?(b.rank||0)-(a.rank||0):sort==="recommended"?((starts.indexOf(a.title)<0?999:starts.indexOf(a.title))-(starts.indexOf(b.title)<0?999:starts.indexOf(b.title))||(a.title||"").localeCompare(b.title||"")):(a.title||"").localeCompare(b.title||""));
  const target=$("#catalogue");target.replaceChildren();
  if(!items.length){const notice=document.createElement("div");notice.className="notice";notice.textContent=app.collection==="books"&&!app.catalogueReady?"Loading our books…":app.collection==="books"&&app.catalogueError?"We couldn’t load the book collection. Check your connection and try again.":"No matching titles. Try another category, language or search.";target.append(notice);
  if(app.collection==="books"&&app.catalogueError){const retry=document.createElement("button");retry.type="button";retry.className="btn secondary";retry.textContent="Retry loading books";retry.addEventListener("click",()=>location.reload());notice.append(document.createElement("br"),retry)}
@@ -231,7 +201,7 @@ async function backend(){
   if(!cfg.supabaseUrl||!(cfg.supabasePublishableKey||cfg.supabaseAnonKey)){
     state.textContent="Sign-in settings are unavailable. Please contact the ReadMalawi librarian.";
     userStatus.textContent="Secure sign-in is not ready.";
-    app.catalogueReady=true;app.catalogueError=true;filterAndRender();
+    // Sign-in availability must not disable public reading.
     return;
   }
   state.textContent="Connecting secure email sign-in…";
@@ -254,12 +224,12 @@ async function backend(){
     }catch(e){
       userStatus.textContent="You can still enter your email and request a secure sign-in link.";
     }
-    await loadApproved();
+    // Public catalogue loading starts independently of sign-in.
   }catch(err){
     state.className="notice";
     state.textContent="Sign-in connection unavailable: "+err.message;
     userStatus.textContent="Please refresh this page to try again. If it persists, try Chrome without browser-blocking extensions.";
-    app.catalogueReady=true;app.catalogueError=true;filterAndRender();
+    // Sign-in availability must not disable public reading.
   }
 }
 function updateUser(user){
@@ -286,13 +256,18 @@ $("#login-form").addEventListener("submit",async e=>{
 });
 $("#logout-btn").addEventListener("click",async()=>{if(app.client)await app.client.auth.signOut()});
 async function loadApproved(){
- if(!app.client)return;
- const {data,error}=await app.client.from("library_books").select("id,title,author,description,media_type,category,language,file_path,access_mode").eq("status","approved").order("submitted_at",{ascending:false}).limit(100).abortSignal(AbortSignal.timeout(12000));
- app.catalogueReady=true;
- app.catalogueError=!!error;
- if(error){filterAndRender();return}
- app.local=[...originalStories,...officialSourceBooks,...(data||[]).map((b,index)=>({...b,kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",discussion_key:"member:"+b.id,rank:100-index}))];filterAndRender();
+ try{
+  const data=await loadPublicCatalogue(cfg);
+  app.catalogueReady=true;app.catalogueError=false;
+  app.local=[...originalStories,...officialSourceBooks,...data.map((b,index)=>({...cleanBook(b),kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",discussion_key:"member:"+b.id,rank:data.length-index}))];
+  const languages=new Map();for(const b of data)languages.set(b.language||"Unconfirmed",(languages.get(b.language||"Unconfirmed")||0)+1);
+  const summary=$("#collection-summary");if(summary)summary.textContent=data.length+" released library titles · "+originalStories.length+" original children's stories · uploaded archives are counted only after release.";
+  const list=$("#readmalawi-languages");if(list){list.replaceChildren();for(const [name,count] of [...languages].sort()){const o=document.createElement("option");o.value=name;o.label=count+" released title"+(count===1?"":"s");list.append(o)}}
+  const available=$("#language-availability");if(available)available.textContent="Languages in released books: "+[...languages].sort().map(([name,count])=>name+" ("+count+")").join(" · ")+". This filter does not translate books.";
+  filterAndRender();
+ }catch(e){app.catalogueReady=true;app.catalogueError=true;filterAndRender()}
 }
+loadApproved();
 // The catalogue renderer is synchronous; it has no Promise to catch.
 // Start authentication independently so a catalogue rendering fault cannot disable sign-in.
 backend().catch(error=>{
@@ -305,3 +280,4 @@ try {
   const message=$("#fetch-message");
   if(message)message.textContent="The book list could not load. Email sign-in is still available.";
 }
+

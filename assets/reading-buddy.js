@@ -1,3 +1,4 @@
+import { cleanBook, loadPublicCatalogue, scoreBooks } from "./catalogue-tools.js";
 (function(){
 "use strict";
 const find=id=>document.getElementById(id);
@@ -27,18 +28,18 @@ const topicLinks=()=>topics.map(category=>({category,count:approved.filter(book=
 function respond(phrase){
  const s=normalized(phrase);
  if(/\b(how|where)\b.*\b(read|open|listen)\b|how to read/.test(s))return ["Choose a book in Books, then tap “Read here”. It opens in the reader. If your phone shows a blank reader, use “Open this book in a new tab”. Reading is free and needs no sign-in.",[route.books]];
- if(/\b(comment|comments|discuss|discussion|review|reviews)\b|book club/.test(s))return ["Open “More” on a book’s card, then choose “Reader comments”. You can read published comments freely. To write a thought or question about that book, sign in by email. Comments appear after review.",[route.club]];
+ if(/\b(comment|comments|discuss|discussion|review|reviews)\b|book club/.test(s))return ["Choose “Reader comments” directly on a book’s card. You can read published comments freely. To write a thought or question about that book, sign in by email. Comments appear after review.",[route.club]];
  if(/\b(whatsapp|missing|request)\b|can t find|cannot find/.test(s))return ["If a book is missing from our collection, ask the ReadMalawi WhatsApp community for a recommendation or reading source. The link prepares a message; you choose the group and send it yourself.",[route.ask]];
- if(/\b(kids|children|child|beginners)\b/.test(s))return ["Kids & beginners is a separate collection of short stories with simple questions.",[route.kids]];
+ if(/^(kids|children|child|beginners|kids books|children s books)$/.test(s))return ["Kids & beginners is a separate collection of short stories with simple questions.",[route.kids]];
  if(/\b(topics|categories|category)\b|choose a topic/.test(s))return catalogueReady?["Choose a topic available in our collection. Or type an author or book title above.",topicLinks()]:["Topics couldn’t load right now. Browse Books to try again.",[route.books]];
  if(/\b(audio|audiobooks|listen)\b/.test(s))return ["The collection currently focuses on e-books. The Audiobooks filter shows only listening titles actually available; some short stories also offer your device’s read-aloud voice.",[route.books,route.kids]];
  if(/\b(chichewa|chitumbuka|chiyao|chilomwe|chisena|chitonga|language|languages|translate)\b/.test(s))return ["Use the Language field in Books to check available titles. Most current books are in English. Choosing a language filters the collection; it does not translate a book.",[route.language]];
  if(/\b(donate|donation|give|offer)\b.*\b(physical|books)\b/.test(s))return ["For physical books, share the approximate number and your general area. Collection is discussed separately on WhatsApp.",[route.upload]];
- if(/\b(upload|submit|pdf)\b/.test(s))return ["Public PDF uploads are not offered. You can browse the book collection, ask for a title on WhatsApp, or offer physical books.",[route.books,route.ask,route.upload]];
+ if(/\b(upload|submit|pdf)\b/.test(s))return ["You can open your own PDF, EPUB or text file privately and use device read-aloud. Personal files are not published to the library.",[["private-reader.html","Open my book →"],route.upload]];
  if(/\b(pay|price|download|membership|subscription)\b/.test(s))return ["Reading our books is free. There is no active paid membership or payment checkout.",[route.books]];
  if(/\b(study|learning|learn|quiz|challenge)\b/.test(s))return ["Smart Study Sprint turns your own short notes into a study routine. Kids & beginners has short stories with questions.",[route.plans,route.kids]];
  if(/\b(founder|jones|nalikungwi)\b/.test(s))return ["Jones Nalikungwi started ReadMalawi. Read the founder’s story here.",[route.founder]];
- if(/\b(partner|sponsor|support)\b/.test(s))return ["Partnership and programme forms are currently test enquiries, not bookings or payments.",[route.partner]];
+ if(/\b(partner|sponsor|support)\b/.test(s))return ["Partnership and programme forms accept real enquiries for private follow-up. A request is not a booking or payment.",[route.partner]];
  if(/^(hello|hi|hey|moni|help|find books|start|what can you do)$/.test(s))return ["Type a book title, author or topic—for example, “James Allen”, “fiction” or “history”. I’ll show matches from our collection. I can also explain how reading and comments work.",[route.books]];
  return null;
 }
@@ -51,15 +52,12 @@ const aiStatus=text=>find("ai-status").textContent=text;
 const modeLabel=()=>find("chat-mode").textContent=aiMode?"✨ AI reading help (10 questions per day)":"Book help · No sign-in needed";
 let catalogueReady=false;
 function catalogueSuggestion(phrase){
- const q=normalized(phrase).replace(/\b(find|show|books?|read|looking|for|please|give|me|do|you|have|available|what|is|about|the|a|an|by|recommend|some)\b/g," ").replace(/\s+/g," ").trim();
- if(q.length<2)return null;
- const words=q.split(" ");
- const found=approved.filter(book=>words.every(word=>normalized([book.title,book.author,book.category,book.description].join(" ")).includes(word)));
- if(!found.length)return null;
- const links=found.slice(0,5).map(book=>["../library.html?q="+encodeURIComponent(book.title)+"#library",book.title+" →"]);
- const category=topics.find(topic=>normalized(topic)===q);
- if(found.length>5)links.push(["../library.html?"+(category?"category="+encodeURIComponent(category):"q="+encodeURIComponent(q))+"#library","See all "+found.length+" matches →"]);
- return ["Found "+found.length+" matching title"+(found.length===1?"":"s")+" in our collection. Choose a title, then tap “Read here” on its card.",links];
+ const matches=scoreBooks(approved,phrase);if(!matches.length)return null;
+ const links=matches.slice(0,5).map(({book})=>["../library.html?q="+encodeURIComponent(book.title)+"#library",book.title+" · "+(book.author&&!/^unknown/i.test(book.author)?book.author:"author not verified")+" →"]);
+ const qualifications=[];
+ if(/\b(short|beginner|beginners|easy)\b/i.test(phrase))qualifications.push("Book lengths and reading levels have not yet been verified, so I cannot guarantee these are short or beginner-friendly.");
+ if(/\b(africa|african|malawi|malawian)\b/i.test(phrase))qualifications.push("Regional coverage is incomplete; these are catalogue matches, not a verified regional reading list.");
+ return ["Here are matching books based on their catalogue titles, subjects and descriptions. "+qualifications.join(" "),links];
 }
 async function send(text){
  const phrase=text.trim().slice(0,750);
@@ -73,7 +71,7 @@ async function send(text){
   }
   const match=help||catalogueSuggestion(phrase);
   const [reply,links]=match||(catalogueReady?[
-    "I couldn’t match that to a title, author or topic in our collection. Try another name, choose Topics, or ask the WhatsApp community for the book.",
+    "I could not find a reliable catalogue match. Try a title, author or subject, or choose Topics. I will not invent a recommendation.",
     [["../library.html?q="+encodeURIComponent(phrase)+"#library","Search this title in Books →"],route.ask]
   ]:["The book collection couldn’t connect right now. You can still browse Books or use the site-help buttons.",[route.books,route.ask]]);
   bubble(reply,"bot",links);
@@ -115,16 +113,10 @@ async function send(text){
 async function initBookSearch(){
  if(!cfg.supabaseUrl||!cfg.supabasePublishableKey){find("catalogue-status").textContent="Book search unavailable · Site help still works";return;}
  try{
-  const response=await fetch(cfg.supabaseUrl+"/rest/v1/library_books?select=title,author,category,language,media_type,description&status=eq.approved&limit=200",{
-   headers:{"apikey":cfg.supabasePublishableKey},
-   signal:AbortSignal.timeout(6500)
-  });
-  if(!response.ok)return;
-  const rows=await response.json();
-  if(Array.isArray(rows)){
-   approved=rows.filter(x=>x&&typeof x.title==="string");catalogueReady=true;
-   find("catalogue-status").textContent="Search "+approved.length+" books · Free to read";
-  }
+  const rows=await loadPublicCatalogue(cfg);
+  approved=rows.map(cleanBook);catalogueReady=true;
+  find("catalogue-status").textContent="Search "+approved.length+" released books · Free to read";
+
  }catch{} finally {
   if(!catalogueReady)find("catalogue-status").textContent="Book search unavailable · Site help still works";
  }
@@ -204,3 +196,4 @@ for(const [label,q] of presets){const b=item("button","",label);b.type="button";
 form.addEventListener("submit",e=>{e.preventDefault();send(field.value);field.value="";field.focus()});
 bubble("Moni! Search by title, author or topic. Try “James Allen” or “fiction”, or use a help button above. I find books in ReadMalawi; I don’t read whole PDFs or answer general questions in book-help mode.","bot",[route.books]);
 })();
+
