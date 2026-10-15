@@ -25,3 +25,12 @@ Live browser checks are recorded in the final delivery message.
 - No live PayChangu donation link or account clearance has been confirmed. Payments remain inactive; agreed minimum is MK500.
 - No invented budgets, delivery partners, facilitator qualifications, governance officers, school outcomes or collection/distribution statistics were published.
 - Phone screen-lock speech, device voices, scanned/OCR text, DRM and very large files have limitations; text/PDF reading remains available where supported.
+
+## Live verification
+- Public library displays 100 released books and 10 original stories, with Chichewa (1), English (82) and Unconfirmed (17) language counts.
+- Personal sample opens without sign-in; save-position confirmation works.
+- A Question of Power opened as a 182-page PDF; scanned pages correctly report no extractable text.
+- English Grammar opened as a 99-page PDF and its cover text was extracted in Text view; page navigation was exercised.
+- Signed-out visitors cannot open the librarian desk's records or edit controls.
+- Cloud browser reports no installed speech voices. Actual audible speech and phone screen-lock behaviour were not verified; speech flow is covered by deterministic tests.
+- Regional recommendation filtering was tightened after live testing: unknown provenance is not treated as a verified African/Malawian match.

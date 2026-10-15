@@ -71,7 +71,7 @@ async function send(text){
   }
   const match=help||catalogueSuggestion(phrase);
   const [reply,links]=match||(catalogueReady?[
-    "I could not find a reliable catalogue match. Try a title, author or subject, or choose Topics. I will not invent a recommendation.",
+    "I could not find a verified match for all parts of your request. Regional labels, length and reading levels are still being reviewed. Try a title or author, or browse a general topic; I will not invent these details.",
     [["../library.html?q="+encodeURIComponent(phrase)+"#library","Search this title in Books →"],route.ask]
   ]:["The book collection couldn’t connect right now. You can still browse Books or use the site-help buttons.",[route.books,route.ask]]);
   bubble(reply,"bot",links);

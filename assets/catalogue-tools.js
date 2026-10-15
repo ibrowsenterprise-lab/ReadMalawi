@@ -41,7 +41,7 @@ export function scoreBooks(books,phrase){
  if(asksAfrican&&african)score+=4;
  const threshold=terms.length<=2?terms.length:Math.ceil(terms.length*.55);
  const matches=terms.length?hits>=threshold:asksAfrican?african:false;
- return {book,score,matches};
+ return {book,score,matches:matches&&(!asksAfrican||african)};
  }).filter(x=>x.matches&&x.score>0).sort((a,b)=>b.score-a.score||a.book.title.localeCompare(b.book.title));
 }
 export function reviewIssues(b){
