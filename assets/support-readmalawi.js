@@ -9,7 +9,7 @@
   if (!button || !unavailable || !recipient || !note) return;
   // A checkout URL alone must never enable collection.
   if (config.donationsEnabled !== true || support.verified !== true ||
-      support.minimumMwk !== 500 || typeof support.recipientName !== 'string' ||
+      support.minimumMwk !== 700 || typeof support.recipientName !== 'string' ||
       !support.recipientName.trim() || typeof support.donationUrl !== 'string') return;
   let url;
   try { url = new URL(support.donationUrl); } catch { return; }
