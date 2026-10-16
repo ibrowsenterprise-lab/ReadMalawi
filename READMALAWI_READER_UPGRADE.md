@@ -43,3 +43,13 @@ Live browser checks are recorded in the final delivery message.
 - Hardened partnership/programme submission and discussion loading/posting against thrown network errors; added request abort limits for writes, duplicate-click guard for partnership enquiry, retained unconfirmed form text, and clear instructions to check receipt before resending.
 - A regression test simulates a failed enquiry and rapid repeated submission: one request only, button restored, original message retained, uncertain receipt explained.
 - Remaining: real email sign-in delivery, authenticated posting and administrator review, phone speech voices/background behaviour, source permissions and missing catalogue metadata need separate verification.
+
+## Private feedback — 16 October 2026
+
+Founder authorised feedback to be visible only to administrators. Removed public reviewed-ideas feed and public-publication consent from assets/community-ideas.html; feedback is private after review, no identifying details required, no individual reply without email contact through a separate channel. Existing feedback rows are preserved. Admin review labels now say Mark reviewed and Private administrator note; no publish action.
+
+Applied Supabase migration keep_community_feedback_private: removed the public approved-row SELECT policy; added restrictive anonymous-deny and authenticated-administrator SELECT policies. Anonymous insert remains allowed under the existing pending-only consent and spam guards. No views or public RPCs expose the feedback table.
+
+Verified in rolled-back database transactions: anonymous submission succeeds; anonymous and ordinary authenticated reads reveal no rows; an existing administrator can read and mark a submission reviewed; reviewed feedback remains unreadable to visitors. Confirmed no test rows remain. Security advisor raised no feedback-policy issue; existing project-wide notices were unchanged. Browser sign-in for an administrator was not performed.
+
+Regression test private-feedback.test.mjs checks no public-feed read, required processing consent, duplicate-click guard, private receipt wording and preserving text after unconfirmed submission.
