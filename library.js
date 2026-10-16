@@ -144,6 +144,9 @@ function filterAndRender(resetPage=true){
  const cat=$("#category").value;
  const lang=$("#language").value.trim().toLowerCase();
  const sort=$("#sort").value;
+ const active=[];if(term)active.push('Search: “'+$("#search").value.trim()+'”');if(cat!=="all")active.push('Category: '+cat);if(lang)active.push('Language: '+$("#language").value.trim());if(app.kind!=="all")active.push(app.kind==="audio"?'Audiobooks only':'E-books only');
+ $("#filter-summary").textContent=active.length?active.join(' · '):'All titles in this collection.';
+ $("#clear-filters").hidden=!active.length;
  const items=app.local.concat(app.remote).filter(book=>
    (app.collection==="kids"?book.source==="original":app.collection==="external"?book.source==="official":book.source==="member")
    &&(app.kind==="all"||book.kind===app.kind)
@@ -154,7 +157,7 @@ function filterAndRender(resetPage=true){
  items.sort((a,b)=>sort==="recent"?(b.rank||0)-(a.rank||0):sort==="recommended"?((starts.indexOf(a.title)<0?999:starts.indexOf(a.title))-(starts.indexOf(b.title)<0?999:starts.indexOf(b.title))||(a.title||"").localeCompare(b.title||"")):(a.title||"").localeCompare(b.title||""));
  const target=$("#catalogue");target.replaceChildren();
  if(!items.length){const notice=document.createElement("div");notice.className="notice";notice.textContent=app.collection==="books"&&!app.catalogueReady?"Loading our books…":app.collection==="books"&&app.catalogueError?"We couldn’t load the book collection. Check your connection and try again.":"No matching titles. Try another category, language or search.";target.append(notice);
- if(app.collection==="books"&&app.catalogueError){const retry=document.createElement("button");retry.type="button";retry.className="btn secondary";retry.textContent="Retry loading books";retry.addEventListener("click",()=>location.reload());notice.append(document.createElement("br"),retry)}
+ if(app.collection==="books"&&app.catalogueError){const retry=document.createElement("button");retry.type="button";retry.className="btn secondary";retry.textContent="Retry loading books";retry.addEventListener("click",()=>loadApproved());notice.append(document.createElement("br"),retry)}
  else if(app.catalogueReady&&(term||cat!=="all"||lang||app.kind!=="all")){const clear=document.createElement("button");clear.type="button";clear.className="btn secondary";clear.textContent="Clear filters";clear.addEventListener("click",()=>{resetFilters();filterAndRender()});notice.append(document.createElement("br"),clear)}
  }
  else {
@@ -173,6 +176,7 @@ function resetFilters(){
  $("#category").value="all";$("#search").value="";$("#language").value="";app.kind="all";
  document.querySelectorAll("[data-kind]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.kind==="all")));
 }
+$("#clear-filters").addEventListener("click",()=>{resetFilters();filterAndRender();$("#search").focus()});
 document.querySelectorAll("[data-collection]").forEach(button=>button.addEventListener("click",()=>{
  app.collection=button.dataset.collection;resetFilters();
  document.querySelectorAll("[data-collection]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.collection===app.collection)));
@@ -255,7 +259,10 @@ $("#login-form").addEventListener("submit",async e=>{
  }catch(err){$("#user-status").textContent="Sign-in unsuccessful: "+err.message}
 });
 $("#logout-btn").addEventListener("click",async()=>{if(app.client)await app.client.auth.signOut()});
+let catalogueLoading=false;
 async function loadApproved(){
+ if(catalogueLoading)return;catalogueLoading=true;app.catalogueReady=false;app.catalogueError=false;
+ $("#collection-summary").textContent="Loading released collection…";$("#language-availability").textContent="";filterAndRender();
  try{
   const data=await loadPublicCatalogue(cfg);
   app.catalogueReady=true;app.catalogueError=false;
@@ -265,7 +272,10 @@ async function loadApproved(){
   const list=$("#readmalawi-languages");if(list){list.replaceChildren();for(const [name,count] of [...languages].sort()){const o=document.createElement("option");o.value=name;o.label=count+" released title"+(count===1?"":"s");list.append(o)}}
   const available=$("#language-availability");if(available)available.textContent="Languages in released books: "+[...languages].sort().map(([name,count])=>name+" ("+count+")").join(" · ")+". This filter does not translate books.";
   filterAndRender();
- }catch(e){app.catalogueReady=true;app.catalogueError=true;filterAndRender()}
+ }catch(e){app.catalogueReady=true;app.catalogueError=true;
+  $("#collection-summary").textContent="Released collection could not be checked. Retry loading books below; original children’s stories remain available in Kids & beginners.";
+  $("#language-availability").textContent="Language counts are temporarily unavailable.";filterAndRender();
+ }finally{catalogueLoading=false}
 }
 loadApproved();
 // The catalogue renderer is synchronous; it has no Promise to catch.

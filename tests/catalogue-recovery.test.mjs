@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';import {parseHTML} from 'linkedom';import {cleanBook,scoreBooks} from '../assets/catalogue-tools.js';
+const {document,window}=parseHTML(fs.readFileSync(new URL('../library.html',import.meta.url),'utf8')),get=id=>document.getElementById(id);
+for(const [id,value] of [['search','grammar'],['language',''],['category','all'],['sort','recommended'],['email','']])Object.defineProperty(get(id),'value',{value,writable:true,configurable:true});
+let calls=0,resolveCatalogue;const load=async()=>{if(++calls===1)throw Error('Network interrupted');return await new Promise(resolve=>resolveCatalogue=resolve)};
+const source=fs.readFileSync(new URL('../library.js',import.meta.url),'utf8').replace(/^import .*;$/mg,'');
+vm.runInNewContext(source,{document,window,location:{search:''},URLSearchParams,URL,AbortController,AbortSignal,setTimeout,clearTimeout,cleanBook,scoreBooks,loadPublicCatalogue:load});
+await new Promise(r=>setTimeout(r,0));assert.match(get('collection-summary').textContent,/could not be checked/);assert.match(get('language-availability').textContent,/temporarily unavailable/);
+const retry=[...get('catalogue').querySelectorAll('button')].find(x=>x.textContent==='Retry loading books');assert(retry);retry.click();retry.click();assert.equal(calls,2);assert.equal(get('search').value,'grammar');
+resolveCatalogue([{id:'45da6577-b38f-4fda-a026-61f014cfb5b6',title:'English Grammar',author:'Example author',language:'English',category:'Language',media_type:'ebook',file_path:'books/grammar.pdf'}]);await new Promise(r=>setTimeout(r,0));assert.match(get('count').textContent,/1–1 of 1/);assert.match(get('filter-summary').textContent,/grammar/);
+const audio=document.querySelector('[data-kind="audio"]');audio.click();assert.match(get('filter-summary').textContent,/Audiobooks only/);assert.equal(get('clear-filters').hidden,false);get('clear-filters').click();assert.equal(get('search').value,'');assert.equal(audio.getAttribute('aria-pressed'),'false');assert.equal(get('clear-filters').hidden,true);assert.match(get('count').textContent,/1–1 of 1/);
+console.log('PASS: failed catalogue summaries resolve; retry preserves search and blocks duplicate loads; hidden type filters are visible and clearable.');

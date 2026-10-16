@@ -71,3 +71,9 @@ Added a simulated-PDF regression covering font size, original/text switching, sc
 Added an explicit Retry opening this library book control after initial connection failures and Cancel opening while loading. Retry reloads the public catalogue and obtains a fresh signed URL; no automatic retry loop. Generation guards prevent cancelled requests from replacing a subsequently opened personal file. EPUB downloads use a 25-second abort signal.
 
 Moved library audiobook playback into its own panel so closing audio preserves the personal-file picker and sample controls. Audio errors expose the retry action. A regression test covers initial failure/retry, rapid duplicate retry clicks, closing audio then opening a personal sample, and cancellation while a catalogue request is pending.
+
+## Catalogue recovery follow-up — 16 October 2026
+
+Catalogue retry now reloads data in place, retains current search/filter choices and prevents duplicate concurrent requests. Failure replaces the collection-checking message and stale language-count hint with explicit unavailable states. Added a visible active-filter summary and Clear all filters control so publication-type filters remain evident when More filters is collapsed.
+
+Regression simulates a catalogue request failure followed by retry success, checks query preservation and duplicate-load protection, then selects audiobook-only filtering and clears it to restore results. No publication or payment changes.
