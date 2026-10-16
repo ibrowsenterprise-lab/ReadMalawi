@@ -68,21 +68,26 @@ function draw(){
 }
 async function fetchPage(){
  if(loading||!client)return;loading=true;$("load-more").disabled=true;
- const {data,error}=await client.from("readmalawi_book_comments")
- .select("id,body,reply_to,created_at,status").eq("book_key",key).eq("status","approved")
- .order("created_at",{ascending:true}).range(offset,offset+79).abortSignal(AbortSignal.timeout(12000));
- if(error)msg("discussion-summary","Unable to load comments: "+error.message);
- else{seen.push(...(data||[]));offset+=data?.length||0;draw();$("load-more").hidden=(data||[]).length<80}
- loading=false;$("load-more").disabled=false;
+ try{
+  const {data,error}=await client.from("readmalawi_book_comments")
+   .select("id,body,reply_to,created_at,status").eq("book_key",key).eq("status","approved")
+   .order("created_at",{ascending:true}).range(offset,offset+79).abortSignal(AbortSignal.timeout(12000));
+  if(error)throw error;
+  seen.push(...(data||[]));offset+=data?.length||0;draw();$("load-more").hidden=(data||[]).length<80;
+ }catch{msg("discussion-summary","Comments could not load. Use Retry comments, or return later.");$("load-more").textContent="Retry comments";$("load-more").hidden=false}
+ finally{loading=false;$("load-more").disabled=false}
 }
 $("load-more").addEventListener("click",fetchPage);
 $("login-form").addEventListener("submit",async e=>{
  e.preventDefault();if(!client)return;
  $("login-button").disabled=true;msg("post-status","Sending your sign-in link…");
  const email=$("login-email").value.trim();
- const {error}=await client.auth.signInWithOtp({email,options:{emailRedirectTo:location.href.split("#")[0]}});
- msg("post-status",error?"Unable to sign in: "+error.message:"Check your email for a secure sign-in link. Then return here.");
- $("login-button").disabled=false;
+ try{
+  const {error}=await client.auth.signInWithOtp({email,options:{emailRedirectTo:location.href.split("#")[0]}});
+  msg("post-status",error?"Unable to sign in: "+error.message:"Check your email for a secure sign-in link. Then return here.");
+ }catch{msg("post-status","Could not confirm that the sign-in email was sent. Check your inbox before trying again.")}
+ finally{$("login-button").disabled=false}
+
 });
 $("comment-form").addEventListener("submit",async e=>{
  e.preventDefault();
@@ -92,9 +97,12 @@ $("comment-form").addEventListener("submit",async e=>{
  if(/https?:\/\/|www\.|@|(?:\+?\d[\d\s-]{8,}\d)/i.test(body)){msg("post-status","Please remove links, email addresses and phone numbers before posting.");return}
  $("post-button").disabled=true;msg("post-status","Sending your comment for review…");
  const row={book_key:key,book_title:title,book_author:author,body,reply_to:replyTo};
- const {error}=await client.from("readmalawi_book_comments").insert(row);
- if(error){msg("post-status","Could not post: "+error.message)}
- else{$("comment-form").reset();clearReply();msg("post-status","Thanks! Your message has been sent to the librarian for approval. It is not public yet.")}
- $("post-button").disabled=false;
+ try{
+  const {error}=await client.from("readmalawi_book_comments").insert(row).abortSignal(AbortSignal.timeout(15000));
+  if(error)throw error;
+  $("comment-form").reset();clearReply();msg("post-status","Thanks! Your message has been sent to the librarian for approval. It is not public yet.");
+ }catch{msg("post-status","We could not confirm your comment was received. Your text is still here. Contact info@readmalawi.fyi before resending to avoid a duplicate.")}
+ finally{$("post-button").disabled=false}
+
 });
 init();

@@ -34,3 +34,12 @@ Live browser checks are recorded in the final delivery message.
 - Signed-out visitors cannot open the librarian desk's records or edit controls.
 - Cloud browser reports no installed speech voices. Actual audible speech and phone screen-lock behaviour were not verified; speech flow is covered by deterministic tests.
 - Regional recommendation filtering was tightened after live testing: unknown provenance is not treated as a verified African/Malawian match.
+
+## Visitor audit — 16 October 2026
+
+- Public HTTP scan: 12 entry pages and 31 same-site referenced resources; no failed HTTP responses, missing linked fragments or duplicate IDs detected. This is a bounded scan, not a guarantee that every route works.
+- Browser: public catalogue loaded 100 released titles; search for grammar found English Grammar; its discussion loaded the correct title and empty approved-comments state. Partnership form required-field validation worked. Private reader sample opened; this browser has no speech voices, and the UI explained that limitation. Physical book offer page showed the coordinator handoff and no guaranteed pickup. No genuine enquiries, comments, sign-in emails or payments were submitted.
+- Fixed: moved the book-language selector from the closed navigation menu into the language section; renamed outdated AI & Learning navigation to Study tools; made text-file 2 MB limit explicit.
+- Hardened partnership/programme submission and discussion loading/posting against thrown network errors; added request abort limits for writes, duplicate-click guard for partnership enquiry, retained unconfirmed form text, and clear instructions to check receipt before resending.
+- A regression test simulates a failed enquiry and rapid repeated submission: one request only, button restored, original message retained, uncertain receipt explained.
+- Remaining: real email sign-in delivery, authenticated posting and administrator review, phone speech voices/background behaviour, source permissions and missing catalogue metadata need separate verification.
