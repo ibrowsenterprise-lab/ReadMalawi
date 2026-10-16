@@ -14,6 +14,8 @@ const route={
  founder:["../index.html#founder","Meet the founder →"],
  learn:["../library.html?section=kids#library","Kids & beginners →"],
  partner:["partners.html","Partner with ReadMalawi →"],
+ feedback:["community-ideas.html","Send private feedback →"],
+ support:["support-readmalawi.html","Contribution details →"],
  plans:["learning-services.html","Learning tools →"]
 };
 function item(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e}
@@ -27,7 +29,9 @@ const topics=["Fiction","Education","History","Religion","Science","Biography","
 const topicLinks=()=>topics.map(category=>({category,count:approved.filter(book=>book.category===category).length})).filter(topic=>topic.count>0).map(topic=>["../library.html?category="+encodeURIComponent(topic.category)+"#library",topic.category+" ("+topic.count+") →"]);
 function respond(phrase){
  const s=normalized(phrase);
- if(/\b(how|where)\b.*\b(read|open|listen)\b|how to read/.test(s))return ["Choose a book in Books, then tap “Read here”. It opens in the reader. If your phone shows a blank reader, use “Open this book in a new tab”. Reading is free and needs no sign-in.",[route.books]];
+ if(/\b(feedback|suggestion|suggestions|bug|bugs|complaint|complaints)\b|(?:website|site).*\b(review|problem|improve)\b/.test(s))return ["Send website suggestions or problems through our private feedback form. No name or sign-in is needed. Only authorised administrators can read submissions, including after review. For a personal reply, email info@readmalawi.fyi.",[route.feedback]];
+ if(/\b(donate|donation|donations|contribution|contributions|mpamba|fcb)\b/.test(s)&&!/\b(physical|books)\b/.test(s))return ["Voluntary contributions start at MK700 through TNM Mpamba or FCB. They support library running costs and improvements. Check the recipient names and confirmation steps on the support page. Reading stays free; PayChangu checkout is not active.",[route.support]];
+ if(/\b(how|where)\b.*\b(read|open|listen)\b|how to read/.test(s))return ["Choose a book in Books, then tap “Read on ReadMalawi”. It opens in My Reading Space. If opening fails, return to the library and try again or contact info@readmalawi.fyi. Reading needs no sign-in.",[route.books]];
  if(/\b(comment|comments|discuss|discussion|review|reviews)\b|book club/.test(s))return ["Choose “Reader comments” directly on a book’s card. You can read published comments freely. To write a thought or question about that book, sign in by email. Comments appear after review.",[route.club]];
  if(/\b(whatsapp|missing|request)\b|can t find|cannot find/.test(s))return ["If a book is missing from our collection, ask the ReadMalawi WhatsApp community for a recommendation or reading source. The link prepares a message; you choose the group and send it yourself.",[route.ask]];
  if(/^(kids|children|child|beginners|kids books|children s books)$/.test(s))return ["Kids & beginners is a separate collection of short stories with simple questions.",[route.kids]];
@@ -36,7 +40,7 @@ function respond(phrase){
  if(/\b(chichewa|chitumbuka|chiyao|chilomwe|chisena|chitonga|language|languages|translate)\b/.test(s))return ["Use the Language field in Books to check available titles. Most current books are in English. Choosing a language filters the collection; it does not translate a book.",[route.language]];
  if(/\b(donate|donation|give|offer)\b.*\b(physical|books)\b/.test(s))return ["For physical books, share the approximate number and your general area. Collection is discussed separately on WhatsApp.",[route.upload]];
  if(/\b(upload|submit|pdf)\b/.test(s))return ["You can open your own PDF, EPUB or text file privately and use device read-aloud. Personal files are not published to the library.",[["private-reader.html","Open my book →"],route.upload]];
- if(/\b(pay|price|download|membership|subscription)\b/.test(s))return ["Reading our books is free. There is no active paid membership or payment checkout.",[route.books]];
+ if(/\b(pay|price|download|membership|subscription)\b/.test(s))return ["Reading our books is free. Paid memberships and PayChangu checkout are inactive. Optional contributions use the TNM Mpamba and FCB instructions on our support page.",[route.books,route.support]];
  if(/\b(study|learning|learn|quiz|challenge)\b/.test(s))return ["Smart Study Sprint turns your own short notes into a study routine. Kids & beginners has short stories with questions.",[route.plans,route.kids]];
  if(/\b(founder|jones|nalikungwi)\b/.test(s))return ["Jones Nalikungwi started ReadMalawi. Read the founder’s story here.",[route.founder]];
  if(/\b(partner|sponsor|support)\b/.test(s))return ["Partnership and programme forms accept real enquiries for private follow-up. A request is not a booking or payment.",[route.partner]];

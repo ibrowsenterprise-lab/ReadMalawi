@@ -53,3 +53,9 @@ Applied Supabase migration keep_community_feedback_private: removed the public a
 Verified in rolled-back database transactions: anonymous submission succeeds; anonymous and ordinary authenticated reads reveal no rows; an existing administrator can read and mark a submission reviewed; reviewed feedback remains unreadable to visitors. Confirmed no test rows remain. Security advisor raised no feedback-policy issue; existing project-wide notices were unchanged. Browser sign-in for an administrator was not performed.
 
 Regression test private-feedback.test.mjs checks no public-feed read, required processing consent, duplicate-click guard, private receipt wording and preserving text after unconfirmed submission.
+
+## Feedback follow-up — 16 October 2026
+
+Added a private feedback inbox link to the authenticated administrator links in the library and the review-desk header. The inbox can now save a private note without changing review status; network load/save errors restore controls and preserve text. A regression test verifies a failed load can be retried and note saving preserves pending status and the feedback card.
+
+Reading Buddy now routes website suggestions and problem reports to private feedback and explains the existing voluntary MK700 TNM Mpamba/FCB channels, with no automatic payments. Removed its outdated reader instruction referring to a nonexistent new-tab control. No database policies, contributor records, payment settings or publication permissions changed in this follow-up.
