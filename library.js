@@ -249,16 +249,30 @@ async function updateAdminLink(user){
   if(!error&&data&&app.user?.id===user.id)link.classList.remove("hide");
  }catch(_){}
 }
+let signInPending=false,signOutPending=false;
 $("#login-form").addEventListener("submit",async e=>{
- e.preventDefault();if(!app.client)return;
- const email=$("#email").value.trim();
+ e.preventDefault();if(!app.client||signInPending||!$("#login-form").reportValidity())return;
+ const email=$("#email").value.trim(),button=$("#login-btn");
+ signInPending=true;button.disabled=true;button.textContent="Sending link…";
+ $("#login-form").setAttribute("aria-busy","true");
+ $("#user-status").textContent="Requesting your secure email sign-in link…";
+ const slow=setTimeout(()=>{$("#user-status").textContent="The sign-in request is taking longer than usual. Please wait and check your inbox before trying again."},15000);
  try{
   const r=await app.client.auth.signInWithOtp({email,options:{emailRedirectTo:location.href.split("#")[0]}});
   if(r.error)throw r.error;
-  $("#user-status").textContent="Check your inbox for your secure sign-in link.";
- }catch(err){$("#user-status").textContent="Sign-in unsuccessful: "+err.message}
+  $("#user-status").textContent="Check your inbox and spam folder for your secure sign-in link.";
+ }catch(err){$("#user-status").textContent="We could not confirm the sign-in email was sent. Check your inbox before trying again. Your email address is still here."}
+ finally{clearTimeout(slow);signInPending=false;button.disabled=false;button.textContent="Email sign-in";$("#login-form").removeAttribute("aria-busy")}
 });
-$("#logout-btn").addEventListener("click",async()=>{if(app.client)await app.client.auth.signOut()});
+$("#logout-btn").addEventListener("click",async()=>{
+ if(!app.client||signOutPending)return;
+ const button=$("#logout-btn");signOutPending=true;button.disabled=true;button.textContent="Signing out…";
+ try{
+  const {error}=await app.client.auth.signOut();if(error)throw error;
+  updateUser(null);$("#user-status").textContent="You are signed out. Public reading remains available.";
+ }catch{ $("#user-status").textContent="Sign-out could not be confirmed. Please try Sign out again before leaving a shared device." }
+ finally{signOutPending=false;button.disabled=false;button.textContent="Sign out"}
+});
 let catalogueLoading=false;
 async function loadApproved(){
  if(catalogueLoading)return;catalogueLoading=true;app.catalogueReady=false;app.catalogueError=false;

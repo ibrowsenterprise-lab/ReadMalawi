@@ -127,7 +127,7 @@ header .wrap{display:flex!important;flex-direction:row!important;align-items:cen
 <h3>Email sign-in</h3><p class="small muted">For book discussions and authorised library administration. Browsing does not require an account.</p>
 <div id="service-message" class="notice">Connecting the library…</div>
 <form id="login-form" class="login"><input id="email" type="email" autocomplete="email" placeholder="Your email address" required aria-label="Email address"><button type="submit" class="btn" id="login-btn" disabled>Email sign-in</button></form>
-<div class="small" id="user-status">Checking sign-in…</div><button class="btn secondary hide" id="logout-btn" type="button">Sign out</button>
+<div class="small" id="user-status" role="status" aria-live="polite">Checking sign-in…</div><button class="btn secondary hide" id="logout-btn" type="button">Sign out</button>
 <p class="small hide" id="admin-link">Library moderator? <a href="assets/moderate.html">Review submissions</a> · <a href="assets/catalogue-review.html">Catalogue quality desk</a> · <a href="assets/community-ideas-review.html">Private feedback inbox</a></p>
 </div></details></div></section>
 </main>
@@ -135,6 +135,6 @@ header .wrap{display:flex!important;flex-direction:row!important;align-items:cen
 <script src="readmalawi-config.js?v=20261015-reader-upgrade"></script>
 <script defer src="assets/testing-notice.js"></script>
 <script defer src="assets/whatsapp-community.js?v=20261015-reader-upgrade"></script>
-<script type="module" src="library.js?v=20261016-catalogue-recovery"></script>
+<script type="module" src="library.js?v=20261016-signin-recovery"></script>
 <script defer src="assets/readmalawi-chat-widget.js"></script>
 </body></html>

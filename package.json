@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests/catalogue.test.mjs && node tests/private-reader.test.mjs && node tests/epub.test.mjs && node tests/enquiry-recovery.test.mjs && node tests/private-feedback.test.mjs && node tests/feedback-inbox.test.mjs && node tests/pdf-reader-controls.test.mjs && node tests/library-reader-recovery.test.mjs && node tests/catalogue-recovery.test.mjs"
+    "test": "node tests/catalogue.test.mjs && node tests/private-reader.test.mjs && node tests/epub.test.mjs && node tests/enquiry-recovery.test.mjs && node tests/private-feedback.test.mjs && node tests/feedback-inbox.test.mjs && node tests/pdf-reader-controls.test.mjs && node tests/library-reader-recovery.test.mjs && node tests/catalogue-recovery.test.mjs && node tests/library-auth-recovery.test.mjs"
   },
   "devDependencies": {
     "fflate": "0.8.3",
