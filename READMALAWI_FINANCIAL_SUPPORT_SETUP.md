@@ -41,3 +41,12 @@ The hosted-link approach does not need API keys in the frontend or a custom paym
 Publish only TNM Mpamba 0882242594 (Jones Nalikungwi) and FCB 0041502003599 (IBROWS Enterprise), copied from the IBROWS project and selected explicitly by the founder. These are existing receiving accounts, not ReadMalawi-named accounts. Branch information was not present and must not be invented. Minimum MK700; provider transfer charges may apply.
 
 Request only amount, date, channel and transaction reference through the existing email/WhatsApp contacts. Confirm against the actual receiving-account record; screenshots alone are not proof. Do not auto-mark payments, issue charitable tax receipts or collect banking credentials. Maintain separate records of ReadMalawi receipts and spending. General payments and hosted checkout flags remain false. No financial transaction was performed during publication.
+
+## Optional donor recognition — 16 October 2026
+
+- Default: no public name and no individual public amount. Confirmation of payment does not imply consent to recognition.
+- After verifying receipt, ask whether the donor wants public thanks and what exact display name they choose. Ask separately whether the amount may be published. No response means no publication.
+- Record consent privately with transaction reference, exact chosen name, permitted fields, consent date and source. Never put the consent register or transaction records in the public repository.
+- Publish only consented fields for confirmed receipts. Do not publish payment identifiers, account details, phone numbers or invented donors. No supporter list is seeded by this change.
+- Handle removal/change requests through the existing email or WhatsApp contact; remove or revise the public acknowledgement while retaining necessary reconciliation records privately.
+- Keep aggregate reporting separate from recognition. Check that granular breakdowns do not inadvertently identify an anonymous donor.
