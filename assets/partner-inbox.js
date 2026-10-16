@@ -6,7 +6,7 @@ const cfg=window.READMALAWI_CONFIG||{};
 const statuses=["new","contacted","in_discussion","closed"];
 const isTestRecord=x=>(x.message||"").startsWith("[READMALAWI TEST]")||(x.admin_notes||"").includes("[READMALAWI TEST]");
 const siteIsTesting=cfg.sitePhase!=="production";
-let client=null,user=null,allEnquiries=[],toastTimeout=null;
+let client=null,user=null,allEnquiries=[],toastTimeout=null,loading=false;
 const TEST_LABEL="[READMALAWI TEST]";
 function safeguardedNotes(value,record){
  const entered=String(value||"").trim().slice(0,4000);
@@ -40,11 +40,14 @@ async function init(){
  }catch(e){status("Unable to open protected inbox: "+e.message)}
 }
 async function load(){
- $("#inbox").replaceChildren();
- const {data,error}=await client.from("readmalawi_partnership_enquiries").select("id,contact_name,contact_email,organisation,country,interest,message,status,created_at,admin_notes").order("created_at",{ascending:false}).limit(100);
- if(error){status("Could not load enquiries: "+error.message);return}
- allEnquiries=data||[];
- render();
+ if(loading)return;loading=true;$("#refresh").disabled=true;
+ status("Loading private enquiries…");
+ try{
+  const {data,error}=await client.from("readmalawi_partnership_enquiries").select("id,contact_name,contact_email,organisation,country,interest,message,status,created_at,admin_notes").order("created_at",{ascending:false}).limit(100).abortSignal(AbortSignal.timeout(15000));
+  if(error)throw error;
+  allEnquiries=data||[];render();
+ }catch{status("Could not refresh enquiries. Any previously loaded records remain below. Use Refresh to try again.")}
+ finally{loading=false;$("#refresh").disabled=false}
 }
 function render(){
  const byInterest=$("#interest-filter").value;
@@ -53,7 +56,7 @@ function render(){
  const filtered=allEnquiries.filter(x=>(byInterest==="all"||(byInterest==="other"?!["education_services","ai_services","author_services","sponsor"].includes(x.interest):x.interest===byInterest))&&(byStatus==="all"||x.status===byStatus)&&(byRecord==="all"||(byRecord==="test"?isTestRecord(x):!isTestRecord(x))));
  $("#inbox").replaceChildren();
  $("#filter-summary").textContent=filtered.length+" of "+allEnquiries.length+" private enquiries shown";
- status("Private enquiries: "+allEnquiries.length+" loaded · newest first");
+ status("Private enquiries: "+allEnquiries.length+" loaded · newest 100 maximum");
  if(!filtered.length){$("#inbox").append(h("p","muted",allEnquiries.length?"No enquiries match these filters.":"No programme or partnership enquiries yet."));return}
  for(const x of filtered)$("#inbox").append(card(x));
 }
@@ -79,13 +82,13 @@ function card(x){
  notes.addEventListener("input",changed);
  state.addEventListener("change",changed);
  save.addEventListener("click",async()=>{
-  save.disabled=true;msg.className="save-feedback pending";msg.textContent="Saving changes…";
+  if(save.disabled)return;save.disabled=true;state.disabled=true;notes.disabled=true;msg.className="save-feedback pending";msg.textContent="Saving changes…";
   const updatedNotes=safeguardedNotes(notes.value,x);
   try{
    const {data,error}=await client.from("readmalawi_partnership_enquiries")
     .update({status:state.value,admin_notes:updatedNotes})
     .eq("id",x.id)
-    .select("id,status,admin_notes").maybeSingle();
+    .select("id,status,admin_notes").maybeSingle().abortSignal(AbortSignal.timeout(15000));
    if(error)throw error;
    if(!data)throw new Error("No record was updated. Verify librarian access and retry.");
    x.status=data.status;
@@ -93,12 +96,12 @@ function card(x){
    notes.value=data.admin_notes;
    msg.className="save-feedback success";
    msg.textContent="✓ Saved successfully — status and private notes verified.";
-   toast("Saved successfully. Test record updated.");
+   toast("Follow-up saved successfully.");
   }catch(err){
    msg.className="save-feedback error";
    msg.textContent="Save failed: "+(err?.message||"Please try again.");
    toast("Save failed. Check the message beside Save follow-up.",true);
-  }finally{save.disabled=false}
+  }finally{save.disabled=false;state.disabled=false;notes.disabled=false}
  });
  root.append(notes,bar,msg);
  if(isTestRecord(x)){

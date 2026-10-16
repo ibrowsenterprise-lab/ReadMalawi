@@ -3,7 +3,8 @@ const {document,window}=parseHTML(fs.readFileSync(new URL('../assets/private-rea
 for(const [id,value] of [['voice','0'],['rate','1'],['font-size','18'],['book-file',''],['page-number','1']])Object.defineProperty(get(id),'value',{value,writable:true,configurable:true});
 Object.defineProperty(get('page-surface'),'clientWidth',{value:600});get('pdf-canvas').getContext=()=>({});
 window.speechSynthesis={getVoices:()=>[],cancel(){}};
-const pdf={numPages:3,destroy(){},async getPage(n){if(n===3)throw Error('Damaged page');return {getTextContent:async()=>({items:n===1?[{str:'Readable PDF page',hasEOL:true}]:[]}),getViewport:({scale})=>({width:600*scale,height:800*scale}),render:()=>({promise:Promise.resolve(),cancel(){}})}}};
+let slowText=false,releaseText;
+const pdf={numPages:3,destroy(){},async getPage(n){if(n===3)throw Error('Damaged page');return {getTextContent:async()=>slowText?await new Promise(resolve=>releaseText=resolve):({items:n===1?[{str:'Readable PDF page',hasEOL:true}]:[]}),getViewport:({scale})=>({width:600*scale,height:800*scale}),render:()=>({promise:Promise.resolve(),cancel(){}})}}};
 let source=fs.readFileSync(new URL('../assets/private-reader.js',import.meta.url),'utf8').replace(/^import .*;$/mg,'').replace("await import('https://cdn.jsdelivr.net/npm/pdfjs-dist@6.4.299/build/pdf.min.mjs')",'await mockPDFModule()');
 await vm.runInNewContext('(async()=>{'+source+'})()',{document,window,location:{search:''},localStorage:{getItem:()=>null},crypto:webcrypto,File,TextDecoder,Uint8Array,URLSearchParams,mockPDFModule:async()=>({GlobalWorkerOptions:{},getDocument:()=>({promise:Promise.resolve(pdf)})})});
 const click=id=>get(id).dispatchEvent(new window.Event('click'));
@@ -13,4 +14,7 @@ assert.equal(get('pdf-canvas').hidden,false);get('font-size').value='28';get('fo
 click('next');await waitFor(()=>get('status').textContent.includes('No extractable text'));assert.equal(get('font-size').disabled,true);assert.equal(get('listen').disabled,true);assert.equal(get('text-toggle').disabled,true);assert.equal(get('pdf-canvas').hidden,false);assert.match(get('view-help').textContent,/browser’s zoom/);
 click('next');await waitFor(()=>get('status').textContent.startsWith('This page could not open'));assert.equal(get('page-text').textContent,'');assert.equal(get('pdf-canvas').hidden,true);assert.equal(get('bookmark').disabled,true);assert.equal(get('previous').disabled,false);
 click('previous');await waitFor(()=>get('status').textContent.includes('No extractable text'));click('previous');await waitFor(()=>get('status').textContent.includes('ready.'));assert.equal(get('bookmark').disabled,false);click('clear');assert.equal(get('text-toggle').textContent,'Text view');assert.equal(get('page-text').hidden,true);
-console.log('PASS: PDF font size shows readable text; scans explain disabled tools; failed pages hide stale content and allow recovery.');
+slowText=true;Object.defineProperty(get('book-file'),'files',{value:[new File(['another mock PDF'],'slow.pdf',{type:'application/pdf'})],configurable:true});get('book-file').dispatchEvent(new window.Event('change'));await waitFor(()=>!!releaseText);
+click('demo');await waitFor(()=>get('book-title').textContent.includes('reading sample')&&get('status').textContent.includes('ready.'));
+const sample=get('page-text').textContent;releaseText({items:[{str:'Cancelled PDF text'}]});await new Promise(r=>setTimeout(r,20));assert.equal(get('page-text').textContent,sample);assert.equal(get('pdf-canvas').hidden,true);assert.match(get('book-title').textContent,/reading sample/);
+console.log('PASS: PDF text controls, scanned pages and recovery; cancelled PDF text extraction cannot corrupt a newer personal book.');

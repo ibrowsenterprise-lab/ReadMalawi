@@ -23,5 +23,7 @@ panel.append(bar,frame);document.body.append(launch,panel);
 const toggle=(open)=>{panel.hidden=!open;launch.setAttribute("aria-expanded",String(open));if(open)close.focus();else launch.focus()};
 launch.addEventListener("click",()=>toggle(panel.hidden));
 close.addEventListener("click",()=>toggle(false));
-document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!panel.hidden)toggle(false)});
+const closeOnEscape=event=>{if(event.key==="Escape"&&!panel.hidden){event.preventDefault();toggle(false)}};
+document.addEventListener("keydown",closeOnEscape);
+frame.addEventListener("load",()=>{try{frame.contentDocument?.addEventListener("keydown",closeOnEscape)}catch(_){}});
 })();

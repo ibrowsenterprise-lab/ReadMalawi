@@ -13,4 +13,13 @@ click('demo');await waitFor(()=>$('status').textContent.includes('ready.'));asse
 click('bookmark');assert.equal(state.size,1);click('clear');assert.equal($('workspace').hidden,true);assert.equal($('page-text').textContent,'');
 const text='<script>UNTRUSTED</script> '+('A paragraph about reading. '.repeat(500));const file=new File([text],'test.txt',{type:'text/plain'});Object.defineProperty($('book-file'),'files',{value:[file],configurable:true});$('book-file').dispatchEvent(new window.Event('change'));await waitFor(()=>$('status').textContent.includes('ready.'));assert.equal($('page-text').querySelector('script'),null);assert.equal($('page-total').textContent,'of 2');click('next');await waitFor(()=>$('status').textContent.startsWith('Page / section 2'));click('bookmark');click('clear');Object.defineProperty($('book-file'),'files',{value:[file],configurable:true});$('book-file').dispatchEvent(new window.Event('change'));await waitFor(()=>$('status').textContent.startsWith('Page / section 2'));assert.match($('saved-place').textContent,/Resumed/);
 click('clear');Object.defineProperty($('book-file'),'files',{value:[{name:'huge.pdf',size:51*1024*1024}],configurable:true});$('book-file').dispatchEvent(new window.Event('change'));assert.match($('status').textContent,/smaller than 50 MB/);
-console.log('PASS: personal text stays local, safe text rendering, speech selection, multi-section navigation, save/resume, clear and file-size validation');
+// A cancelled slow file must not overwrite text, page totals or the bookmark key of a newer book.
+let releaseOld;
+const oldFile={name:'older.txt',size:20,arrayBuffer:()=>new Promise(resolve=>releaseOld=resolve)};
+Object.defineProperty($('book-file'),'files',{value:[oldFile],configurable:true});$('book-file').dispatchEvent(new window.Event('change'));
+click('demo');await waitFor(()=>$('status').textContent.includes('ready.'));
+const newText=$('page-text').textContent;click('bookmark');const currentKeys=[...state.keys()].sort();
+releaseOld(new TextEncoder().encode('This older file must stay cancelled.').buffer);await new Promise(r=>setTimeout(r,30));
+assert.equal($('page-text').textContent,newText);assert.equal($('page-total').textContent,'of 1');assert.match($('book-title').textContent,/reading sample/);
+click('bookmark');assert.deepEqual([...state.keys()].sort(),currentKeys);
+console.log('PASS: private text safety, speech, saved positions, limits, and cancelled slow files cannot corrupt the newer book.');

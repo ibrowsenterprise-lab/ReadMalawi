@@ -24,7 +24,7 @@ async function showPage(next){
  try{
   if(pdf){
    const p=await pdf.getPage(page);if(token!==generation)return;
-   const text=await p.getTextContent();currentText=text.items.map(x=>x.str+(x.hasEOL?'\n':' ')).join('').trim();
+   const text=await p.getTextContent();if(token!==generation)return;currentText=text.items.map(x=>x.str+(x.hasEOL?'\n':' ')).join('').trim();
    const base=p.getViewport({scale:1});const width=Math.min(1200,Math.max(280,$('page-surface').clientWidth-28));const viewport=p.getViewport({scale:Math.min(2,width/base.width)});
    const c=$('pdf-canvas');c.width=Math.ceil(viewport.width);c.height=Math.ceil(viewport.height);
    renderTask=p.render({canvasContext:c.getContext('2d'),viewport});await renderTask.promise;renderTask=null;
@@ -48,7 +48,7 @@ async function openFile(file){
  const ext=file.name.split('.').pop().toLowerCase();if(!['pdf','epub','txt'].includes(ext)){say('Choose a PDF, EPUB or plain text file.');return}
  busy=true;const token=generation;say('Opening your file on this device…');
  try{
-  const data=new Uint8Array(await file.arrayBuffer());const hash=await crypto.subtle.digest('SHA-256',data.slice(0,65536));key='rm-place-'+file.size+'-'+Array.from(new Uint8Array(hash)).map(x=>x.toString(16).padStart(2,'0')).join('');
+  const data=new Uint8Array(await file.arrayBuffer());if(token!==generation)return;const hash=await crypto.subtle.digest('SHA-256',data.slice(0,65536));if(token!==generation)return;key='rm-place-'+file.size+'-'+Array.from(new Uint8Array(hash)).map(x=>x.toString(16).padStart(2,'0')).join('');
   if(ext==='pdf'){const loaded=await loadPDF({data});if(token!==generation){loaded.destroy();return}pdf=loaded;total=pdf.numPages}
   else if(ext==='epub'){const sections=await readEPUB(data);if(token!==generation)return;parts=sections;total=parts.length}
   else {if(file.size>2*1024*1024)throw Error('Plain text files must be smaller than 2 MB');const text=new TextDecoder().decode(data);for(let i=0;i<text.length;i+=10000)parts.push(text.slice(i,i+10000));total=parts.length}

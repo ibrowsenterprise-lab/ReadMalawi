@@ -23,10 +23,19 @@
 
   const synth=window.speechSynthesis;
   let session=0,reading=false;
+  const englishVoice=()=>{const voices=synth.getVoices?.()||[];return voices.find(v=>/^en(?:-|$)/i.test(v.lang)&&v.localService)||voices.find(v=>/^en(?:-|$)/i.test(v.lang))};
+  function refreshVoice(){
+    if(reading)return;
+    const voice=englishVoice();play.disabled=!voice;
+    status.textContent=voice?(voice.localService?"Uses your device’s English voice.":"Uses an online English speech service provided by your device."):"No English speech voice is available yet. Reading still works; check your device’s text-to-speech settings.";
+  }
+  if(synth.addEventListener)synth.addEventListener("voiceschanged",refreshVoice);
+  else synth.onvoiceschanged=refreshVoice;
+  refreshVoice();
   function setActive(active){
     reading=active;
     play.hidden=active;stop.hidden=!active;
-    status.textContent=active?"Reading aloud…":"Uses your device’s English voice, if available.";
+    if(active)status.textContent="Reading aloud…";else refreshVoice();
   }
   function halt(){
     session+=1;setActive(false);
@@ -38,16 +47,16 @@
     try{
       const utterance=new SpeechSynthesisUtterance(paragraphs[index]);
       utterance.lang="en";utterance.rate=0.88;utterance.pitch=1;
-      const voices=synth.getVoices?.()||[];
-      const preferred=voices.find(v=>v.lang.toLowerCase().startsWith("en")&&v.localService)||voices.find(v=>v.lang.toLowerCase().startsWith("en"));
-      if(preferred)utterance.voice=preferred;
+      const preferred=englishVoice();
+      if(!preferred){setActive(false);return}
+      utterance.voice=preferred;
       utterance.onend=()=>next(index+1,token);
       utterance.onerror=(event)=>{if(token!==session)return;setActive(false);status.textContent=event.error==="canceled"?"Stopped.":"Audio unavailable. You can still read the story.";};
       synth.speak(utterance);
     }catch(_){setActive(false);status.textContent="Audio unavailable. You can still read the story."}
   }
   play.addEventListener("click",()=>{
-    if(reading)return;
+    if(reading||!englishVoice())return;
     halt();setActive(true);
     next(0,session);
   });
@@ -55,3 +64,4 @@
   window.addEventListener("pagehide",halt);
   document.addEventListener("visibilitychange",()=>{if(document.hidden&&reading)halt()});
 })();
+

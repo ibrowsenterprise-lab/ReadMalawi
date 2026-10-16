@@ -109,6 +109,8 @@ $("study-build").addEventListener("click",makeGuide);
 $("study-clear").addEventListener("click",()=>{
  resetTimer();phases=[];
  $("study-notes").value="";$("study-own-summary").value="";
+ for(const id of ["study-summary","study-plan","study-terms","study-quote"])$(id).replaceChildren();
+ $("study-word-count").textContent="0 words entered · aim for 15–35 words.";
  $("study-result").hidden=true;$("study-status").textContent="Notes cleared from this page.";generated="";
 });
 $("study-own-summary").addEventListener("input",()=>{
@@ -124,3 +126,4 @@ $("study-export").addEventListener("click",()=>{
  a.href=url;a.download="ReadMalawi_Study_Sprint.txt";a.click();
  setTimeout(()=>URL.revokeObjectURL(url),15000);
 });
+
