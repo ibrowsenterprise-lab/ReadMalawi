@@ -59,3 +59,9 @@ Regression test private-feedback.test.mjs checks no public-feed read, required p
 Added a private feedback inbox link to the authenticated administrator links in the library and the review-desk header. The inbox can now save a private note without changing review status; network load/save errors restore controls and preserve text. A regression test verifies a failed load can be retried and note saving preserves pending status and the feedback card.
 
 Reading Buddy now routes website suggestions and problem reports to private feedback and explains the existing voluntary MK700 TNM Mpamba/FCB channels, with no automatic payments. Removed its outdated reader instruction referring to a nonexistent new-tab control. No database policies, contributor records, payment settings or publication permissions changed in this follow-up.
+
+## Reader controls follow-up — 16 October 2026
+
+PDF text-size changes now reveal extracted text instead of changing an invisible text layer. Clear view guidance distinguishes extracted text from original PDF layout. Scanned pages disable text-size/text-view controls and explain browser zoom; original images remain readable. New page loads hide old content immediately; failed pages cannot be bookmarked as successfully loaded and leave navigation available. Clearing resets the view toggle, and pagehide keeps a PDF alive when the browser preserves the page in its back/forward cache.
+
+Added a simulated-PDF regression covering font size, original/text switching, scan limitations, damaged-page stale-content suppression and navigating back to a readable page. No publication, payment, account or database changes. Physical-phone speech/background behaviour remains unverified.

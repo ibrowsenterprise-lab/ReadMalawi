@@ -5,11 +5,21 @@ const cfg=window.READMALAWI_CONFIG||{};
 let pdf=null,parts=[],page=1,total=0,currentText='',key='',busy=false,generation=0,textView=false,voices=[],speechGeneration=0,renderTask=null;
 const synth=window.speechSynthesis;
 function stop(){speechGeneration++;if(synth)synth.cancel();$('pause').disabled=true;$('stop').disabled=true;$('pause').textContent='Pause'}
-function reset(){generation++;stop();if(renderTask)renderTask.cancel();renderTask=null;if(pdf)pdf.destroy();pdf=null;parts=[];currentText='';total=0;key='';$('workspace').hidden=true;$('file-panel').hidden=false;$('privacy-note').textContent='Your personal file is opened in this browser, not uploaded to ReadMalawi or published to the library. Reading tools are downloaded when needed.';$('pdf-canvas').hidden=true;$('page-text').textContent='';$('book-file').value='';$('saved-place').textContent='';$('book-title').textContent='Open a book. Make time to read.';say('Book cleared from this tab. Saved page positions can be removed in browser site data.');busy=false}
+function reset(){generation++;stop();if(renderTask)renderTask.cancel();renderTask=null;if(pdf)pdf.destroy();pdf=null;parts=[];currentText='';total=0;key='';$('workspace').hidden=true;$('file-panel').hidden=false;$('privacy-note').textContent='Your personal file is opened in this browser, not uploaded to ReadMalawi or published to the library. Reading tools are downloaded when needed.';$('pdf-canvas').hidden=true;$('pdf-canvas').width=0;$('pdf-canvas').height=0;$('page-text').textContent='';$('page-text').hidden=true;textView=false;$('text-toggle').textContent='Text view';$('text-toggle').setAttribute('aria-pressed','false');$('book-file').value='';$('saved-place').textContent='';$('book-title').textContent='Open a book. Make time to read.';say('Book cleared from this tab. Saved page positions can be removed in browser site data.');busy=false}
 function restore(){try{const saved=Number(localStorage.getItem(key));page=Number.isInteger(saved)&&saved>=1&&saved<=total?saved:1;if(page>1)$('saved-place').textContent='Resumed at your saved page / section '+page+'.'}catch{page=1}}
+function updateView(){
+ $('page-text').hidden=!!pdf&&!textView;$('pdf-canvas').hidden=!pdf||textView;
+ $('text-toggle').hidden=!pdf;$('text-toggle').disabled=!currentText;
+ $('text-toggle').setAttribute('aria-pressed',String(!!pdf&&textView));
+ $('text-toggle').textContent=textView?'Original page':'Text view';
+ $('font-size').disabled=!currentText;
+ $('view-help').textContent=pdf?(currentText?'Text size opens the extracted text view. Use Original page to return to the PDF layout.':'This page is a scan or image. Text size and listening need readable text; use your browser’s zoom to enlarge the original page.'):'Text size changes the reading text below.';
+}
 async function showPage(next){
- if(busy||!total)return;page=Math.max(1,Math.min(total,next));busy=true;const token=generation;stop();say('Opening page / section '+page+'…');
- $('previous').disabled=true;$('next').disabled=true;$('listen').disabled=true;
+ if(busy||!total)return;page=Math.max(1,Math.min(total,next));busy=true;const token=generation;let ready=false;stop();say('Opening page / section '+page+'…');
+ currentText='';$('page-text').textContent='';$('page-text').hidden=true;$('pdf-canvas').hidden=true;
+ $('page-number').value=page;$('page-number').max=total;$('page-total').textContent='of '+total;
+ for(const id of ['previous','next','listen','font-size','text-toggle','bookmark'])$(id).disabled=true;
  try{
   if(pdf){
    const p=await pdf.getPage(page);if(token!==generation)return;
@@ -19,14 +29,13 @@ async function showPage(next){
    renderTask=p.render({canvasContext:c.getContext('2d'),viewport});await renderTask.promise;renderTask=null;
   }else currentText=parts[page-1]||'';
   if(token!==generation)return;
+  if(!currentText&&pdf)textView=false;
   $('page-text').textContent=currentText||'No readable text was found on this page. It may be a scan or image. You can still view the original PDF.';
-  $('page-text').hidden=pdf&&!textView;$('pdf-canvas').hidden=!pdf||textView;
-  $('text-toggle').hidden=!pdf;$('text-toggle').setAttribute('aria-pressed',String(textView));
-  $('page-number').value=page;$('page-number').max=total;$('page-total').textContent='of '+total;
+  updateView();ready=true;
   $('listen').disabled=!currentText||!voices.length||!synth;
   say('Page / section '+page+' of '+total+(currentText?' ready.':' · No extractable text; listening is unavailable.'));
- }catch(e){if(token===generation)say('This page could not open. Try another page or reopen the file. '+(e.name==='PasswordException'?'Password-protected PDFs are not supported.':''))}
- finally{if(token===generation){busy=false;$('previous').disabled=page<=1;$('next').disabled=page>=total}}
+ }catch(e){if(token===generation){currentText='';$('view-help').textContent='Choose another page or enter this page number again to retry.';say('This page could not open. Try another page or reopen the file. '+(e.name==='PasswordException'?'Password-protected PDFs are not supported.':''))}}
+ finally{if(token===generation){busy=false;$('previous').disabled=page<=1;$('next').disabled=page>=total;$('bookmark').disabled=!ready}}
 }
 async function loadPDF(source){
  const lib=await import('https://cdn.jsdelivr.net/npm/pdfjs-dist@6.4.299/build/pdf.min.mjs');
@@ -55,12 +64,12 @@ $('listen').addEventListener('click',()=>{if(!synth||!currentText||!voices.lengt
 $('pause').addEventListener('click',()=>{if(!synth)return;if(synth.paused){synth.resume();$('pause').textContent='Pause'}else{synth.pause();$('pause').textContent='Resume'}});$('stop').addEventListener('click',()=>{stop();$('speech-status').textContent='Listening stopped.'});
 $('book-file').addEventListener('change',e=>openFile(e.target.files[0]));$('clear').addEventListener('click',reset);
 $('previous').addEventListener('click',()=>showPage(page-1));$('next').addEventListener('click',()=>showPage(page+1));$('page-number').addEventListener('change',e=>{const n=Number(e.target.value);if(Number.isInteger(n)&&n>=1&&n<=total)showPage(n);else e.target.value=page});
-$('text-toggle').addEventListener('click',()=>{textView=!textView;$('page-text').hidden=!textView;$('pdf-canvas').hidden=textView;$('text-toggle').setAttribute('aria-pressed',String(textView));$('text-toggle').textContent=textView?'Original page':'Text view'});
-$('font-size').addEventListener('change',e=>$('page-text').style.fontSize=e.target.value+'px');
+$('text-toggle').addEventListener('click',()=>{if(busy||!pdf||!currentText)return;textView=!textView;updateView()});
+$('font-size').addEventListener('change',e=>{if(busy||!currentText)return;$('page-text').style.fontSize=e.target.value+'px';if(pdf)textView=true;updateView()});
 $('bookmark').addEventListener('click',()=>{try{localStorage.setItem(key,String(page));$('saved-place').textContent='Saved page / section '+page+' on this browser. Reopen the same book to resume. The book itself is not saved.'}catch{$('saved-place').textContent='This browser could not save your place.'}});
 $('forget').addEventListener('click',()=>{try{localStorage.removeItem(key);$('saved-place').textContent='Saved position removed from this browser.'}catch{$('saved-place').textContent='Could not remove saved position.'}});
 $('demo').addEventListener('click',()=>openFile(new File(['A book can begin a conversation. Chisomo brought a story to the reading group. Each reader chose a favourite sentence and explained why it mattered. They listened to different views and agreed to meet again.\n\nTry the text-size and listening controls. This sample is original ReadMalawi demonstration text.'],'ReadMalawi reading sample.txt',{type:'text/plain'})));
-window.addEventListener('pagehide',()=>{stop();if(pdf)pdf.destroy()});
+window.addEventListener('pagehide',event=>{stop();if(pdf&&!event.persisted)pdf.destroy()});
 const id=new URLSearchParams(location.search).get('book');
 if(id){
  $('file-panel').hidden=true;$('privacy-note').textContent='Read a released ReadMalawi book. Page positions can be saved on this browser; no reading progress is sent to ReadMalawi.';say('Connecting to the library book…');
