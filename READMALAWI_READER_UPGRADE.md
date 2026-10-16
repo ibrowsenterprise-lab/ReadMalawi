@@ -65,3 +65,9 @@ Reading Buddy now routes website suggestions and problem reports to private feed
 PDF text-size changes now reveal extracted text instead of changing an invisible text layer. Clear view guidance distinguishes extracted text from original PDF layout. Scanned pages disable text-size/text-view controls and explain browser zoom; original images remain readable. New page loads hide old content immediately; failed pages cannot be bookmarked as successfully loaded and leave navigation available. Clearing resets the view toggle, and pagehide keeps a PDF alive when the browser preserves the page in its back/forward cache.
 
 Added a simulated-PDF regression covering font size, original/text switching, scan limitations, damaged-page stale-content suppression and navigating back to a readable page. No publication, payment, account or database changes. Physical-phone speech/background behaviour remains unverified.
+
+## Library connection recovery — 16 October 2026
+
+Added an explicit Retry opening this library book control after initial connection failures and Cancel opening while loading. Retry reloads the public catalogue and obtains a fresh signed URL; no automatic retry loop. Generation guards prevent cancelled requests from replacing a subsequently opened personal file. EPUB downloads use a 25-second abort signal.
+
+Moved library audiobook playback into its own panel so closing audio preserves the personal-file picker and sample controls. Audio errors expose the retry action. A regression test covers initial failure/retry, rapid duplicate retry clicks, closing audio then opening a personal sample, and cancellation while a catalogue request is pending.

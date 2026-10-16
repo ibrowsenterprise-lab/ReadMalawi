@@ -4,8 +4,9 @@ const $=id=>document.getElementById(id),say=t=>$('status').textContent=t;
 const cfg=window.READMALAWI_CONFIG||{};
 let pdf=null,parts=[],page=1,total=0,currentText='',key='',busy=false,generation=0,textView=false,voices=[],speechGeneration=0,renderTask=null;
 const synth=window.speechSynthesis;
+let libraryLoading=false;
 function stop(){speechGeneration++;if(synth)synth.cancel();$('pause').disabled=true;$('stop').disabled=true;$('pause').textContent='Pause'}
-function reset(){generation++;stop();if(renderTask)renderTask.cancel();renderTask=null;if(pdf)pdf.destroy();pdf=null;parts=[];currentText='';total=0;key='';$('workspace').hidden=true;$('file-panel').hidden=false;$('privacy-note').textContent='Your personal file is opened in this browser, not uploaded to ReadMalawi or published to the library. Reading tools are downloaded when needed.';$('pdf-canvas').hidden=true;$('pdf-canvas').width=0;$('pdf-canvas').height=0;$('page-text').textContent='';$('page-text').hidden=true;textView=false;$('text-toggle').textContent='Text view';$('text-toggle').setAttribute('aria-pressed','false');$('book-file').value='';$('saved-place').textContent='';$('book-title').textContent='Open a book. Make time to read.';say('Book cleared from this tab. Saved page positions can be removed in browser site data.');busy=false}
+function reset(){generation++;libraryLoading=false;$('retry-book').hidden=true;$('cancel-opening').hidden=true;$('library-audio').hidden=true;const audio=$('audio-player').querySelector('audio');if(audio){audio.pause?.();audio.removeAttribute('src');audio.load?.()}$('audio-player').replaceChildren();stop();if(renderTask)renderTask.cancel();renderTask=null;if(pdf)pdf.destroy();pdf=null;parts=[];currentText='';total=0;key='';$('workspace').hidden=true;$('file-panel').hidden=false;$('privacy-note').textContent='Your personal file is opened in this browser, not uploaded to ReadMalawi or published to the library. Reading tools are downloaded when needed.';$('pdf-canvas').hidden=true;$('pdf-canvas').width=0;$('pdf-canvas').height=0;$('page-text').textContent='';$('page-text').hidden=true;textView=false;$('text-toggle').textContent='Text view';$('text-toggle').setAttribute('aria-pressed','false');$('book-file').value='';$('saved-place').textContent='';$('book-title').textContent='Open a book. Make time to read.';say('Book cleared from this tab. Saved page positions can be removed in browser site data.');busy=false}
 function restore(){try{const saved=Number(localStorage.getItem(key));page=Number.isInteger(saved)&&saved>=1&&saved<=total?saved:1;if(page>1)$('saved-place').textContent='Resumed at your saved page / section '+page+'.'}catch{page=1}}
 function updateView(){
  $('page-text').hidden=!!pdf&&!textView;$('pdf-canvas').hidden=!pdf||textView;
@@ -71,18 +72,33 @@ $('forget').addEventListener('click',()=>{try{localStorage.removeItem(key);$('sa
 $('demo').addEventListener('click',()=>openFile(new File(['A book can begin a conversation. Chisomo brought a story to the reading group. Each reader chose a favourite sentence and explained why it mattered. They listened to different views and agreed to meet again.\n\nTry the text-size and listening controls. This sample is original ReadMalawi demonstration text.'],'ReadMalawi reading sample.txt',{type:'text/plain'})));
 window.addEventListener('pagehide',event=>{stop();if(pdf&&!event.persisted)pdf.destroy()});
 const id=new URLSearchParams(location.search).get('book');
-if(id){
- $('file-panel').hidden=true;$('privacy-note').textContent='Read a released ReadMalawi book. Page positions can be saved on this browser; no reading progress is sent to ReadMalawi.';say('Connecting to the library book…');
+$('retry-book').addEventListener('click',()=>openLibraryBook());
+$('cancel-opening').addEventListener('click',reset);
+$('close-audio').addEventListener('click',reset);
+async function openLibraryBook(){
+ if(!id||libraryLoading)return;
+ reset();libraryLoading=true;const token=generation;
+ $('file-panel').hidden=true;$('cancel-opening').hidden=false;$('privacy-note').textContent='Read a released ReadMalawi book. Page positions can be saved on this browser; no reading progress is sent to ReadMalawi.';say('Connecting to the library book…');
  try{
   if(!/^[0-9a-f-]{36}$/i.test(id))throw Error('Invalid book reference');
-  const all=await loadPublicCatalogue(cfg),raw=all.find(b=>b.id===id);if(!raw)throw Error('This book is not currently available');const book=cleanBook(raw);key='rm-library-place-'+id;
-  const {getSupabaseModule}=await import('./supabase-loader.js');const mod=await getSupabaseModule();const client=mod.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey);
-  const result=await client.storage.from('readmalawi-library').createSignedUrl(book.file_path,3600);if(result.error)throw result.error;const url=result.data.signedUrl;
-  if(book.media_type==='audiobook'){const audio=document.createElement('audio');audio.controls=true;audio.preload='metadata';audio.src=url;$('file-panel').hidden=false;$('file-panel').replaceChildren(audio);$('book-title').textContent=book.title;say('Use the audio controls to listen.');}
-  else {
-   if(/\.epub$/i.test(book.file_path)){const res=await fetch(url);if(!res.ok)throw Error('Book download unavailable');const buf=await res.arrayBuffer();if(buf.byteLength>50*1024*1024)throw Error('Book exceeds this reader’s 50 MB limit');parts=await readEPUB(new Uint8Array(buf));total=parts.length}
-   else{pdf=await loadPDF({url});total=pdf.numPages}
+  const all=await loadPublicCatalogue(cfg);if(token!==generation)return;
+  const raw=all.find(b=>b.id===id);if(!raw)throw Error('This book is not currently available');const book=cleanBook(raw);key='rm-library-place-'+id;
+  const {getSupabaseModule}=await import('./supabase-loader.js');const mod=await getSupabaseModule();if(token!==generation)return;const client=mod.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey);
+  const result=await client.storage.from('readmalawi-library').createSignedUrl(book.file_path,3600);if(token!==generation)return;if(result.error)throw result.error;const url=result.data.signedUrl;
+  if(book.media_type==='audiobook'){
+   const audio=document.createElement('audio');audio.controls=true;audio.preload='metadata';audio.src=url;
+   audio.addEventListener('error',()=>{if(token===generation){say('The audio could not load. Retry opening this library book, or contact info@readmalawi.fyi.');$('retry-book').hidden=false}});
+   $('audio-player').replaceChildren(audio);$('library-audio').hidden=false;$('book-title').textContent=book.title;say('Use the audio controls to listen.');
+  }else{
+   if(/\.epub$/i.test(book.file_path)){
+    const res=await fetch(url,{signal:AbortSignal.timeout(25000)});if(!res.ok)throw Error('Book download unavailable');const buf=await res.arrayBuffer();if(token!==generation)return;if(buf.byteLength>50*1024*1024)throw Error('Book exceeds this reader’s 50 MB limit');
+    const sections=await readEPUB(new Uint8Array(buf));if(token!==generation)return;parts=sections;total=parts.length;
+   }else{
+    const loaded=await loadPDF({url});if(token!==generation){loaded.destroy();return}pdf=loaded;total=pdf.numPages;
+   }
    $('book-title').textContent=book.title;$('workspace').hidden=false;restore();await showPage(page);
   }
- }catch(e){say('Book unavailable: '+e.message+'. Return to the library to retry or contact info@readmalawi.fyi.');$('file-panel').hidden=false}
+ }catch(e){if(token===generation){say('Book unavailable: '+e.message+'. Retry below, browse another title, or contact info@readmalawi.fyi.');$('retry-book').hidden=false;$('file-panel').hidden=false}}
+ finally{if(token===generation){libraryLoading=false;$('cancel-opening').hidden=true}}
 }
+if(id)await openLibraryBook();
