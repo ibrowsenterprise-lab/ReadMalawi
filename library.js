@@ -20,6 +20,7 @@ const originalStories=[
  * Catalogue metadata is editorial; it does not certify redistribution rights in Malawi.
  * Keep source names and specific editions distinct from privately submitted PDFs.
  */
+const requestedPreview={title:"The Absent Father Effect on Daughters",author:"Susan E. Schwartz",description:"Father Desire, Father Wounds. Free sample of the Routledge e-book.",category:"Other",language:"English",kind:"book",source:"preview",url:"assets/the-absent-father-effect-on-daughters.html",rank:81};
 const officialSourceBooks=[
  {title:"Getting Motivated to Change",author:"N. G. Bartholomew, D. F. Dansereau & D. D. Simpson",
   description:"University training material; check its terms for any reuse.",provider:"Texas Christian University",
@@ -53,7 +54,7 @@ const officialSourceBooks=[
   category:"Education",language:"English",url:"https://www.navalmanack.com/"}
 ].map((book,index)=>({...book,kind:"book",source:"official",rank:80-index}));
 
-const app={collection:"books",page:1,pageSize:12,catalogueReady:false,catalogueError:false,kind:"all",sourceFilter:"all",local:originalStories.concat(officialSourceBooks),remote:[],client:null,user:null,requests:[],backend:false};
+const app={collection:"books",page:1,pageSize:12,catalogueReady:false,catalogueError:false,kind:"all",sourceFilter:"all",local:[...originalStories,requestedPreview,...officialSourceBooks],remote:[],client:null,user:null,requests:[],backend:false};
 const cfg=window.READMALAWI_CONFIG||{};
 const types={book:"E-book",audio:"Audiobook"};
 const show=(id,text,good)=>{const el=$(id);el.textContent=text;el.className="status "+(good?"ok":"err")};
@@ -87,7 +88,7 @@ const entry=data=>{
  author.textContent=data.author&&data.author!=="Unknown"&&data.author!=="Unknown author"?data.author:"Author not listed";
  const meta=document.createElement("p");meta.className="book-label";
  meta.textContent=[data.language&&data.language!=="Unconfirmed"?data.language:null,data.category,
-  data.source==="official"?"Publisher website":data.source==="original"?"Short story":"Read on ReadMalawi"]
+  data.source==="preview"?"Free sample":data.source==="official"?"Publisher website":data.source==="original"?"Short story":"Read on ReadMalawi"]
   .filter(Boolean).join(" · ")||"Book";
  details.append(heading,author,meta);
  if(data.description){const d=document.createElement("p");d.className="small muted";d.textContent=data.description.slice(0,220);details.append(d)}
@@ -119,12 +120,12 @@ const entry=data=>{
  if(extra.children.length>1)details.append(extra);
  const link=document.createElement("a");link.className="book-action";
  const isHosted=data.source==="member",isAudio=data.kind==="audio",isOfficial=data.source==="official";
- link.textContent=isOfficial?"Read at publisher ↗":isHosted?(isAudio?"Listen here ›":"Read here ›"):"Read story ›";
- link.setAttribute("aria-label",(isOfficial?"Open original source for: ":isAudio?"Listen on ReadMalawi: ":"Read on ReadMalawi: ")+(data.title||"Untitled book"));
+ link.textContent=data.source==="preview"?"View free sample ›":isOfficial?"Read at publisher ↗":isHosted?(isAudio?"Listen here ›":"Read here ›"):"Read story ›";
+ link.setAttribute("aria-label",(data.source==="preview"?"View free sample of: ":isOfficial?"Open original source for: ":isAudio?"Listen on ReadMalawi: ":"Read on ReadMalawi: ")+(data.title||"Untitled book"));
  if(isOfficial){
    link.href=secureURL(data.url)||"assets/official-reading.html";
    link.target="_blank";link.rel="noopener noreferrer";
- }else if(data.source==="original"){
+ }else if(data.source==="original"||data.source==="preview"){
    link.href=data.url;
  }else if(isHosted){
    link.href="assets/private-reader.html?book="+encodeURIComponent(data.id);
@@ -148,7 +149,7 @@ function filterAndRender(resetPage=true){
  $("#filter-summary").textContent=active.length?active.join(' · '):'All titles in this collection.';
  $("#clear-filters").hidden=!active.length;
  const items=app.local.concat(app.remote).filter(book=>
-   (app.collection==="kids"?book.source==="original":app.collection==="external"?book.source==="official":book.source==="member")
+   (app.collection==="kids"?book.source==="original":app.collection==="external"?(book.source==="official"||book.source==="preview"):(book.source==="member"||Boolean(term)&&book.source==="preview"))
    &&(app.kind==="all"||book.kind===app.kind)
    &&(cat==="all"||book.category===cat)
    &&(!lang||String(book.language||"").toLowerCase().includes(lang))
@@ -165,7 +166,7 @@ function filterAndRender(resetPage=true){
  items.slice((app.page-1)*app.pageSize,app.page*app.pageSize).forEach(book=>target.append(entry(book)));
  }
  const totalPages=Math.max(1,Math.ceil(items.length/app.pageSize));
- $("#count").textContent=app.collection==="books"&&!app.catalogueReady?"Loading catalogue…":app.collection==="books"&&app.catalogueError?"Catalogue unavailable":items.length?((app.page-1)*app.pageSize+1)+"–"+Math.min(app.page*app.pageSize,items.length)+" of "+items.length+" titles":"No matching titles";
+ $("#count").textContent=!items.length&&app.collection==="books"&&!app.catalogueReady?"Loading catalogue…":!items.length&&app.collection==="books"&&app.catalogueError?"Catalogue unavailable":items.length?((app.page-1)*app.pageSize+1)+"–"+Math.min(app.page*app.pageSize,items.length)+" of "+items.length+" titles":"No matching titles";
  $("#page-status").textContent="Page "+app.page+" of "+totalPages;
  $("#page-prev").disabled=app.page<=1;$("#page-next").disabled=app.page>=totalPages;
  $("#catalogue-pages").hidden=items.length<=app.pageSize;
@@ -181,7 +182,7 @@ document.querySelectorAll("[data-collection]").forEach(button=>button.addEventLi
  app.collection=button.dataset.collection;resetFilters();
  document.querySelectorAll("[data-collection]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.collection===app.collection)));
  $("#catalogue-heading").textContent=app.collection==="kids"?"Kids & beginners":app.collection==="external"?"More reading sources":"Browse our books";
- $("#catalogue-intro").textContent=app.collection==="kids"?"Short stories with simple questions for younger readers and beginners.":app.collection==="external"?"Extra titles to read on the original publisher’s website.":"Search by title or author, or choose a category. Tap Read to open a book here.";
+ $("#catalogue-intro").textContent=app.collection==="kids"?"Short stories with simple questions for younger readers and beginners.":app.collection==="external"?"Find free samples and books available from their original providers.":"Search by title or author, or choose a category. Tap Read to open a book here.";
  filterAndRender();
 }));
 const searchParams=new URLSearchParams(location.search);
@@ -280,7 +281,7 @@ async function loadApproved(){
  try{
   const data=await loadPublicCatalogue(cfg);
   app.catalogueReady=true;app.catalogueError=false;
-  app.local=[...originalStories,...officialSourceBooks,...data.map((b,index)=>({...cleanBook(b),kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",discussion_key:"member:"+b.id,rank:data.length-index}))];
+  app.local=[...originalStories,requestedPreview,...officialSourceBooks,...data.map((b,index)=>({...cleanBook(b),kind:b.media_type==="audiobook"?"audio":"book",storage_path:b.file_path,source:"member",discussion_key:"member:"+b.id,rank:data.length-index}))];
   const languages=new Map();for(const b of data)languages.set(b.language||"Unconfirmed",(languages.get(b.language||"Unconfirmed")||0)+1);
   const summary=$("#collection-summary");if(summary)summary.textContent=data.length+" released library titles · "+originalStories.length+" original children's stories · uploaded archives are counted only after release.";
   const list=$("#readmalawi-languages");if(list){list.replaceChildren();for(const [name,count] of [...languages].sort()){const o=document.createElement("option");o.value=name;o.label=count+" released title"+(count===1?"":"s");list.append(o)}}
