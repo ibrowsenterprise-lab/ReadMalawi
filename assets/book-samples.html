@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#092e2b">
+<title>Free Book Samples | ReadMalawi</title>
+<meta name="description" content="Browse free book samples and read excerpts directly on ReadMalawi.">
+<link rel="canonical" href="https://readmalawi.fyi/assets/book-samples.html">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#fbfaf4;color:#1a322a;font:1rem/1.55 system-ui,sans-serif}header{background:#092e2b;color:white;padding:1rem}header a{color:white;font-weight:750}main,header div{max-width:58rem;margin:auto}main{padding:1.25rem 1rem 3rem}a{color:#11654c;text-underline-offset:.2em}h1{font:700 clamp(2rem,6vw,3.4rem)/1.1 Georgia,serif;margin:.6em 0 .25em}h2{margin:0;font-size:1.18rem}p{margin:.45rem 0 1rem}label{display:block;font-weight:650}input,select,button{font:inherit;color:inherit;min-height:44px;padding:.45rem .65rem;border:1px solid #80998b;border-radius:.45rem;background:white}input,select{width:100%}button{cursor:pointer}button:disabled{opacity:.48;cursor:default}:focus-visible{outline:3px solid #ad6315;outline-offset:3px}.controls,.grid{display:grid;gap:.85rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr))}.card{padding:1rem;border:1px solid #cbd9d0;border-radius:.7rem;background:white}.meta{color:#435b51;font-size:.9rem}.pagination[hidden]{display:none}.pagination{display:flex;align-items:center;justify-content:center;gap:.75rem;margin:1.2rem 0}.reader{max-width:42rem;margin:0 auto}.excerpt{font:clamp(1.1rem,4vw,1.25rem)/1.7 Georgia,serif;white-space:pre-line;overflow-wrap:anywhere}.reading-links{display:flex;gap:1rem;flex-wrap:wrap}
+</style>
+<script src="book-samples.js" defer></script>
+</head>
+<body>
+<header><div><a href="../index.html">ReadMalawi</a> · <a href="../library.html#library">Library</a></div></header>
+<main>
+<section id="shelf">
+<h1>Free book samples</h1>
+<p>Read an excerpt here, then follow the source link if you want to continue with the full book.</p>
+<div class="controls">
+<label>Search by title or author <input id="search" type="search" autocomplete="off"></label>
+<label>Category <select id="category"><option value="">All categories</option></select></label>
+</div>
+<p id="status" role="status">Loading samples…</p>
+<div id="samples" class="grid"></div>
+<nav id="pagination" class="pagination" aria-label="Sample pages" hidden>
+<button id="previous" type="button">Previous</button><span id="page"></span><button id="next" type="button">Next</button>
+</nav>
+</section>
+<article id="reader" class="reader" hidden>
+<a href="book-samples.html">← Browse all samples</a>
+<h1 id="title"></h1>
+<p id="byline" class="meta"></p>
+<div id="excerpt" class="excerpt"></div>
+<p class="reading-links"><a id="full-book" href="https://www.gutenberg.org/">Continue at Project Gutenberg</a></p>
+</article>
+<noscript><p>Enable JavaScript to browse the sample collection or <a href="https://www.gutenberg.org/ebooks/">browse Project Gutenberg</a>.</p></noscript>
+</main>
+</body>
+</html>
